@@ -1,7 +1,6 @@
-import { Suspense } from "react";
-import FullQuestion from "./_components/FullQuestion";
-
-const question = {
+import { NextResponse } from "next/server";
+const questions = [
+  {
     Codigo: "Q00001",
     Disciplina: "Engenharia de Software",
     Banca: "Cebraspe",
@@ -83,19 +82,62 @@ const question = {
   3 – Apreseentou e descreveu, de forma clara e suficiente, uma técnica ou um algoritmo de regra de associação em mineração de
   dados. 
    `,
-  };
+  },
+  {
+    Codigo: "Q00002",
+    Disciplina: "Engenharia de Software",
+    Banca: "Cebraspe",
+    Ano: "2024",
+    Nivel: "Superior",
+    Cargo: "Analista Judiciário – Tecnologia da Informação",
+    Instituicao: "TSE",
+    Questao: `A respeito de técnicas de análise de segurança das aplicações, redija um texto dissertativo atendendo ao que se pede a seguir.    
+  <br>
+  <div style="margin-left: 15px">
+  1 <div style="margin-left: 30px; margin-top: -26px">Explique o que é análise estática de código-fonte (SAST). [valor: 10,00 pontos]</div>
+  2 <div style="margin-left: 30px; margin-top: -26px">Discorra sobre o princípio de funcionamento da SAST. [valor: 10,00 pontos]</div>
+  3 <div style="margin-left: 30px; margin-top: -26px">Explique o que são testes dinâmicos de segurança (DAST). [valor: 10,00 pontos]</div>
+  4 <div style="margin-left: 30px; margin-top: -26px">Discorra sobre o princípio de funcionamento do DAST. [valor: 10,00 pontos]</div>
+  5 <div style="margin-left: 30px; margin-top: -26px">Identifique, justificando, qual análise entre a SAST e o DAST é considerada white box e qual é considerada black
+  box. [valor: 7,50 pontos]</div></div>`,
+    Resposta: `1 O teste de segurança de aplicativos estáticos (SAST), ou análise estática, é uma metodologia de teste que analisa o
+  código-fonte para encontrar vulnerabilidades de segurança. As ferramentas de SAST analisam o código-fonte ou as
+  versões compiladas do código quando ele não está em execução para encontrar falhas de segurança.
+  2 A SAST analisa o código-fonte ou as versões compiladas do código quando ele não está em execução para encontrar
+  falhas de segurança. A SAST identifica vulnerabilidades nos estágios iniciais de desenvolvimento para resolver
+  rapidamente problemas sem quebrar compilações ou transmitir vulnerabilidades para a versão final do aplicativo
+  quando o desenvolvedor estiver codificando o programa.
+  3 O teste de segurança do aplicativo dinâmico (DAST) é um processo de teste de um aplicativo em um estado
+  operacional para encontrar vulnerabilidades de segurança. As ferramentas DAST analisam programas enquanto estão
+  em execução para encontrar vulnerabilidades de segurança.
+  4 O DAST funciona simulando ataques automatizados em um aplicativo, imitando um invasor malicioso. O objetivo é
+  encontrar resultados que não eram esperados e, portanto, poderiam ser usados por invasores para comprometer um
+  aplicativo.
+  5 A SAST é uma análise white box, ou teste de caixa branca, pois tem acesso ao código-fonte. O DAST, por sua vez, é
+  uma análise black box, pois examina o estado de execução de uma aplicação sem conhecer o seu código-fonte.`,
+    Criterios: `QUESITO 2.1 Definição de SAST
+  Conceito 0 – Não respondeu ou respondeu de maneira totalmente equivocada.
+  Conceito 1 – Definiu SAST de maneira parcialmente correta.
+  Conceito 2 – Definiu SAST corretamente.
+  QUESITO 2.2 Princípio de funcionamento da SAST
+  Conceito 0 – Não respondeu ou respondeu de maneira totalmente equivocada.
+  Conceito 1 – Apresentou, de maneira parcialmente correta, o princípio de funcionamento da SAST.
+  Conceito 2 – Apresentou, de maneira totalmente correta, o princípio de funcionamento da SAST.
+  QUESITO 2.3 Definição de DAST
+  Conceito 0 – Não respondeu ou respondeu de maneira totalmente equivocada.
+  Conceito 1 – Definiu DAST de maneira parcialmente correta.
+  Conceito 2 – Definiu DAST corretamente.
+  QUESITO 2.4 Princípio de funcionamento do DAST
+  Conceito 0 – Não respondeu ou respondeu de maneira totalmente equivocada.
+  Conceito 1 – Apresentou, de maneira parcialmente correta, o princípio de funcionamento do DAST.
+  Conceito 2 – Apresentou, de maneira totalmente correta, o princípio de funcionamento do DAST.
+  QUESITO 2.5 Identificação de SAST e DAST em white box e black box
+  Conceito 0 – Não respondeu ou respondeu de maneira totalmente equivocada.
+  Conceito 1 – Apresentou a classificação correta para white box ou para black box.
+  Conceito 2 – Apresentou a classificação correta para white box e para black box. `,
+  },
+];
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ codigo: string }>;
-}) {
-  const { codigo } = await params;
-  return (
-    <div className="h-[400px]">
-      <Suspense fallback={<h1>Carregando...</h1>}>
-        <FullQuestion question={question} />
-      </Suspense>
-    </div>
-  );
+export async function GET() {
+  return NextResponse.json(questions);
 }
