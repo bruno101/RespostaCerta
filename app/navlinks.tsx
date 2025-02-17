@@ -44,9 +44,9 @@ export default function NavLinks() {
             </span>
           </button>
 
-          <p className="text-2xl text-white font-bold ml-3 -mt-2">
+          <Link href="/" className="text-2xl text-white font-bold ml-3 -mt-2">
             Questões Discursivas
-          </p>
+          </Link>
 
           <button className="text-l text-white font-bold ml-auto -mt-1">
             Entrar
@@ -101,9 +101,9 @@ export default function NavLinks() {
         <div className="hidden lg:block container flex flex-wrap items-center justify-between mx-auto text-slate-800">
           {/* Desktop Menu */}
           <div className="flex flex-row">
-            <p className="text-2xl text-white font-bold">
+            <Link href="/" className="text-2xl text-white font-bold">
               Questões Discursivas
-            </p>
+            </Link>
             <button className="text-l text-white font-bold ml-auto">
               Entrar
             </button>

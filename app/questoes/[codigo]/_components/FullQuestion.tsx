@@ -1,4 +1,5 @@
-import QuestionBody from "@/app/ui/questionList/QuestionBody";
+import QuestionBody from "@/app/ui/questions/QuestionBody";
+import QuestionComments from "@/app/ui/questions/QuestionComments";
 
 export default function FullQuestion({
   question,
@@ -19,7 +20,7 @@ export default function FullQuestion({
 }) {
   return (
     <div className="flex flex-col">
-      <div className={`border-b-1 p-3 flex flex-row`}>
+      <div className={`border-b-1 px-3 py-3 flex flex-row`}>
         <div className="flex flex-wrap ml-5 w-[85%] ">
           <div className="bg-gray-50 border-1 px-2 py-1 rounded-md text-gray-700 h-8 text-sm">
             {question.Codigo}
@@ -56,6 +57,8 @@ export default function FullQuestion({
       </div>
 
       <QuestionBody question={question} />
+
+      <QuestionComments question={question} />
     </div>
   );
 }
