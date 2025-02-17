@@ -64,41 +64,27 @@ export default function QuestionList({
           </svg>
           <div className="mt-[10px] ml-2 text-xs">{question.Cargo}</div>
         </div>
-        {!minimized ? (
           <button
-            onClick={() => setMinimized(true)}
-            className="mr-6 w-12 ml-auto hover:outline-[20px] hover:outline-offset-2 hover:outline-gray-800"
+            onClick={() => setMinimized((x)=>!x)}
+            className="mr-6 w-8 pl-[4px] h-8 rounded-lg ml-auto hover:bg-slate-100 focus:bg-slate-200 focus:outline focus:outline-3 focus:outline-blue-200"
           >
             <Image
-              src="https://img.icons8.com/material-outlined/24/minimize-window.png"
-              alt="minimize-window"
+              src={`https://img.icons8.com/material-outlined/24/${minimized ? "maximize" : "minimize"}-window.png`}
+              alt={minimized ? "maximize-window" : "minimize-window"}
               width="24"
               height="24"
-              className="h-6 w-6 mt-1"
+              className="h-6 w-6"
             />
           </button>
-        ) : (
-          <button
-            onClick={() => setMinimized(false)}
-            className="mr-6 w-12 ml-auto hover:outline-[20px] hover:outline-offset-2 hover:outline-gray-800"
-          >
-            <Image
-              src="https://img.icons8.com/material-outlined/24/maximize-window.png"
-              alt="minimize-window"
-              width="24"
-              height="24"
-              className="h-6 w-6 mt-1"
-            />
-          </button>
-        )}
+
       </div>
       {!minimized && (
         <>
           <QuestionBody question={question} />
-          {/*<button className="ml-7 mb-10 text-sm text-white bg-cyan-700 font-bold px-4 py-2 rounded-lg hover:bg-cyan-600 focus:outline focus:outline-5 focus:outline-cyan-200 focus:outline-offset-2">
+          <button className="ml-7 mb-10 text-sm text-white bg-cyan-700 font-bold px-4 py-2 rounded-lg hover:bg-cyan-600 focus:outline focus:outline-5 focus:outline-cyan-200 focus:outline-offset-2">
             <Link href={`/questoes/${question.Codigo}`}>Ver questão</Link>
-          </button>*/}
-          <QuestionComments question={question} />
+          </button>
+          {/*<QuestionComments question={question} />*/}
         </>
       )}
     </div>
