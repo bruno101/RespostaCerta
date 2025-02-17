@@ -46,7 +46,7 @@ export default function Home() {
     const possibleOptions = selectors.filter((item) => item.name === name)[0]
       .options;
     return possibleOptions.filter(
-      (possibleOption) => possibleOption.toLowerCase() === option
+      (possibleOption) => possibleOption.toLowerCase() === option.toLowerCase()
     )[0];
   };
 
@@ -64,13 +64,13 @@ export default function Home() {
         const valueArr = value.split(",");
         for (const option of valueArr) {
           const newOption = capitalize(option, item.name);
+
           if (!(newOption in item.options)) {
             item.options.push(newOption);
           }
         }
       }
     }
-
     setSelected(newSelected);
     setFiltered([
       ...newSelected,
@@ -111,10 +111,11 @@ export default function Home() {
     }
   };
   const onFilter = () => {
-    //setFiltered([...selected, { name: "Palavras Chave", options: [keyWords] }]);
-    let newKeyWordParams = `?palavra=${keyWords}`;
+    let newKeyWordParams = `?palavras=${keyWords}`;
     for (const item of selected) {
-      newKeyWordParams += `?${item.name}=${item.options.join(",")}`;
+      newKeyWordParams += `&${item.name.toLowerCase()}=${item.options.join(
+        ","
+      )}`;
     }
     router.replace(newKeyWordParams);
   };
