@@ -25,7 +25,7 @@ export default function QuestionComments({
     <div>
       <div
         className={`pt-2 ${
-          activeItem != -1 ? "border-b-1" : "rounded-lg"
+          activeItem != -1 ? "border-b-1" : "rounded-b-lg"
         } border-t-1 bg-slate-50 text-[14px]`}
       >
         <button

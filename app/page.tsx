@@ -35,7 +35,7 @@ export default function Home() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [selected, setSelected] = useState(initialSelected);
+  const [selected, setSelected] = useState([...initialSelected]);
   const [keyWords, setKeyWords] = useState("");
   const [filtered, setFiltered] = useState([
     ...initialSelected,
@@ -65,7 +65,7 @@ export default function Home() {
         for (const option of valueArr) {
           const newOption = capitalize(option, item.name);
 
-          if (!(newOption in item.options)) {
+          if (!(item.options.includes(newOption))) {
             item.options.push(newOption);
           }
         }
@@ -79,7 +79,7 @@ export default function Home() {
   }, [searchParams]);
 
   const onSelectionChange = (name: string, keys: SharedSelection) => {
-    const nextSelected: { options: any[]; name: string }[] = selected.map(
+    const nextSelected: { options: any[]; name: string }[] = [...selected].map(
       (selection) => {
         if (selection.name !== name) {
           return selection;
@@ -95,7 +95,7 @@ export default function Home() {
     if (name === "Palavras Chave") {
       setKeyWords("");
     } else {
-      const nextSelected = selected.map((selection) => {
+      const nextSelected = [...selected].map((selection) => {
         if (selection.name !== name) {
           return selection;
         } else {
@@ -120,7 +120,7 @@ export default function Home() {
     router.replace(newKeyWordParams);
   };
   const empty = () => {
-    setSelected(initialSelected);
+    setSelected([...initialSelected]);
   };
   return (
     <div className="w-full">

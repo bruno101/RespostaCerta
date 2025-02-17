@@ -27,7 +27,7 @@ export default function RootLayout({
 
           <NavLinks />
 
-          <div className="mb-10 bg-white border-1 mt-10 lg:mt-0 md:ml-4 md:mr-4 md:rounded-lg min-h-[700px]">
+          <div className="mb-10 bg-white border-1 mt-10 lg:mt-0 md:ml-4 md:mr-4 md:rounded-lg">
           {children}</div>
 
         </div>

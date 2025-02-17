@@ -114,7 +114,7 @@ export default function NavLinks() {
               <Link
                 key={index}
                 href={item.href}
-                className={`flex items-center py-2 px-4 text-lg text-white hover:bg-[#0a89a8] rounded-t-md ${pathName===item.href || (pathName.startsWith("/questoes") && item.href==="/")? "active":""}`}
+                className={`box-border flex items-center pt-2 pb-4 px-4 text-lg text-white hover:bg-[#0a89a8] rounded-t-md ${pathName===item.href || (pathName.startsWith("/questoes") && item.href==="/")? "active":""}`}
               >
                 <div className="flex items-center">{item.name}</div>
               </Link>

@@ -22,4 +22,7 @@ body {
 
 .active {
   background-color: rgb(10, 137, 168);
+  border-bottom-color: rgb(60, 182, 145);
+  border-bottom-width: 3px;
+  padding-bottom: 12px;
 }

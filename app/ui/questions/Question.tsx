@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import QuestionBody from "./QuestionBody";
+import QuestionComments from "./QuestionComments";
 
 export default function QuestionList({
   question,
@@ -94,9 +95,10 @@ export default function QuestionList({
       {!minimized && (
         <>
           <QuestionBody question={question} />
-          <button className="ml-7 mb-10 text-sm text-white bg-cyan-700 font-bold px-4 py-2 rounded-lg hover:bg-cyan-600 focus:outline focus:outline-5 focus:outline-cyan-200 focus:outline-offset-2">
+          {/*<button className="ml-7 mb-10 text-sm text-white bg-cyan-700 font-bold px-4 py-2 rounded-lg hover:bg-cyan-600 focus:outline focus:outline-5 focus:outline-cyan-200 focus:outline-offset-2">
             <Link href={`/questoes/${question.Codigo}`}>Ver questão</Link>
-          </button>
+          </button>*/}
+          <QuestionComments question={question} />
         </>
       )}
     </div>
