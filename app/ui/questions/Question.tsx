@@ -29,18 +29,20 @@ export default function QuestionList({
     <div className="border-1 ml-5 mr-5 mb-4 rounded-lg">
       <div className={`${!minimized && "border-b-1"} p-3 flex`}>
         <div className="flex flex-wrap ml-5 w-[85%] ">
-          <div className="bg-gray-50 border-1 px-2 py-1 rounded-l-md font-bold text-sm h-8">
-            {(index + 1).toString()}
+          <div className="flex flex-row min-h-8">
+            <div className="flex flex-col bg-gray-50 border-1 px-2 py-1 rounded-l-md font-bold text-sm h-full">
+              <p className="mt-auto mb-auto">{(index + 1).toString()}</p>
+            </div>
+            <div className="max-w-20 flex flex-row break-all flex-wrap bg-gray-50 border-r-1 border-y-1 px-2 py-1 rounded-r-md text-gray-700 min-h-6 text-[11px]">
+              <p className="mt-auto mb-auto">{question.Codigo}</p>
+            </div>
           </div>
-          <div className="bg-gray-50 border-r-1 border-y-1 px-2 py-1 rounded-r-md text-gray-700 h-8 text-sm">
-            {question.Codigo}
-          </div>
-          <div className="ml-3 mt-1 font-bold text-md">{question.Banca}</div>
+          <div className="ml-3 mt-4 font-bold text-md">{question.Banca}</div>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
-            className="size-3 mt-3 ml-2"
+            className="size-3 mt-6 ml-2"
           >
             <path
               fillRule="evenodd"
@@ -49,12 +51,12 @@ export default function QuestionList({
             />
           </svg>
 
-          <div className="mt-[10px] ml-2 text-xs">{question.Instituicao}</div>
+          <div className="mt-[23px] ml-2 text-xs">{question.Instituicao}</div>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
-            className="size-3 mt-3 ml-2"
+            className="size-3 mt-6 ml-2"
           >
             <path
               fillRule="evenodd"
@@ -62,21 +64,22 @@ export default function QuestionList({
               clipRule="evenodd"
             />
           </svg>
-          <div className="mt-[10px] ml-2 text-xs">{question.Cargo}</div>
+          <div className="mt-[23px] ml-2 text-xs">{question.Cargo}</div>
         </div>
-          <button
-            onClick={() => setMinimized((x)=>!x)}
-            className="mr-6 w-8 pl-[4px] h-8 rounded-lg ml-auto hover:bg-slate-100 focus:bg-slate-200 focus:outline focus:outline-3 focus:outline-blue-200"
-          >
-            <Image
-              src={`https://img.icons8.com/material-outlined/24/${minimized ? "maximize" : "minimize"}-window.png`}
-              alt={minimized ? "maximize-window" : "minimize-window"}
-              width="24"
-              height="24"
-              className="h-6 w-6"
-            />
-          </button>
-
+        <button
+          onClick={() => setMinimized((x) => !x)}
+          className="mt-4 mr-6 w-8 pl-[4px] h-8 rounded-lg ml-auto hover:bg-slate-100 focus:bg-slate-200 focus:outline focus:outline-3 focus:outline-blue-200"
+        >
+          <Image
+            src={`https://img.icons8.com/material-outlined/24/${
+              minimized ? "maximize" : "minimize"
+            }-window.png`}
+            alt={minimized ? "maximize-window" : "minimize-window"}
+            width="24"
+            height="24"
+            className="h-6 w-6"
+          />
+        </button>
       </div>
       {!minimized && (
         <>

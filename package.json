@@ -13,11 +13,13 @@
     "@heroui/system": "^2.4.7",
     "@heroui/theme": "^2.4.6",
     "framer-motion": "^12.4.1",
+    "mongoose": "^8.10.1",
     "next": "15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@types/mongoose": "^5.11.97",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

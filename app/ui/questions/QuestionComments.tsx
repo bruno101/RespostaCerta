@@ -2,6 +2,7 @@
 import { useState } from "react";
 import QuestionAnswer from "./QuestionAnswer";
 import UserComments from "./UserComments";
+import Image from "next/image";
 
 export default function QuestionComments({
   question,
@@ -26,7 +27,7 @@ export default function QuestionComments({
       <div
         className={`pt-2 ${
           activeItem != -1 ? "border-b-1" : "rounded-b-lg"
-        } border-t-1 bg-slate-50 text-[14px]`}
+        } border-t-1 bg-slate-50 text-[14px] flex flex-row`}
       >
         <button
           onClick={() => {
@@ -34,10 +35,20 @@ export default function QuestionComments({
           }}
           className={`${
             activeItem === 0 &&
-            "bg-blue-200 text-cyan-800 font-bold border-b-3 border-b-blue-500"
-          } py-4 px-5 hover:border-b-3 hover:border-b-blue-500`}
+            "bg-blue-200 text-cyan-800 font-bold border-b-3 border-b-blue-500 pb-2"
+          } ${
+            activeItem === 1 &&
+            "hover:pb-[13px]"
+          } py-4 px-5 hover:border-b-3 hover:border-b-blue-500 hover:pb-2 flex flex-row`}
         >
-          Questão comentada
+          <Image
+            width="32"
+            height="32"
+            className="h-5 w-5 mr-2"
+            src="https://img.icons8.com/?size=100&id=14570&format=png&color=000000"
+            alt="comentários"
+          />
+          <p>Questão comentada</p>
         </button>
         <button
           onClick={() => {
@@ -46,9 +57,19 @@ export default function QuestionComments({
           className={`${
             activeItem === 1 &&
             "bg-blue-200 text-cyan-800 font-bold border-b-3 border-b-blue-500"
-          } py-4 px-5 hover:border-b-3 hover:border-b-blue-500`}
+          } ${
+            activeItem === 0 &&
+            "hover:pb-[13px]"
+          } py-4 px-5 hover:border-b-3 hover:border-b-blue-500 hover:pb-2 flex flex-row`}
         >
-          Comentários de alunos
+          <Image
+            width="32"
+            height="32"
+            className="h-5 w-5 mr-2"
+            src="https://img.icons8.com/windows/32/messaging-.png"
+            alt="comentários"
+          />
+          <p>Comentários de alunos</p>
         </button>
       </div>
       {activeItem != -1 && (
@@ -76,7 +97,7 @@ export default function QuestionComments({
           </button>
           <div>
             {activeItem === 0 && <QuestionAnswer answer={question.Resposta} />}
-            {activeItem === 1 && <UserComments/>}
+            {activeItem === 1 && <UserComments />}
           </div>
         </div>
       )}
