@@ -81,10 +81,10 @@ export default function QuestionComments({
           }}
           className={`${
             activeItem === 1 &&
-            "bg-blue-200 text-cyan-800 font-bold border-b-3 border-b-blue-500"
+            "hover:pb-[16px] bg-blue-200 text-cyan-800 font-bold border-b-3 border-b-blue-500"
           } ${
             activeItem === 0 && "hover:pb-[13px]"
-          } py-4 px-5 hover:border-b-3 hover:border-b-blue-500 hover:pb-2 flex flex-row
+          } py-4 px-5 hover:border-b-3 hover:border-b-blue-500 hover:pb-[13px] flex flex-row
           `}
         >
           <Image

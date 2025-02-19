@@ -14,7 +14,7 @@ export default function UserComments({
     name: string;
     question_id: string;
     likes: Number;
-    createdAt: Number;
+    createdAt: Date;
   }[];
   commentsLoading: boolean;
 }) {
@@ -36,8 +36,8 @@ export default function UserComments({
               onClick={() => {
                 setButtonActive(1);
               }}
-              className={`bg-white text-gray-800 text-[15px] mr-3 rounded-2xl border-1 border-gray-300 py-1 px-4 hover:bg-blue-50 hover:border-cyan-200 ${
-                buttonActive === 1 && "text-cyan-700 bg-blue-50 border-cyan-500"
+              className={` mr-3 text-[15px] rounded-2xl border-1 py-1 px-4 hover:bg-blue-50 hover:border-cyan-200 ${
+                buttonActive === 1 ? "text-cyan-700 bg-blue-50 border-cyan-500" : "bg-white text-gray-800 border-gray-300"
               }`}
             >
               Mais curtidos
@@ -46,8 +46,8 @@ export default function UserComments({
               onClick={() => {
                 setButtonActive(2);
               }}
-              className={`bg-white text-gray-800 text-[15px] rounded-2xl border-1 border-gray-300 py-1 px-4 hover:bg-blue-50 hover:border-cyan-200 ${
-                buttonActive === 2 && "text-cyan-700 bg-blue-50 border-cyan-500"
+              className={` text-[15px] rounded-2xl border-1 py-1 px-4 hover:bg-blue-50 hover:border-cyan-200 ${
+                buttonActive === 2 ? "text-cyan-700 bg-blue-50 border-cyan-500" : "bg-white text-gray-800 border-gray-300"
               }`}
             >
               Por data

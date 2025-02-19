@@ -9,7 +9,7 @@ export default function UserComment({
     name: string;
     question_id: string;
     likes: Number;
-    createdAt: Number;
+    createdAt: Date;
   };
 }) {
   return (
