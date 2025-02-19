@@ -3,6 +3,8 @@ import { useState } from "react";
 import QuestionAnswer from "./QuestionAnswer";
 import UserComments from "./UserComments";
 import Image from "next/image";
+import { useEffect } from "react";
+import { divider } from "@heroui/theme";
 
 export default function QuestionComments({
   question,
@@ -22,6 +24,27 @@ export default function QuestionComments({
   };
 }) {
   const [activeItem, setActiveItem] = useState(-1);
+  const [comments, setComments] = useState<any[]>([]);
+  const [commentsLoading, setCommentsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchComments() {
+      try {
+        const res = await fetch(`/api/comments/${question.Codigo}`); // 👈 API call
+        if (!res.ok) throw new Error("Failed to fetch comments");
+
+        const data = await res.json();
+        setComments(data);
+      } catch (err: any) {
+        console.log(err);
+      } finally {
+        setCommentsLoading(false);
+      }
+    }
+
+    fetchComments();
+  }, []);
+
   return (
     <div>
       <div
@@ -37,8 +60,7 @@ export default function QuestionComments({
             activeItem === 0 &&
             "bg-blue-200 text-cyan-800 font-bold border-b-3 border-b-blue-500 pb-2"
           } ${
-            activeItem === 1 &&
-            "hover:pb-[13px]"
+            activeItem === 1 && "hover:pb-[13px]"
           } py-4 px-5 hover:border-b-3 hover:border-b-blue-500 hover:pb-2 flex flex-row`}
         >
           <Image
@@ -49,6 +71,9 @@ export default function QuestionComments({
             alt="comentários"
           />
           <p>Questão comentada</p>
+          {question.Resposta && (
+            <div className="w-2 h-2 ml-3 mt-2 bg-blue-500 rounded-full"></div>
+          )}
         </button>
         <button
           onClick={() => {
@@ -58,9 +83,9 @@ export default function QuestionComments({
             activeItem === 1 &&
             "bg-blue-200 text-cyan-800 font-bold border-b-3 border-b-blue-500"
           } ${
-            activeItem === 0 &&
-            "hover:pb-[13px]"
-          } py-4 px-5 hover:border-b-3 hover:border-b-blue-500 hover:pb-2 flex flex-row`}
+            activeItem === 0 && "hover:pb-[13px]"
+          } py-4 px-5 hover:border-b-3 hover:border-b-blue-500 hover:pb-2 flex flex-row
+          `}
         >
           <Image
             width="32"
@@ -70,6 +95,11 @@ export default function QuestionComments({
             alt="comentários"
           />
           <p>Comentários de alunos</p>
+          {comments.length > 0 && (
+            <div className="min-w-5 pr-[2px] h-6 ml-3 mt-[-1px] bg-cyan-700 rounded-md text-white">
+              {comments.length}
+            </div>
+          )}
         </button>
       </div>
       {activeItem != -1 && (
@@ -97,7 +127,12 @@ export default function QuestionComments({
           </button>
           <div>
             {activeItem === 0 && <QuestionAnswer answer={question.Resposta} />}
-            {activeItem === 1 && <UserComments />}
+            {activeItem === 1 && (
+              <UserComments
+                comments={comments}
+                commentsLoading={commentsLoading}
+              />
+            )}
           </div>
         </div>
       )}

@@ -13,7 +13,7 @@ export default function NavLinks() {
 
   // Navigation items array
   const navItems = [
-    { name: "Filtro de Questões", href: "/" },
+    { name: "Questões", href: "/" },
     { name: "Cadernos", href: "/cadernos" },
     { name: "Simulados", href: "/simulados" },
   ];
