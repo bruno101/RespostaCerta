@@ -1,7 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import EmptyUserComments from "./EmptyUserComments";
 import CommentArea from "./CommentArea";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import UserComment from "./UserComment";
 import IComment from "@/app/interfaces/IComment";
 
@@ -15,7 +15,16 @@ export default function UserComments({
   setComments: Dispatch<SetStateAction<IComment[]>>;
 }) {
   const [buttonActive, setButtonActive] = useState(1);
-  const orderByLikes = buttonActive === 2;
+  const orderByLikes = buttonActive === 1;
+  useEffect(() => {
+    let sortedComments = [...comments];
+    sortedComments.sort((a, b) => {
+      return orderByLikes
+        ? b.likes - a.likes
+        : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+    setComments(sortedComments);
+  }, [orderByLikes]);
   return (
     <div className="w-full">
       {commentsLoading ? (
@@ -58,21 +67,14 @@ export default function UserComments({
             <EmptyUserComments />
           ) : (
             <div className="flex flex-col mt-10 mb-3">
-              {comments
-                .sort((a, b) => {
-                  return orderByLikes
-                    ? a.likes - b.likes
-                    : new Date(a.createdAt).getTime() -
-                        new Date(b.createdAt).getTime();
-                })
-                .map((comment, index) => (
-                  <UserComment
-                    comments={comments}
-                    key={index}
-                    comment={comment}
-                    setComments={setComments}
-                  />
-                ))}
+              {comments.map((comment, index) => (
+                <UserComment
+                  comments={comments}
+                  key={index}
+                  comment={comment}
+                  setComments={setComments}
+                />
+              ))}
             </div>
           )}
           <CommentArea

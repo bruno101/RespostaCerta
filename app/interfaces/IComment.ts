@@ -4,15 +4,14 @@ export default interface IComment {
   name: string;
   question_id: string;
   likes: number;
+  didCurrentUserLike: boolean;
   createdAt: string;
-  reply_to?: string;
   _id: string;
   replies: {
     text: string;
     email: string;
     name: string;
     question_id: string;
-    likes: number;
     createdAt: string;
     _id: string;
   }[];

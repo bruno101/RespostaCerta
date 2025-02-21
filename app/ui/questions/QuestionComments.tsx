@@ -20,11 +20,11 @@ export default function QuestionComments({
   useEffect(() => {
     async function fetchComments() {
       try {
-        const res = await fetch(`/api/comments/${question.Codigo}`); // 👈 API call
+        const res = await fetch(`/api/questions/${question.Codigo}/comments`); // 👈 API call
         if (!res.ok) throw new Error("Failed to fetch comments");
 
         const data = await res.json();
-        setComments(data);
+        setComments(data.sort((a: IComment, b: IComment) => {a.likes-b.likes}));
       } catch (err: any) {
         console.log(err);
       } finally {
@@ -126,7 +126,7 @@ export default function QuestionComments({
             {activeItem === 0 && <QuestionAnswer answer={question.Resposta} />}
             {activeItem === 1 && (
               <UserComments
-                comments={comments}
+                comments={[...comments]}
                 setComments={setComments}
                 commentsLoading={commentsLoading}
               />

@@ -24,11 +24,15 @@ export default function CommentArea({
 
   const addCommentReplyToUi = (newComment: ICommentReply) => {
     let newComments = [...comments];
-    newComments
-      .find((comment) => {
+    let index = newComments
+      .findIndex((comment) => {
         return comment._id === newComment.reply_to;
       })
-      ?.replies.push(newComment);
+    const c = {...newComments[index]};
+    const replies = [...c.replies]
+    replies.push(newComment);
+    c.replies = replies;
+    newComments[index] = c;
     setComments(newComments);
   };
 
@@ -37,19 +41,17 @@ export default function CommentArea({
     if (replyTo) {
       addCommentReplyToUi(newComment);
     } else {
-      addCommentToUi({ ...newComment, replies: [] });
+      addCommentToUi({ ...newComment, likes: 0, didCurrentUserLike: false, replies: [] });
     }
   };
 
   const postComment = async () => {
     const newCommentData = {
-      question_id: questionId,
       reply_to: replyTo,
-      text: text,
-      likes: 0,
+      text
     };
     try {
-      const response = await fetch("/api/comments", {
+      const response = await fetch(`/api/questions/${questionId}/comments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

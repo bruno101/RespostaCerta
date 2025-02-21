@@ -3,6 +3,7 @@ import FullQuestion from "./_components/FullQuestion";
 import Question from "@/app/models/Question";
 import { connectToDatabase } from "@/lib/mongoose";
 import mongoose from "mongoose";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default async function Page({
   params,
@@ -64,7 +65,19 @@ export default async function Page({
 
   return (
     <div className="">
-      <Suspense fallback={<h1>Carregando...</h1>}>
+      <Suspense
+        fallback={
+            <div className="w-[90%] flex mt-[100px] ml-auto mr-auto mb-3 flex w-full">
+            <Skeleton className=" h-20 w-20 rounded-full mr-5" />
+            <div className="space-y-2 w-full ">
+              <Skeleton className="h-7 mt-3 min-w-[250px] mr-10" />
+              <Skeleton className="h-7 min-w-[200px] mr-10" />
+            </div>
+            
+          </div>
+        }
+      >
+
         <FullQuestion question={question} />
       </Suspense>
     </div>

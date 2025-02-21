@@ -8,7 +8,7 @@ interface IComment extends Document {
     question_id: Types.ObjectId;
     reply_to: Types.ObjectId;
     text: string;
-    likes: Number;
+    usersWhoLiked: string[];
 }
 
 const CommentSchema = new Schema<IComment>({
@@ -17,7 +17,7 @@ const CommentSchema = new Schema<IComment>({
     question_id: { type: Schema.Types.ObjectId, ref: "Question", required: true },
     reply_to: { type: Schema.Types.ObjectId, ref: "Comment", required: false },
     text: { type: String, required: true },
-    likes: {type: Number, required: true}
+    usersWhoLiked: {type: [String], default: []}
 }, { timestamps: true });
 
 const Comment: Model<IComment> = mongoose.models.Comment || mongoose.model<IComment>('Comment', CommentSchema, "comments");

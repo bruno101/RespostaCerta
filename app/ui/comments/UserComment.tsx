@@ -14,10 +14,42 @@ export default function UserComment({
   setComments: Dispatch<SetStateAction<IComment[]>>;
 }) {
   const date = new Date(comment.createdAt);
+  const liked = comment.didCurrentUserLike;
   const [showReplies, setShowReplies] = useState(false);
-  const [liked, setLiked] = useState(false);
-  const onClickLike = () => {
-    setLiked((x) => !x);
+  const updateLikesOnUi = () => {
+    setComments((c) => {
+      let newComments = [...c];
+      let index = newComments.findIndex((comm) => {
+        return comm._id === comment._id;
+      });
+      const newComment = { ...newComments[index] };
+      if (newComment.didCurrentUserLike) {
+        newComment.didCurrentUserLike = false;
+        newComment.likes -= 1;
+      } else {
+        newComment.didCurrentUserLike = true;
+        newComment.likes += 1;
+      }
+      newComments[index] = newComment;
+      return newComments;
+    });
+  };
+
+  const onClickLike = async () => {
+    try {
+      updateLikesOnUi();
+      const response = await fetch(
+        `/api/comments/${comment._id}/${
+          comment.didCurrentUserLike ? "dislike" : "like"
+        }`,
+        {
+          method: "PATCH",
+        }
+      );
+      const data = await response.json();
+    } catch (error) {
+      console.error("Error liking comment:", error);
+    }
   };
   return (
     <div>
@@ -44,7 +76,8 @@ export default function UserComment({
               " às " +
               date.getHours() +
               ":" +
-              (date.getMinutes() < 10 ? "0" : "") + date.getMinutes()}
+              (date.getMinutes() < 10 ? "0" : "") +
+              date.getMinutes()}
           </p>
         </div>
         <div className="mt-10 ml-5 text-[15px] mb-7">{comment.text}</div>
