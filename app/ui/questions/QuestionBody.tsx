@@ -1,21 +1,11 @@
 "use client";
 
+import IQuestion from "@/app/interfaces/IQuestion";
+
 export default function QuestionBody({
   question,
 }: {
-  question: {
-    Disciplina: string;
-    Banca: string;
-    Ano: string;
-    Nivel: string;
-    Questao: string;
-    Resposta: string;
-    Criterios: string;
-    TextoMotivador?: string;
-    Codigo: string;
-    Instituicao: string;
-    Cargo: string;
-  };
+  question: IQuestion;
 }) {
   return (
     <div>

@@ -1,22 +1,11 @@
+import IQuestion from "@/app/interfaces/IQuestion";
 import QuestionBody from "@/app/ui/questions/QuestionBody";
 import QuestionComments from "@/app/ui/questions/QuestionComments";
 
 export default function FullQuestion({
   question,
 }: {
-  question: {
-    Disciplina: string;
-    Banca: string;
-    Ano: string;
-    Nivel: string;
-    Questao: string;
-    Resposta: string;
-    Criterios: string;
-    TextoMotivador?: string;
-    Codigo: string;
-    Instituicao: string;
-    Cargo: string;
-  };
+  question: IQuestion
 }) {
   return (
     <div className="flex flex-col">

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongoose";
 import Comment from "@/app/models/Comment";
-import mongoose from "mongoose";
+
 export async function GET(
   request: Request,
   { params }: { params: { questionId: string } }
@@ -9,8 +9,8 @@ export async function GET(
   try {
     // Connect to the database
     await connectToDatabase();
-
-    const { questionId } = params;
+    const p = await params;
+    const { questionId } = p;
 
     if (!questionId) {
       return NextResponse.json(
@@ -18,11 +18,20 @@ export async function GET(
         { status: 400 }
       );
     }
-      
-    const comments = await Comment.find({ question_id: questionId }).populate(
-      "question_id"
+
+    const comments = await Comment.find({
+      question_id: questionId,
+      $or: [{ reply_to: null }, { reply_to: { $exists: false } }],
+    })
+      .populate("question_id")
+      .lean();
+    const commentsWithReplies = await Promise.all(
+      comments.map(async (comment) => {
+        const replies = await Comment.find({ reply_to: comment._id }).lean();
+        return { ...comment, replies };
+      })
     );
-    return NextResponse.json(comments);
+    return NextResponse.json(commentsWithReplies);
   } catch (error) {
     console.error("Error fetching comments:", error);
     return NextResponse.json(

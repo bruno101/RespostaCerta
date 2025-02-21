@@ -1,24 +1,21 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import EmptyUserComments from "./EmptyUserComments";
 import CommentArea from "./CommentArea";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import UserComment from "./UserComment";
+import IComment from "@/app/interfaces/IComment";
 
 export default function UserComments({
   comments,
   commentsLoading,
+  setComments,
 }: {
-  comments: {
-    text: string;
-    email: string;
-    name: string;
-    question_id: string;
-    likes: Number;
-    createdAt: Date;
-  }[];
+  comments: IComment[];
   commentsLoading: boolean;
+  setComments: Dispatch<SetStateAction<IComment[]>>;
 }) {
-  const [buttonActive, setButtonActive] = useState(0);
+  const [buttonActive, setButtonActive] = useState(1);
+  const orderByLikes = buttonActive === 2;
   return (
     <div className="w-full">
       {commentsLoading ? (
@@ -37,7 +34,9 @@ export default function UserComments({
                 setButtonActive(1);
               }}
               className={` mr-3 text-[15px] rounded-2xl border-1 py-1 px-4 hover:bg-blue-50 hover:border-cyan-200 ${
-                buttonActive === 1 ? "text-cyan-700 bg-blue-50 border-cyan-500" : "bg-white text-gray-800 border-gray-300"
+                buttonActive === 1
+                  ? "text-cyan-700 bg-blue-50 border-cyan-500"
+                  : "bg-white text-gray-800 border-gray-300"
               }`}
             >
               Mais curtidos
@@ -47,7 +46,9 @@ export default function UserComments({
                 setButtonActive(2);
               }}
               className={` text-[15px] rounded-2xl border-1 py-1 px-4 hover:bg-blue-50 hover:border-cyan-200 ${
-                buttonActive === 2 ? "text-cyan-700 bg-blue-50 border-cyan-500" : "bg-white text-gray-800 border-gray-300"
+                buttonActive === 2
+                  ? "text-cyan-700 bg-blue-50 border-cyan-500"
+                  : "bg-white text-gray-800 border-gray-300"
               }`}
             >
               Por data
@@ -56,13 +57,29 @@ export default function UserComments({
           {comments.length === 0 ? (
             <EmptyUserComments />
           ) : (
-            <div className="flex flex-col mt-10 mb-10">
-              {comments.map((comment, index) => (
-                <UserComment key={index} comment={comment} />
-              ))}
+            <div className="flex flex-col mt-10 mb-3">
+              {comments
+                .sort((a, b) => {
+                  return orderByLikes
+                    ? a.likes - b.likes
+                    : new Date(a.createdAt).getTime() -
+                        new Date(b.createdAt).getTime();
+                })
+                .map((comment, index) => (
+                  <UserComment
+                    comments={comments}
+                    key={index}
+                    comment={comment}
+                    setComments={setComments}
+                  />
+                ))}
             </div>
           )}
-          <CommentArea />
+          <CommentArea
+            comments={comments}
+            questionId={comments[0].question_id}
+            setComments={setComments}
+          />
         </div>
       )}
     </div>

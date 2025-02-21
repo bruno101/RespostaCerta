@@ -4,24 +4,13 @@ import Link from "next/link";
 import { useState } from "react";
 import QuestionBody from "./QuestionBody";
 import QuestionComments from "./QuestionComments";
+import IQuestion from "@/app/interfaces/IQuestion";
 
 export default function QuestionList({
   question,
   index,
 }: {
-  question: {
-    Disciplina: string;
-    Banca: string;
-    Ano: string;
-    Nivel: string;
-    Questao: string;
-    Resposta: string;
-    Criterios: string;
-    TextoMotivador?: string;
-    Codigo: string;
-    Instituicao: string;
-    Cargo: string;
-  };
+  question: IQuestion;
   index: number;
 }) {
   const [minimized, setMinimized] = useState(false);
@@ -87,7 +76,6 @@ export default function QuestionList({
           <button className="ml-7 mb-10 text-sm text-white bg-cyan-700 font-bold px-4 py-2 rounded-lg hover:bg-cyan-600 focus:outline focus:outline-5 focus:outline-cyan-200 focus:outline-offset-2">
             <Link href={`/questoes/${question.Codigo}`}>Ver questão</Link>
           </button>
-          {/*<QuestionComments question={question} />*/}
         </>
       )}
     </div>

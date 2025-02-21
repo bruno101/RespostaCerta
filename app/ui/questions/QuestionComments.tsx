@@ -1,31 +1,21 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import QuestionAnswer from "./QuestionAnswer";
-import UserComments from "./UserComments";
+import UserComments from "../comments/UserComments";
 import Image from "next/image";
 import { useEffect } from "react";
-import { divider } from "@heroui/theme";
+import IQuestion from "@/app/interfaces/IQuestion";
+import IComment from "@/app/interfaces/IComment";
 
 export default function QuestionComments({
   question,
 }: {
-  question: {
-    Disciplina: string;
-    Banca: string;
-    Ano: string;
-    Nivel: string;
-    Questao: string;
-    Resposta: string;
-    Criterios: string;
-    TextoMotivador?: string;
-    Codigo: string;
-    Instituicao: string;
-    Cargo: string;
-  };
+  question: IQuestion
 }) {
   const [activeItem, setActiveItem] = useState(-1);
-  const [comments, setComments] = useState<any[]>([]);
+  const [comments, setComments] = useState<IComment[]>([]);
   const [commentsLoading, setCommentsLoading] = useState(true);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     async function fetchComments() {
@@ -45,6 +35,12 @@ export default function QuestionComments({
     fetchComments();
   }, []);
 
+  useEffect(()=>{
+    if (activeItem != -1 || !commentsLoading) {
+      buttonRef.current?.scrollIntoView({behavior: "smooth", block: "start"})
+    }
+  }, [activeItem, commentsLoading])
+
   return (
     <div>
       <div
@@ -56,6 +52,7 @@ export default function QuestionComments({
           onClick={() => {
             setActiveItem(0);
           }}
+          ref={buttonRef}
           className={`${
             activeItem === 0 &&
             "bg-blue-200 text-cyan-800 font-bold border-b-3 border-b-blue-500 pb-2"
@@ -130,6 +127,7 @@ export default function QuestionComments({
             {activeItem === 1 && (
               <UserComments
                 comments={comments}
+                setComments={setComments}
                 commentsLoading={commentsLoading}
               />
             )}

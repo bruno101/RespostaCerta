@@ -1,20 +1,9 @@
 import { Suspense, useEffect, useState } from "react";
 import Question from "./Question";
+import IQuestion from "@/app/interfaces/IQuestion";
 
 export default function QuestionList() {
-  const initQuestions: {
-    Disciplina: string;
-    Banca: string;
-    Ano: string;
-    Nivel: string;
-    Questao: string;
-    Resposta: string;
-    Criterios: string;
-    TextoMotivador?: string;
-    Codigo: string;
-    Instituicao: string;
-    Cargo: string;
-  }[] = [];
+  const initQuestions: IQuestion[] = [];
 
   const [questions, setQuestions] = useState(initQuestions);
 
