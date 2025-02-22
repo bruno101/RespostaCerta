@@ -6,34 +6,36 @@ import { Dispatch, SetStateAction, useState } from "react";
 export default function CommentArea({
   replyTo,
   questionId,
-  comments,
   setComments,
 }: {
   replyTo?: string;
   questionId: string;
-  comments: IComment[];
   setComments: Dispatch<SetStateAction<IComment[]>>;
 }) {
   const [text, setText] = useState("");
 
   const addCommentToUi = (newComment: IComment) => {
-    let newComments = [...comments];
-    newComments.push(newComment);
-    setComments(newComments);
+    setComments((comments) => {
+      let newComments = [...comments];
+      newComments.push(newComment);
+      return newComments;
+    });
   };
 
   const addCommentReplyToUi = (newComment: ICommentReply) => {
-    let newComments = [...comments];
-    let index = newComments
-      .findIndex((comment) => {
-        return comment._id === newComment.reply_to;
-      })
-    const c = {...newComments[index]};
-    const replies = [...c.replies]
-    replies.push(newComment);
-    c.replies = replies;
-    newComments[index] = c;
-    setComments(newComments);
+    setComments((comments) => {
+      let newComments = [...comments];
+      let index = newComments
+        .findIndex((comment) => {
+          return comment._id === newComment.reply_to;
+        })
+      const c = {...newComments[index]};
+      const replies = [...c.replies]
+      replies.push(newComment);
+      c.replies = replies;
+      newComments[index] = c;
+      return newComments;
+    } )
   };
 
   const addCommentOrReplyToUi = (newComment: IComment | ICommentReply) => {

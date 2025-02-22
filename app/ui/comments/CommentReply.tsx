@@ -1,8 +1,20 @@
 import ICommentReply from "@/app/interfaces/ICommentReply";
 import Image from "next/image";
+import TruncatedText from "./TruncatedText";
+import EditionAndDeletionPopover from "./EditionAndDeletionPopover";
+import { Dispatch, SetStateAction } from "react";
+import IComment from "@/app/interfaces/IComment";
 
-export default function CommentReply({ comment }: { comment: ICommentReply }) {
+export default function CommentReply({
+  comment,
+  setComments,
+}: {
+  comment: ICommentReply;
+  setComments: Dispatch<SetStateAction<IComment[]>>;
+}) {
   const date = new Date(comment.createdAt);
+  const isThisCurrentUserComment =
+    comment.email === "arianagrande@fakegmail.com";
   return (
     <div className="ml-20">
       <div className="mt-5 mb-5 shadow-sm border-1 w-full rounded-xl bg-white">
@@ -17,7 +29,7 @@ export default function CommentReply({ comment }: { comment: ICommentReply }) {
             />
           </div>
           <p className="font-bold mt-6 mr-2 text-[13px] text-gray-800">
-            {comment.name}
+            {isThisCurrentUserComment ? "Você" : comment.name}
           </p>
           <p className="ml-auto mr-5 mt-5 text-[12px] text-gray-800">
             {date.getDate() +
@@ -32,7 +44,22 @@ export default function CommentReply({ comment }: { comment: ICommentReply }) {
               date.getMinutes()}
           </p>
         </div>
-        <div className="mt-5 ml-5 text-[14px] mb-5">{comment.text}</div>
+        <div className="mb-5 flex flex-col">
+          <div className="ml-0 mr-auto">
+            <TruncatedText text={comment.text} small={true} />
+          </div>
+          {isThisCurrentUserComment && (
+            <div className="ml-auto mr-5 mt-3">
+              <EditionAndDeletionPopover
+                commentId={comment._id}
+                setComments={setComments}
+                isReply={true}
+                replyTo={comment.reply_to}
+                text={comment.text}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

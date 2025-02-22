@@ -23,7 +23,6 @@ export async function GET(
       question_id: code,
       $or: [{ reply_to: null }, { reply_to: { $exists: false } }],
     })
-      .populate("question_id")
       .lean();
     const commentsWithReplies = await Promise.all(
       comments.map(async (comment) => {
@@ -63,6 +62,13 @@ export async function POST(
     if (!code || !text) {
       return NextResponse.json(
         { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    if (typeof code !== 'string' || typeof text != 'string') {
+      return NextResponse.json(
+        { error: "Code and text should be strings" },
         { status: 400 }
       );
     }

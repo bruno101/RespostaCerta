@@ -69,7 +69,6 @@ export default function UserComments({
             <div className="flex flex-col mt-10 mb-3">
               {comments.map((comment, index) => (
                 <UserComment
-                  comments={comments}
                   key={index}
                   comment={comment}
                   setComments={setComments}
@@ -78,7 +77,6 @@ export default function UserComments({
             </div>
           )}
           <CommentArea
-            comments={comments}
             questionId={comments[0].question_id}
             setComments={setComments}
           />

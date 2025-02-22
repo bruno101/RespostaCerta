@@ -3,19 +3,22 @@ import { Dispatch, SetStateAction, useState } from "react";
 import CommentReply from "./CommentReply";
 import CommentArea from "./CommentArea";
 import IComment from "@/app/interfaces/IComment";
+import EditionAndDeletionPopover from "./EditionAndDeletionPopover";
+import TruncatedText from "./TruncatedText";
 
 export default function UserComment({
   comment,
-  comments,
   setComments,
 }: {
   comment: IComment;
-  comments: IComment[];
   setComments: Dispatch<SetStateAction<IComment[]>>;
 }) {
+  const [showReplies, setShowReplies] = useState(false);
+
+  const isThisCurrentUserComment =
+    comment.email === "arianagrande@fakegmail.com";
   const date = new Date(comment.createdAt);
   const liked = comment.didCurrentUserLike;
-  const [showReplies, setShowReplies] = useState(false);
   const updateLikesOnUi = () => {
     setComments((c) => {
       let newComments = [...c];
@@ -38,14 +41,15 @@ export default function UserComment({
   const onClickLike = async () => {
     try {
       updateLikesOnUi();
-      const response = await fetch(
-        `/api/comments/${comment._id}/${
-          comment.didCurrentUserLike ? "dislike" : "like"
-        }`,
-        {
-          method: "PATCH",
-        }
-      );
+      const response = await fetch(`/api/comments/${comment._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          didCurrentUserLike: !comment.didCurrentUserLike,
+        }),
+      });
       const data = await response.json();
     } catch (error) {
       console.error("Error liking comment:", error);
@@ -65,7 +69,7 @@ export default function UserComment({
             />
           </div>
           <p className="font-bold mt-6 mr-3 text-[15px] text-gray-800">
-            {comment.name}
+            {isThisCurrentUserComment ? "Você" : comment.name}
           </p>
           <p className="ml-auto mr-5 mt-5 text-[13px] text-gray-800">
             {date.getDate() +
@@ -80,10 +84,10 @@ export default function UserComment({
               date.getMinutes()}
           </p>
         </div>
-        <div className="mt-10 ml-5 text-[15px] mb-7">{comment.text}</div>
-        <div className="flex border-t">
+        <TruncatedText text={comment.text} small={false} />
+        <div className="flex border-t mt-7">
           <button
-            className={`flex ml-5 rounded-2xl border-1 mt-3 mb-3 pl-3 pr-3 pt-[2px] pb-[1px] ${
+            className={`flex ml-5 hover:bg-blue-100 hover:text-cyan-700 rounded-2xl border-1 mt-3 mb-3 pl-3 pr-3 pt-[2px] pb-[1px] ${
               liked ? "bg-blue-200 text-cyan-700" : "text-gray-700"
             }`}
             onClick={onClickLike}
@@ -103,8 +107,8 @@ export default function UserComment({
             </p>
           </button>
           <button
-            className={`flex ml-5 mr-5 mt-3 mb-3 pl-3 pt-[5px] pr-4 ${
-              showReplies && "bg-gray-100 rounded-2xl"
+            className={`flex hover:bg-gray-100 rounded-2xl ml-5 mr-5 mt-3 mb-3 pl-3 pt-[5px] pr-4 ${
+              showReplies && "bg-gray-100"
             }`}
             onClick={() => {
               setShowReplies((x) => !x);
@@ -124,19 +128,32 @@ export default function UserComment({
               {comment.replies.length}
             </p>
           </button>
+          {isThisCurrentUserComment && (
+            <div className="ml-auto mr-10 mt-[15px]">
+              <EditionAndDeletionPopover
+                setComments={setComments}
+                isReply={false}
+                commentId={comment._id}
+                text={comment.text}
+              />
+            </div>
+          )}
         </div>
       </div>
       {showReplies && (
         <div>
           {comment.replies.map((comm, index) => (
-            <CommentReply key={index} comment={comm} />
+            <CommentReply
+              key={index}
+              comment={comm}
+              setComments={setComments}
+            />
           ))}
           <div className="ml-10">
             <CommentArea
               replyTo={comment._id}
               questionId={comment.question_id}
               setComments={setComments}
-              comments={comments}
             />
           </div>
         </div>

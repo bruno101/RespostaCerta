@@ -10,7 +10,7 @@ import IComment from "@/app/interfaces/IComment";
 export default function QuestionComments({
   question,
 }: {
-  question: IQuestion
+  question: IQuestion;
 }) {
   const [activeItem, setActiveItem] = useState(-1);
   const [comments, setComments] = useState<IComment[]>([]);
@@ -24,7 +24,14 @@ export default function QuestionComments({
         if (!res.ok) throw new Error("Failed to fetch comments");
 
         const data = await res.json();
-        setComments(data.sort((a: IComment, b: IComment) => {a.likes-b.likes}));
+        setComments(
+          data.sort((a: IComment, b: IComment) => {
+            return a.likes - b.likes
+              ? b.likes - a.likes
+              : new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime();
+          })
+        );
       } catch (err: any) {
         console.log(err);
       } finally {
@@ -35,11 +42,11 @@ export default function QuestionComments({
     fetchComments();
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (activeItem != -1 || !commentsLoading) {
-      buttonRef.current?.scrollIntoView({behavior: "smooth", block: "start"})
+      buttonRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [activeItem, commentsLoading])
+  }, [activeItem, commentsLoading]);
 
   return (
     <div>
