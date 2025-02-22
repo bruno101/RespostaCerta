@@ -24,9 +24,6 @@ export async function GET() {
       Resposta: q.Resposta,
     }));
 
-    // Transform questions into an array of key-value pairs
-    console.log(mappedQuestions);
-
     return NextResponse.json(mappedQuestions);
   } catch (error) {
     console.error("Error fetching questions:", error);

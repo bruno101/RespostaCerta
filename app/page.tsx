@@ -6,6 +6,7 @@ import QuestionList from "./ui/questions/QuestionList";
 import { SharedSelection } from "@heroui/system";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import LoadingQuestions from "./ui/questions/LoadingQuestions";
 
 const initialSelected: { options: string[]; name: string }[] = [
   {
@@ -43,12 +44,23 @@ function HomeInnerPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [selected, setSelected] = useState([...initialSelected]);
+  const [selected, setSelected] = useState(
+    [...initialSelected].map((selection) => {
+      const newSel = { ...selection };
+      newSel.options = [...newSel.options];
+      return newSel;
+    })
+  );
   const [keyWords, setKeyWords] = useState("");
+  const [loadingQuestions, setLoadingQuestions] = useState(false);
   const [filtered, setFiltered] = useState([
     ...initialSelected,
     { name: "Palavras Chave", options: [] },
   ]);
+
+  const onFinishedLoading = () => {
+    setLoadingQuestions(false);
+  };
 
   const capitalize = (option: string, name: string): string => {
     const possibleOptions = selectors.filter((item) => item.name === name)[0]
@@ -73,7 +85,7 @@ function HomeInnerPage() {
         for (const option of valueArr) {
           const newOption = capitalize(option, item.name);
 
-          if (!(item.options.includes(newOption))) {
+          if (!item.options.includes(newOption)) {
             item.options.push(newOption);
           }
         }
@@ -119,6 +131,7 @@ function HomeInnerPage() {
     }
   };
   const onFilter = () => {
+    setLoadingQuestions(true);
     let newKeyWordParams = `?palavras=${keyWords}`;
     for (const item of selected) {
       newKeyWordParams += `&${item.name.toLowerCase()}=${item.options.join(
@@ -129,6 +142,7 @@ function HomeInnerPage() {
   };
   const empty = () => {
     setSelected([...initialSelected]);
+    console.log(initialSelected);
   };
   return (
     <div className="w-full">
@@ -143,7 +157,24 @@ function HomeInnerPage() {
             empty={empty}
             selectors={selectors}
           />
-          {filtered[0].options.length > 0 && <QuestionList />}
+          {loadingQuestions ? (
+            <>
+              <LoadingQuestions />
+              {filtered[0].options.length > 0} &&
+              <QuestionList
+                loading={loadingQuestions}
+                onFinishedLoading={onFinishedLoading}
+              />
+              )
+            </>
+          ) : (
+            filtered[0].options.length > 0 && (
+              <QuestionList
+                loading={loadingQuestions}
+                onFinishedLoading={onFinishedLoading}
+              />
+            )
+          )}
         </div>
         <div className="w-[25%]">
           <AppliedFilters
@@ -166,7 +197,23 @@ function HomeInnerPage() {
           empty={empty}
           selectors={selectors}
         />
-        {filtered[0].options.length > 0 && <QuestionList />}
+        {loadingQuestions ? (
+          <>
+            <LoadingQuestions />
+            {filtered[0].options.length > 0} &&
+            <QuestionList
+              loading={loadingQuestions}
+              onFinishedLoading={onFinishedLoading}
+            />
+          </>
+        ) : (
+          filtered[0].options.length > 0 && (
+            <QuestionList
+              loading={loadingQuestions}
+              onFinishedLoading={onFinishedLoading}
+            />
+          )
+        )}
       </div>
     </div>
   );
