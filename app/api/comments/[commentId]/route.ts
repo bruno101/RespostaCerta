@@ -24,7 +24,7 @@ export async function PATCH(
       );
     }
 
-    const { commentId } = params;
+    const { commentId } = await params;
     const email = "arianagrande@fakegmail.com";
 
     if (text) {
@@ -119,7 +119,7 @@ export async function DELETE(
 ) {
   try {
     await connectToDatabase();
-    const { commentId } = params;
+    const { commentId } = await params;
     const email = "arianagrande@fakegmail.com";
 
     const comment = await Comment.findById(commentId);
