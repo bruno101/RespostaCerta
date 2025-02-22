@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Filter from "./ui/filter/Filter";
 import AppliedFilters from "./ui/filter/AppliedFilters";
 import QuestionList from "./ui/questions/QuestionList";
@@ -32,6 +32,14 @@ const selectors = [
 ];
 
 export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeInnerPage />
+    </Suspense>
+  );
+}
+
+function HomeInnerPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
