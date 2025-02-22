@@ -48,7 +48,7 @@ export default function NavLinks() {
             Questões Discursivas
           </Link>
 
-          <button className="text-l text-white font-bold ml-auto -mt-1">
+          <button className="text-l rounded-3xl px-4 py-1 bg-[#15bdb2] hover:bg-[#2ee8dc] text-white font-bold ml-auto -mt-1">
             Entrar
           </button>
 
@@ -104,7 +104,10 @@ export default function NavLinks() {
             <Link href="/" className="text-2xl text-white font-bold">
               Questões Discursivas
             </Link>
-            <button className="text-l text-white font-bold ml-auto">
+            <button className="hover:bg-cyan-600 rounded-3xl px-4 py-1 border-white border-1 text-l text-white font-bold ml-auto mr-5">
+              Criar conta
+            </button>
+            <button className="mr-5 rounded-3xl px-4 py-1 bg-[#15bdb2] hover:bg-[#2ee8dc] text-l text-white font-bold ">
               Entrar
             </button>
           </div>

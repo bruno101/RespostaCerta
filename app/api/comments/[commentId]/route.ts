@@ -7,7 +7,9 @@ export async function PATCH(
   {
     params,
   }: {
-    params: { commentId: string };
+    params: {
+      commentId: string;
+    };
   }
 ) {
   try {
@@ -80,7 +82,7 @@ export async function PATCH(
           { status: 200 }
         );
       } else {
-        return (new NextResponse as any).json(null, { status: 204 });
+        return (new NextResponse() as any).json(null, { status: 204 });
       }
     }
 
@@ -94,7 +96,7 @@ export async function PATCH(
         { status: 200 }
       );
     } else {
-      return (new NextResponse as any).json(null, { status: 204 });
+      return (new NextResponse() as any).json(null, { status: 204 });
     }
   } catch (error) {
     console.error("Error disliking comment:", error);
@@ -106,11 +108,13 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  request: Request,
+  req: Request,
   {
     params,
   }: {
-    params: { commentId: string };
+    params: {
+      commentId: string;
+    };
   }
 ) {
   try {
@@ -121,7 +125,7 @@ export async function DELETE(
     const comment = await Comment.findById(commentId);
 
     if (!comment) {
-      return (new NextResponse as any).json(null, { status: 204 });
+      return (new NextResponse() as any).json(null, { status: 204 });
     }
 
     if (comment.email !== email) {
@@ -131,7 +135,9 @@ export async function DELETE(
       );
     }
 
-    await Comment.deleteMany({ $or: [{ _id: commentId }, { reply_to: commentId }] });
+    await Comment.deleteMany({
+      $or: [{ _id: commentId }, { reply_to: commentId }],
+    });
     return NextResponse.json(
       { message: "Comment deleted successfully" },
       { status: 200 }
