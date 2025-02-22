@@ -4,7 +4,7 @@ import Comment from "@/app/models/Comment";
 
 export async function GET(
   request: Request,
-  { params }: { params: { code: string } }
+  { params }: { params: Promise<{ code: string }> }
 ) {
   try {
     // Connect to the database
@@ -48,7 +48,7 @@ export async function GET(
 
 export async function POST(
   req: Request,
-  { params }: { params: { code: string } }
+  { params }: { params: Promise<{ code: string }> }
 ) {
   try {
     await connectToDatabase();

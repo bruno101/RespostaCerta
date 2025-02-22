@@ -7,9 +7,9 @@ export async function PATCH(
   {
     params,
   }: {
-    params: {
+    params: Promise<{
       commentId: string;
-    };
+    }>;
   }
 ) {
   try {
@@ -112,9 +112,9 @@ export async function DELETE(
   {
     params,
   }: {
-    params: {
+    params: Promise<{
       commentId: string;
-    };
+    }>;
   }
 ) {
   try {
