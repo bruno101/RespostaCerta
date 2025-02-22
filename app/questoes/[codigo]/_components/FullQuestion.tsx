@@ -1,12 +1,62 @@
-import IQuestion from "@/app/interfaces/IQuestion";
+import Question from "@/app/models/Question";
 import QuestionBody from "@/app/ui/questions/QuestionBody";
 import QuestionComments from "@/app/ui/questions/QuestionComments";
+import { connectToDatabase } from "@/lib/mongoose";
+import mongoose from "mongoose";
 
-export default function FullQuestion({
-  question,
-}: {
-  question: IQuestion
-}) {
+export default async function FullQuestion({ codigo }: { codigo: string }) {
+  let question: {
+    Disciplina: string;
+    Banca: string;
+    Ano: string;
+    Nivel: string;
+    Questao: string;
+    Resposta: string;
+    Criterios: string;
+    TextoMotivador?: string;
+    Codigo: string;
+    Instituicao: string;
+    Cargo: string;
+  } = {
+    Disciplina: "",
+    Banca: "",
+    Ano: "",
+    Nivel: "",
+    Questao: "",
+    Resposta: "",
+    Criterios: "",
+    Codigo: "",
+    Instituicao: "",
+    Cargo: "",
+  };
+  try {
+    // Connect to the database
+    await connectToDatabase();
+
+    // Fetch question from the database
+    const q = await Question.findById(new mongoose.Types.ObjectId(codigo));
+
+    if (q) {
+      question = {
+        Codigo: q._id.toString(), // 👈 Convert ObjectId to string
+        Disciplina: q.Disciplina,
+        Banca: q.Banca,
+        Ano: q.Ano,
+        Nivel: q.Nivel,
+        Instituicao: q.Instituicao,
+        Cargo: q.Cargo,
+        TextoMotivador: q.TextoMotivador,
+        Questao: q.Questao,
+        Criterios: q.Criterios,
+        Resposta: q.Resposta,
+      };
+    } else {
+      console.log("Not found");
+    }
+  } catch (error) {
+    console.error("Error fetching questions:", error);
+  }
+
   return (
     <div className="flex flex-col">
       <div className={`border-b-1 px-3 py-3 flex flex-row`}>
