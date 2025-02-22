@@ -1,23 +1,14 @@
+"use client";
+import IQuestion from "@/app/interfaces/IQuestion";
 import Question from "@/app/models/Question";
 import QuestionBody from "@/app/ui/questions/QuestionBody";
 import QuestionComments from "@/app/ui/questions/QuestionComments";
-import { connectToDatabase } from "@/lib/mongoose";
+import { Skeleton } from "@/components/ui/skeleton";
 import mongoose from "mongoose";
+import { useEffect, useState } from "react";
 
-export default async function FullQuestion({ codigo }: { codigo: string }) {
-  let question: {
-    Disciplina: string;
-    Banca: string;
-    Ano: string;
-    Nivel: string;
-    Questao: string;
-    Resposta: string;
-    Criterios: string;
-    TextoMotivador?: string;
-    Codigo: string;
-    Instituicao: string;
-    Cargo: string;
-  } = {
+export default function FullQuestion({ codigo }: { codigo: string }) {
+  const [question, setQuestion] = useState<IQuestion>({
     Disciplina: "",
     Banca: "",
     Ano: "",
@@ -28,33 +19,36 @@ export default async function FullQuestion({ codigo }: { codigo: string }) {
     Codigo: "",
     Instituicao: "",
     Cargo: "",
-  };
-  try {
-    // Connect to the database
-    await connectToDatabase();
+  });
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    async function fetchQuestions() {
+      try {
+        const res = await fetch(`/api/questions/${codigo}`);
+        if (!res.ok) throw new Error("Failed to fetch question");
 
-    // Fetch question from the database
-    const q = await Question.findById(new mongoose.Types.ObjectId(codigo));
-
-    if (q) {
-      question = {
-        Codigo: q._id.toString(), // 👈 Convert ObjectId to string
-        Disciplina: q.Disciplina,
-        Banca: q.Banca,
-        Ano: q.Ano,
-        Nivel: q.Nivel,
-        Instituicao: q.Instituicao,
-        Cargo: q.Cargo,
-        TextoMotivador: q.TextoMotivador,
-        Questao: q.Questao,
-        Criterios: q.Criterios,
-        Resposta: q.Resposta,
-      };
-    } else {
-      console.log("Not found");
+        const data = await res.json();
+        setQuestion(data);
+      } catch (err: any) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
     }
-  } catch (error) {
-    console.error("Error fetching questions:", error);
+
+    fetchQuestions();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="w-[90%] flex mt-[100px] ml-auto mr-auto mb-[100px] flex w-full">
+        <Skeleton className=" h-20 w-20 rounded-full ml-5 mr-5" />
+        <div className="space-y-2 w-full ">
+          <Skeleton className="h-7 mt-3 min-w-[250px] mr-10" />
+          <Skeleton className="h-7 min-w-[200px] mr-10" />
+        </div>
+      </div>
+    );
   }
 
   return (
