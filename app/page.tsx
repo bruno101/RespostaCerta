@@ -6,7 +6,7 @@ import QuestionList from "./ui/questions/QuestionList";
 import { SharedSelection } from "@heroui/system";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import LoadingQuestions from "./ui/questions/LoadingQuestions";
+import LoadingSkeletons from "./ui/questions/LoadingSkeletons";
 
 const initialSelected: { options: string[]; name: string }[] = [
   {
@@ -34,8 +34,8 @@ const selectors = [
 
 export default function Home() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <HomeInnerPage />
+    <Suspense fallback={<LoadingSkeletons />}>
+        <HomeInnerPage />
     </Suspense>
   );
 }
@@ -72,8 +72,11 @@ function HomeInnerPage() {
 
   useEffect(() => {
     const keyW = searchParams.get("palavras");
+    let alreadyHasSelectedItems = false;
     if (keyW) {
       setKeyWords(keyW);
+      !alreadyHasSelectedItems && setLoadingQuestions(true);
+      alreadyHasSelectedItems = true;
     }
 
     const newSelected = [...selected];
@@ -81,6 +84,8 @@ function HomeInnerPage() {
     for (const item of newSelected) {
       const value = searchParams.get(item.name.toLowerCase());
       if (value) {
+        !alreadyHasSelectedItems && setLoadingQuestions(true);
+        alreadyHasSelectedItems = true;
         const valueArr = value.split(",");
         for (const option of valueArr) {
           const newOption = capitalize(option, item.name);
@@ -159,7 +164,7 @@ function HomeInnerPage() {
           />
           {loadingQuestions ? (
             <>
-              <LoadingQuestions />
+              <LoadingSkeletons />
               {filtered[0].options.length > 0} &&
               <QuestionList
                 loading={loadingQuestions}
@@ -199,7 +204,7 @@ function HomeInnerPage() {
         />
         {loadingQuestions ? (
           <>
-            <LoadingQuestions />
+            <LoadingSkeletons />
             {filtered[0].options.length > 0} &&
             <QuestionList
               loading={loadingQuestions}

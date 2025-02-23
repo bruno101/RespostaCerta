@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function LoadingQuestions() {
+export default function LoadingSkeletons() {
   return (
     <div className="mt-20">
       {[1,2].map((_, index) => {
