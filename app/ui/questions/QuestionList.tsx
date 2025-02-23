@@ -28,7 +28,6 @@ export default function QuestionList({
 
   useEffect(() => {
     if (questions.length > 0) {
-      console.log("here");
       onFinishedLoading();
     }
   }, [questions]);
