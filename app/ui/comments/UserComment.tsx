@@ -5,18 +5,21 @@ import CommentArea from "./CommentArea";
 import IComment from "@/app/interfaces/IComment";
 import EditionAndDeletionPopover from "./EditionAndDeletionPopover";
 import TruncatedText from "./TruncatedText";
+import IUser from "@/app/interfaces/IUser";
 
 export default function UserComment({
   comment,
   setComments,
+  currentUser,
 }: {
   comment: IComment;
   setComments: Dispatch<SetStateAction<IComment[]>>;
+  currentUser?: IUser;
 }) {
   const [showReplies, setShowReplies] = useState(false);
 
   const isThisCurrentUserComment =
-    comment.email === "arianagrande@fakegmail.com";
+    currentUser?.email && comment.email === currentUser.email;
   const date = new Date(comment.createdAt);
   const liked = comment.didCurrentUserLike;
   const updateLikesOnUi = () => {
@@ -59,15 +62,17 @@ export default function UserComment({
     <div>
       <div className="mt-5 mb-5 shadow-md border-1 w-full rounded-xl bg-white">
         <div className="flex flex-row">
-          <div className="w-8 h-8 rounded-full overflow-hidden mt-5 ml-5 mr-4">
-            <Image
-              src="https://avatar.iran.liara.run/public/boy?username=Ash"
-              alt="Circle Image"
-              width={64}
-              height={64}
-              className="object-cover"
-            />
-          </div>
+          <Image
+            src={
+              comment.user_image_link
+                ? comment.user_image_link
+                : "https://img.icons8.com/?size=100&id=z-JBA_KtSkxG&format=png&color=000000"
+            }
+            alt="Circle Image"
+            width={64}
+            height={64}
+            className="object-cover w-8 h-8 rounded-full overflow-hidden mt-5 ml-5 mr-4"
+          />
           <p className="font-bold mt-6 mr-3 text-[15px] text-gray-800">
             {isThisCurrentUserComment ? "Você" : comment.name}
           </p>
@@ -147,6 +152,7 @@ export default function UserComment({
               key={index}
               comment={comm}
               setComments={setComments}
+              currentUser={currentUser}
             />
           ))}
           <div className="ml-10">
@@ -154,6 +160,7 @@ export default function UserComment({
               replyTo={comment._id}
               questionId={comment.question_id}
               setComments={setComments}
+              currentUser={currentUser}
             />
           </div>
         </div>

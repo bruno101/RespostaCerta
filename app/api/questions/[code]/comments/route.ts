@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongoose";
 import Comment from "@/app/models/Comment";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function GET(
   request: Request,
@@ -8,6 +10,7 @@ export async function GET(
 ) {
   try {
     // Connect to the database
+    const session = await getServerSession(authOptions);
     await connectToDatabase();
     const p = await params;
     const { code } = p;
@@ -19,24 +22,43 @@ export async function GET(
       );
     }
 
-    const comments = await Comment.find({
+    /*const comments = await Comment.find({
       question_id: code,
       $or: [{ reply_to: null }, { reply_to: { $exists: false } }],
-    })
-      .lean();
-    const commentsWithReplies = await Promise.all(
-      comments.map(async (comment) => {
-        const newComment = { ...comment };
-        const didCurrentUserLike = newComment.usersWhoLiked.includes(
-          "arianagrande@fakegmail.com"
-        );
-        const likes = newComment.usersWhoLiked.length;
-        delete (newComment as any).usersWhoLiked;
-        const replies = await Comment.find({ reply_to: comment._id }).lean();
-        return { ...newComment, replies, didCurrentUserLike, likes };
-      })
+    }).lean();*/
+    const commentsWithUserData = await Comment.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "email",
+          foreignField: "email",
+          as: "user",
+        },
+      },
+    ]);
+    const commentsWithExtraData = await Promise.all(
+      commentsWithUserData
+        .filter((comment) => !comment.reply_to)
+        .map(async (comment) => {
+          const newComment = { ...comment };
+          const didCurrentUserLike = newComment.usersWhoLiked.includes(
+            session?.user?.email || ""
+          );
+          const likes = newComment.usersWhoLiked.length;
+          const user_image_link = newComment.user[0]?.image_link;
+          delete (newComment as any).usersWhoLiked;
+          delete (newComment as any).user;
+          const replies = await Comment.find({ reply_to: comment._id }).lean();
+          return {
+            ...newComment,
+            replies,
+            didCurrentUserLike,
+            likes,
+            user_image_link,
+          };
+        })
     );
-    return NextResponse.json(commentsWithReplies);
+    return NextResponse.json(commentsWithExtraData);
   } catch (error) {
     console.error("Error fetching comments:", error);
     return NextResponse.json(
@@ -51,13 +73,17 @@ export async function POST(
   { params }: { params: Promise<{ code: string }> }
 ) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
     await connectToDatabase();
     const p = await params;
     const { code } = p;
     const body = await req.json();
     let { reply_to, text } = body;
-    const name = "Ariana Grande";
-    const email = "arianagrande@fakegmail.com";
+    const name = session?.user?.name;
+    const email = session?.user?.email;
 
     if (!code || !text) {
       return NextResponse.json(
@@ -66,7 +92,7 @@ export async function POST(
       );
     }
 
-    if (typeof code !== 'string' || typeof text != 'string') {
+    if (typeof code !== "string" || typeof text != "string") {
       return NextResponse.json(
         { error: "Code and text should be strings" },
         { status: 400 }
@@ -85,7 +111,13 @@ export async function POST(
     await newComment.save();
 
     return NextResponse.json(
-      { message: "Comment created successfully", comment: newComment },
+      {
+        message: "Comment created successfully",
+        comment: {
+          ...(newComment as any)._doc,
+          user_image_link: session?.user?.image,
+        },
+      },
       { status: 201 }
     );
   } catch (error) {

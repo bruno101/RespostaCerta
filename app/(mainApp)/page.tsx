@@ -1,12 +1,12 @@
 "use client";
 import { Suspense, useEffect, useState } from "react";
-import Filter from "./ui/filter/Filter";
-import AppliedFilters from "./ui/filter/AppliedFilters";
-import QuestionList from "./ui/questions/QuestionList";
+import Filter from "../ui/filter/Filter";
+import AppliedFilters from "../ui/filter/AppliedFilters";
+import QuestionList from "../ui/questions/QuestionList";
 import { SharedSelection } from "@heroui/system";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import LoadingSkeletons from "./ui/questions/LoadingSkeletons";
+import LoadingSkeletons from "../ui/questions/LoadingSkeletons";
 
 const initialSelected: { options: string[]; name: string }[] = [
   {
@@ -35,7 +35,7 @@ const selectors = [
 export default function Home() {
   return (
     <Suspense fallback={<LoadingSkeletons />}>
-        <HomeInnerPage />
+      <HomeInnerPage />
     </Suspense>
   );
 }
@@ -165,11 +165,12 @@ function HomeInnerPage() {
           {loadingQuestions ? (
             <>
               <LoadingSkeletons />
-              {filtered[0].options.length > 0} &&
-              <QuestionList
-                loading={loadingQuestions}
-                onFinishedLoading={onFinishedLoading}
-              />
+              {filtered[0].options.length > 0 && (
+                <QuestionList
+                  loading={loadingQuestions}
+                  onFinishedLoading={onFinishedLoading}
+                />
+              )}
               )
             </>
           ) : (
@@ -205,11 +206,12 @@ function HomeInnerPage() {
         {loadingQuestions ? (
           <>
             <LoadingSkeletons />
-            {filtered[0].options.length > 0} &&
-            <QuestionList
-              loading={loadingQuestions}
-              onFinishedLoading={onFinishedLoading}
-            />
+            {filtered[0].options.length > 0 && (
+              <QuestionList
+                loading={loadingQuestions}
+                onFinishedLoading={onFinishedLoading}
+              />
+            )}
           </>
         ) : (
           filtered[0].options.length > 0 && (

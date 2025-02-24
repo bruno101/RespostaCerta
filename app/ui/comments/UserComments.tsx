@@ -4,6 +4,7 @@ import CommentArea from "./CommentArea";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import UserComment from "./UserComment";
 import IComment from "@/app/interfaces/IComment";
+import { useSession } from "next-auth/react";
 
 export default function UserComments({
   comments,
@@ -14,6 +15,7 @@ export default function UserComments({
   commentsLoading: boolean;
   setComments: Dispatch<SetStateAction<IComment[]>>;
 }) {
+  const { data: session } = useSession();
   const [buttonActive, setButtonActive] = useState(1);
   const orderByLikes = buttonActive === 1;
   useEffect(() => {
@@ -72,6 +74,7 @@ export default function UserComments({
                   key={index}
                   comment={comment}
                   setComments={setComments}
+                  currentUser={session?.user}
                 />
               ))}
             </div>
@@ -79,6 +82,7 @@ export default function UserComments({
           <CommentArea
             questionId={comments[0].question_id}
             setComments={setComments}
+            currentUser={session?.user}
           />
         </div>
       )}

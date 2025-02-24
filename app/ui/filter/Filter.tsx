@@ -20,6 +20,7 @@ export default function Filter({
   setKeyWords: Dispatch<SetStateAction<string>>;
   selectors: { name: string; options: string[] }[];
 }) {
+  
   return (
     <div className="w-full">
       <Search keyWords={keyWords} setKeyWords={setKeyWords} />

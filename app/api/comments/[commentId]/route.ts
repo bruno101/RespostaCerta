@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongoose";
 import Comment from "@/app/models/Comment";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { user } from "@heroui/theme";
 
 export async function PATCH(
   req: Request,
@@ -17,6 +20,11 @@ export async function PATCH(
     const body = await req.json();
     let { didCurrentUserLike, text } = body;
 
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
     if (didCurrentUserLike === undefined && !text) {
       return NextResponse.json(
         { error: "Empty or missing fields" },
@@ -25,7 +33,7 @@ export async function PATCH(
     }
 
     const { commentId } = await params;
-    const email = "arianagrande@fakegmail.com";
+    const email = session?.user?.email || "";
 
     if (text) {
       if (typeof text != "string") {
@@ -118,9 +126,13 @@ export async function DELETE(
   }
 ) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
     await connectToDatabase();
     const { commentId } = await params;
-    const email = "arianagrande@fakegmail.com";
+    const email = session?.user?.email;
 
     const comment = await Comment.findById(commentId);
 

@@ -1,14 +1,13 @@
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { handleSignIn, handleSignOut } from "@/lib/auth.js";
+import { signOut } from "next-auth/react";
 
 export default function MobileMenu({
   navItems,
 }: {
   navItems: { name: string; href: string }[];
 }) {
-
   const { data: session } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const toggleMobileMenu = () => {
@@ -42,15 +41,22 @@ export default function MobileMenu({
       <Link href="/" className="text-2xl text-white font-bold ml-3 -mt-2">
         Questões Discursivas
       </Link>
+      {session && (
+        <button
+          onClick={() => signOut()}
+          className="text-l rounded-3xl px-4 py-1 bg-[#15bdb2] focus:outline focus:outline-2 focus:outline-blue-400 focus:bg-[#2ee8dc] hover:bg-[#2ee8dc] text-white font-bold ml-auto -mt-1"
+        >
+          Sair
+        </button>
+      )}
+      {!session && (
+        <Link href="/signin" className="ml-auto -mt-1">
+          <button className="text-l rounded-3xl px-4 py-1 bg-[#15bdb2] focus:outline focus:outline-2 focus:outline-blue-400 focus:bg-[#2ee8dc] hover:bg-[#2ee8dc] text-white font-bold">
+            Entrar
+          </button>
+        </Link>
+      )}
 
-      <button
-        onClick={() => {
-          session ? handleSignOut() : handleSignIn();
-        }}
-        className="text-l rounded-3xl px-4 py-1 bg-[#15bdb2] hover:bg-[#2ee8dc] text-white font-bold ml-auto -mt-1"
-      >
-        {session ? "Sair" : "Entrar"}
-      </button>
       <div
         className={`fixed top-0 left-0 min-h-screen w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
@@ -58,7 +64,7 @@ export default function MobileMenu({
       >
         <div className="flex flex-row items-center border-b pb-4">
           <Link href="/" className="cursor-pointer font-bold text-xl pt-4 ps-4">
-            Questões Discursivas
+            Resposta Certa
           </Link>
           <button
             onClick={toggleMobileMenu}

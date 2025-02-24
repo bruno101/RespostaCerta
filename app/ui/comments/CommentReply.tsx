@@ -4,30 +4,31 @@ import TruncatedText from "./TruncatedText";
 import EditionAndDeletionPopover from "./EditionAndDeletionPopover";
 import { Dispatch, SetStateAction } from "react";
 import IComment from "@/app/interfaces/IComment";
+import IUser from "@/app/interfaces/IUser";
 
 export default function CommentReply({
   comment,
   setComments,
+  currentUser,
 }: {
   comment: ICommentReply;
   setComments: Dispatch<SetStateAction<IComment[]>>;
+  currentUser?: IUser;
 }) {
   const date = new Date(comment.createdAt);
   const isThisCurrentUserComment =
-    comment.email === "arianagrande@fakegmail.com";
+    currentUser?.email && comment.email === currentUser.email;
   return (
     <div className="ml-20">
       <div className="mt-5 mb-5 shadow-sm border-1 w-full rounded-xl bg-white">
         <div className="flex flex-row">
-          <div className="w-6 h-6 rounded-full overflow-hidden mt-5 ml-5 mr-2">
             <Image
-              src="https://avatar.iran.liara.run/public/boy?username=Ash"
+              src={comment.user_image_link? comment.user_image_link: "https://img.icons8.com/?size=100&id=z-JBA_KtSkxG&format=png&color=000000"}
               alt="Circle Image"
               width={48}
               height={48}
-              className="object-cover"
+              className="object-cover w-6 h-6 rounded-full overflow-hidden mt-5 ml-5 mr-2"
             />
-          </div>
           <p className="font-bold mt-6 mr-2 text-[13px] text-gray-800">
             {isThisCurrentUserComment ? "Você" : comment.name}
           </p>

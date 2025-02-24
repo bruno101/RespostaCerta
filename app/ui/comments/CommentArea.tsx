@@ -1,5 +1,6 @@
 import IComment from "@/app/interfaces/IComment";
 import ICommentReply from "@/app/interfaces/ICommentReply";
+import IUser from "@/app/interfaces/IUser";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useState } from "react";
 
@@ -7,10 +8,12 @@ export default function CommentArea({
   replyTo,
   questionId,
   setComments,
+  currentUser,
 }: {
   replyTo?: string;
   questionId: string;
   setComments: Dispatch<SetStateAction<IComment[]>>;
+  currentUser?: IUser;
 }) {
   const [text, setText] = useState("");
 
@@ -25,32 +28,35 @@ export default function CommentArea({
   const addCommentReplyToUi = (newComment: ICommentReply) => {
     setComments((comments) => {
       let newComments = [...comments];
-      let index = newComments
-        .findIndex((comment) => {
-          return comment._id === newComment.reply_to;
-        })
-      const c = {...newComments[index]};
-      const replies = [...c.replies]
+      let index = newComments.findIndex((comment) => {
+        return comment._id === newComment.reply_to;
+      });
+      const c = { ...newComments[index] };
+      const replies = [...c.replies];
       replies.push(newComment);
       c.replies = replies;
       newComments[index] = c;
       return newComments;
-    } )
+    });
   };
 
   const addCommentOrReplyToUi = (newComment: IComment | ICommentReply) => {
-
     if (replyTo) {
       addCommentReplyToUi(newComment);
     } else {
-      addCommentToUi({ ...newComment, likes: 0, didCurrentUserLike: false, replies: [] });
+      addCommentToUi({
+        ...newComment,
+        likes: 0,
+        didCurrentUserLike: false,
+        replies: [],
+      });
     }
   };
 
   const postComment = async () => {
     const newCommentData = {
       reply_to: replyTo,
-      text
+      text,
     };
     try {
       const response = await fetch(`/api/questions/${questionId}/comments`, {
@@ -72,25 +78,23 @@ export default function CommentArea({
   return (
     <div className={`w-full flex flex-col ${!replyTo && "mt-[60px]"}`}>
       <div className="flex">
-        <div
-          className={`${
-            replyTo
-              ? "w-7 h-7 ml-[30px] mt-2 mr-5"
-              : "w-10 h-10 ml-5 mt-5 mr-10"
+        <Image
+          src={
+            currentUser?.image
+              ? currentUser.image
+              : "https://img.icons8.com/?size=100&id=z-JBA_KtSkxG&format=png&color=000000"
+          }
+          alt="Circle Image"
+          width={replyTo ? 56 : 120}
+          height={replyTo ? 56 : 120}
+          className={`object-cover ${
+            replyTo ? "w-7 h-7 ml-[30px] mt-2 mr-5" : "w-9 h-9 ml-5 mt-5 mr-10"
           } rounded-full overflow-hidden`}
-        >
-          <Image
-            src="https://avatar.iran.liara.run/public/boy?username=Ash"
-            alt="Circle Image"
-            width={replyTo ? 56 : 80}
-            height={replyTo ? 56 : 80}
-            className="object-cover"
-          />
-        </div>
+        />
         <textarea
           className={`${
             replyTo ? "h-[6em]" : "h-[10em]"
-          } bg-white border-1 rounded-lg mr-auto w-full`}
+          } bg-white border-1 rounded-lg mr-auto w-full px-1`}
           value={text}
           onChange={(e) => {
             setText(e.target.value);
