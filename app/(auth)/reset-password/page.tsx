@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState, useEffect } from "react";
+import { FormEvent, useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import Link from "next/link";
@@ -8,6 +8,14 @@ import Image from "next/image";
 import { BiSolidShow, BiSolidHide } from "react-icons/bi";
 
 export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPassword />
+    </Suspense>
+  );
+}
+
+function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -16,7 +24,7 @@ export default function ResetPasswordPage() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [tokenError, setTokenError] = useState("");
-  
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
@@ -29,17 +37,17 @@ export default function ResetPasswordPage() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
+
     if (password !== confirmPassword) {
       setError("As senhas não coincidem");
       return;
     }
-    
+
     if (password.length < 6) {
       setError("A senha deve ter pelo menos 6 caracteres");
       return;
     }
-    
+
     setIsSubmitting(true);
     setError("");
 
@@ -49,13 +57,15 @@ export default function ResetPasswordPage() {
         password,
       });
       setSuccess(true);
-      
+
       // Redirect to login after 3 seconds
       setTimeout(() => {
         router.push("/signin");
       }, 3000);
     } catch (error: any) {
-      setError(error.response?.data?.message || "Ocorreu um erro. Tente novamente.");
+      setError(
+        error.response?.data?.message || "Ocorreu um erro. Tente novamente."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -80,9 +90,7 @@ export default function ResetPasswordPage() {
             </div>
             <div className="flex flex-col bg-slate-50 rounded-b-lg pb-[20px] px-10 sm:px-20">
               <div className="py-6 text-center">
-                <p className="text-red-600 mb-4">
-                  {tokenError}
-                </p>
+                <p className="text-red-600 mb-4">{tokenError}</p>
                 <Link
                   href="/forgot-password"
                   className="text-blue-500 hover:text-blue-700 underline"
@@ -130,8 +138,10 @@ export default function ResetPasswordPage() {
                     {error}
                   </div>
                 )}
-                
-                <label className="text-xs font-bold mt-3 mb-1">Nova Senha</label>
+
+                <label className="text-xs font-bold mt-3 mb-1">
+                  Nova Senha
+                </label>
                 <div className="flex w-full ml-auto mr-auto">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -151,8 +161,10 @@ export default function ResetPasswordPage() {
                     {showPassword ? <BiSolidHide /> : <BiSolidShow />}
                   </button>
                 </div>
-                
-                <label className="text-xs font-bold mt-3 mb-1">Confirmar Senha</label>
+
+                <label className="text-xs font-bold mt-3 mb-1">
+                  Confirmar Senha
+                </label>
                 <div className="flex w-full ml-auto mr-auto">
                   <input
                     type={showConfirmPassword ? "text" : "password"}
@@ -172,15 +184,15 @@ export default function ResetPasswordPage() {
                     {showConfirmPassword ? <BiSolidHide /> : <BiSolidShow />}
                   </button>
                 </div>
-                
-                <button 
+
+                <button
                   type="submit"
                   disabled={isSubmitting}
                   className="rounded-md border-1 focus:outline focus:outline-blue-400 focus:outline-2 focus:bg-blue-200 hover:bg-blue-200 bg-white w-[250px] py-1 text-black ml-auto mr-auto mt-5 mb-2"
                 >
                   {isSubmitting ? "Processando..." : "Redefinir Senha"}
                 </button>
-                
+
                 <p className="text-xs text-[#888] mx-auto mt-2">
                   <Link
                     href="/signin"
