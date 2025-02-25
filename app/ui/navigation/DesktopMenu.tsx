@@ -11,26 +11,29 @@ export default function DesktopMenu({
   const { data: session } = useSession();
   const pathName = usePathname();
 
-
   return (
     <>
       <div className="flex flex-row">
         <Link href="/" className="text-2xl text-white font-bold">
           Resposta Certa
         </Link>
-        {/*<button className="hover:bg-cyan-600 rounded-3xl px-4 py-1 border-white border-1 text-l text-white font-bold ml-auto mr-5">
-              Criar conta
-            </button>*/}
+        {session === null && (
+          <Link className="ml-auto mr-5" href="/signup">
+            <button className="focus:bg-cyan-600 focus:outline focus:border-0 focus:outline-2 focus:outline-cyan-300 hover:bg-cyan-600 rounded-3xl px-4 py-1 border-white border-1 text-l text-white font-bold ">
+            Criar conta
+              </button>
+          </Link>
+        )}
         {session && (
           <button
             onClick={() => signOut()}
-            className="ml-auto mr-5 rounded-3xl px-4 py-1 bg-[#15bdb2] focus:outline focus:outline-2 focus:outline-blue-400 hover:bg-[#2ee8dc] focus:bg-[#2ee8dc] text-l text-white font-bold "
+            className=" ml-auto mr-5 rounded-3xl px-4 py-1 bg-[#15bdb2] focus:outline focus:outline-2 focus:outline-blue-400 hover:bg-[#2ee8dc] focus:bg-[#2ee8dc] text-l text-white font-bold "
           >
             Sair
           </button>
         )}
-        {session===null && (
-          <Link href="/signin" className="ml-auto mr-5">
+        {session === null && (
+          <Link href="/signin" className="mr-5">
             <button className=" rounded-3xl px-4 py-1 bg-[#15bdb2] focus:outline focus:outline-2 focus:outline-blue-400 hover:bg-[#2ee8dc] focus:bg-[#2ee8dc] text-l text-white font-bold ">
               Entrar
             </button>

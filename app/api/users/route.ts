@@ -6,7 +6,7 @@ export async function POST(req: Request) {
   try {
     await connectToDatabase();
     const body = await req.json();
-    let { name, email, image_link } = body;
+    let { name, email, image, signedUpWithGoogle } = body;
 
     if (!name || !email) {
       return NextResponse.json(
@@ -18,24 +18,47 @@ export async function POST(req: Request) {
     if (
       typeof name !== "string" ||
       typeof email !== "string" ||
-      (image_link && typeof image_link !== "string")
+      (image && typeof image !== "string") ||
+      (signedUpWithGoogle && typeof signedUpWithGoogle !== "boolean")
     ) {
       return NextResponse.json(
-        { error: "Name, email and image_url should be strings" },
+        {
+          error:
+            "Name, email and image should be strings; signedUpWithGoogle should be boolean",
+        },
         { status: 400 }
       );
     }
 
+    if (signedUpWithGoogle === null || signedUpWithGoogle === undefined)
+      signedUpWithGoogle = true;
+
     const user = await User.findOne({ email });
 
+    if (
+      signedUpWithGoogle &&
+      user &&
+      (user.signedUpWithGoogle === false ||
+        user.signedUpWithGoogle === undefined ||
+        user.signedUpWithGoogle === null)
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "Email already used by account not created with google",
+        },
+        { status: 409 }
+      );
+    }
+
     if (user) {
-      return (new NextResponse() as any).json(null, { status: 204 }); 
+      return (new NextResponse() as any).json(null, { status: 204 });
     }
 
     const newUser = new User({
       name,
       email,
-      image_link: image_link ? image_link : null,
+      image: image ? image : null,
     });
 
     await newUser.save();

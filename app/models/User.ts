@@ -5,14 +5,32 @@ interface IUser extends Document {
   _id: Types.ObjectId;
   name: string;
   email: string;
-  image_link: string;
+  image: string;
+  password: string;
+  createdAt: Date;
+  updatedAt: Date;
+  signedUpWithGoogle?: boolean;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: number;
 }
 
 const UserSchema = new Schema<IUser>(
   {
     name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    image_link: { type: String, required: false },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      match: [
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        "Email is invalid",
+      ],
+    },
+    image: { type: String, required: false },
+    password: { type: String, required: false, select: false },
+    signedUpWithGoogle: { type: String, required: false },
+    resetPasswordToken: { type: String, required: false },
+    resetPasswordExpires: { type: Number, required: false },
   },
   { timestamps: true }
 );

@@ -45,7 +45,7 @@ export async function GET(
             session?.user?.email || ""
           );
           const likes = newComment.usersWhoLiked.length;
-          const user_image_link = newComment.user[0]?.image_link;
+          const user_image_link = newComment.user[0]?.image;
           delete (newComment as any).usersWhoLiked;
           delete (newComment as any).user;
           const replies = await Comment.find({ reply_to: comment._id }).lean();

@@ -6,18 +6,26 @@ import Image from "next/image";
 import { useEffect } from "react";
 import IQuestion from "@/app/interfaces/IQuestion";
 import IComment from "@/app/interfaces/IComment";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function QuestionComments({
   question,
 }: {
   question: IQuestion;
 }) {
+  const { data: session } = useSession();
+  const router = useRouter();
   const [activeItem, setActiveItem] = useState(-1);
   const [comments, setComments] = useState<IComment[]>([]);
   const [commentsLoading, setCommentsLoading] = useState(true);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const [sessionReady, setSessionReady] = useState(false);
 
   useEffect(() => {
+    if (session !== undefined) {
+      setSessionReady(true);
+    }
     async function fetchComments() {
       try {
         const res = await fetch(`/api/questions/${question.Codigo}/comments`); // 👈 API call
@@ -29,7 +37,7 @@ export default function QuestionComments({
             return a.likes - b.likes
               ? b.likes - a.likes
               : new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime();
+                  new Date(a.createdAt).getTime();
           })
         );
       } catch (err: any) {
@@ -39,8 +47,10 @@ export default function QuestionComments({
       }
     }
 
-    fetchComments();
-  }, []);
+    if (session && session.user) {
+      fetchComments();
+    }
+  }, [session]);
 
   useEffect(() => {
     if (activeItem != -1 || !commentsLoading) {
@@ -80,7 +90,11 @@ export default function QuestionComments({
           )}
         </button>
         <button
+          disabled={sessionReady ? false : true}
           onClick={() => {
+            if (!session) {
+              router.push("/signin");
+            }
             setActiveItem(1);
           }}
           className={`${
@@ -136,6 +150,7 @@ export default function QuestionComments({
                 comments={[...comments]}
                 setComments={setComments}
                 commentsLoading={commentsLoading}
+                currentUser={session?.user}
               />
             )}
           </div>

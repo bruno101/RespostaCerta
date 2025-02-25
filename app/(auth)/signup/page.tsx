@@ -1,4 +1,5 @@
 "use client";
+
 import { FormEvent, useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { signIn, useSession } from "next-auth/react";
@@ -12,6 +13,19 @@ import Image from "next/image";
 export default function Page() {
   const [error, setError] = useState();
   const [showPassword, setShowPassword] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [nameBlurred, setNameBlurred] = useState(false);
+  const [emailBlurred, setEmailBlurred] = useState(false);
+  const [passwordBlurred, setPasswordBlurred] = useState(false);
+
+  const nameValid = name.trim().length > 0;
+  const emailValid = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
+    email
+  );
+  const passwordValid = password.length >= 6;
+  const formValid = nameValid && emailValid && passwordValid;
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -25,9 +39,17 @@ export default function Page() {
     event.preventDefault();
     try {
       const formData = new FormData(event.currentTarget);
+      const signupResponse = await axios.post(
+        `${process.env.NEXT_PUBLIC_AUTH_URL}/api/auth/signup`,
+        {
+          email: formData.get("email"),
+          password: formData.get("password"),
+          name: formData.get("name"),
+        }
+      );
 
       const res = await signIn("credentials", {
-        email: formData.get("email"),
+        email: signupResponse.data.email,
         password: formData.get("password"),
         redirect: false,
       });
@@ -55,7 +77,7 @@ export default function Page() {
               height={50}
             />
             <p className="font-bold text-[17px] mb-2 ml-auto mr-auto">
-              Entrar no Resposta Certa
+              Criar conta no Resposta Certa
             </p>
             <p className="font-bold text-[12px] mb-4 text-gray-400 ml-auto mr-auto">
               Treine sua escrita e conquiste sua vaga!
@@ -67,7 +89,7 @@ export default function Page() {
               onClick={() => signIn("google", { callbackUrl: "/" })}
             >
               <BiLogoGoogle className="w-6 h-6 mt-[0px] ml-auto mr-2" />
-              <p className="mr-auto">Entrar com o Google</p>
+              <p className="mr-auto">Criar conta com o Google</p>
             </button>
             <div className="flex">
               <hr className="w-[104px] mt-[10px] ml-auto" />
@@ -75,29 +97,66 @@ export default function Page() {
               <hr className="w-[104px] mt-[10px] mr-auto" />
             </div>
             <form className="flex flex-col" onSubmit={handleSubmit}>
-              {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
-                  {error}
-                </div>
-              )}
+              {error && <div className="">{error}</div>}
+              <label className="text-xs font-bold mt-5 mb-1">Nome</label>
+              <input
+                type="text"
+                name="name"
+                onBlur={() => setNameBlurred(true)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className={`${
+                  nameValid && "border-0 outline outline-2 outline-green-400"
+                } ${
+                  !nameValid &&
+                  nameBlurred &&
+                  "border-0 outline outline-2 outline-red-400"
+                } shadow-sm px-2 border-1 rounded-md w-[250px] py-1 ml-auto mr-auto`}
+              />
               <label className="text-xs font-bold mt-3 mb-1">Email</label>
               <input
                 type="email"
+                value={email}
+                onBlur={() => setEmailBlurred(true)}
+                onChange={(e) => setEmail(e.target.value)}
                 name="email"
                 placeholder="email@dominio.com"
-                className="shadow-sm px-2 border-1 rounded-md w-[250px] py-1 ml-auto mr-auto"
+                className={`${
+                  emailValid && "border-0 outline outline-2 outline-green-400"
+                } ${
+                  !emailValid &&
+                  emailBlurred &&
+                  "border-0 outline outline-2 outline-red-400"
+                } shadow-sm px-2 border-1 rounded-md w-[250px] py-1 ml-auto mr-auto`}
               />
               <label className="text-xs font-bold mt-3 mb-1">Senha</label>
               <div className="flex w-full ml-auto mr-auto">
                 <input
                   type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="6+ caracteres"
-                  className="w-full shadow-sm px-2 border-1 rounded-l-md w-[250px] py-1"
+                  onBlur={() => setPasswordBlurred(true)}
+                  className={`${
+                    passwordValid &&
+                    "border-0 outline outline-2 outline-green-400"
+                  } ${
+                    !passwordValid &&
+                    passwordBlurred &&
+                    "border-0 outline outline-2 outline-red-400"
+                  } w-full shadow-sm px-2 border-1 rounded-l-md w-[250px] py-1`}
                   name="password"
                 />
                 <button
-                  className="w-2/12 bg-white border-1 shadow-sm rounded-r-md  
-flex items-center justify-center transition duration-150 ease hover:bg-blue-100"
+                  className={`${
+                    passwordValid &&
+                    "border-0 outline outline-2 outline-green-400"
+                  } ${
+                    !passwordValid &&
+                    passwordBlurred &&
+                    "border-0 outline outline-2 outline-red-400"
+                  } w-2/12 bg-white border-1 shadow-sm rounded-r-md
+flex items-center justify-center transition duration-150 ease hover:bg-blue-100`}
                   onClick={(e) => {
                     e.preventDefault();
                     setShowPassword(!showPassword);
@@ -106,23 +165,24 @@ flex items-center justify-center transition duration-150 ease hover:bg-blue-100"
                   {showPassword ? <BiSolidHide /> : <BiSolidShow />}
                 </button>
               </div>
-              <Link
-                href="/forgot-password"
-                className="text-[10px] text-cyan-700 hover:text-cyan-500 focus:text-cyan-500 font-bold ml-auto mt-[4px]"
+              <button
+                disabled={formValid ? false : true}
+                className={`${
+                  formValid
+                    ? "text-black focus:outline focus:outline-blue-400 focus:outline-2 focus:bg-blue-200  hover:bg-blue-200 bg-white"
+                    : "text-slate-400 bg-white"
+                } rounded-md border-1 w-[250px] py-1 ml-auto mr-auto mt-5 mb-2`}
               >
-                Esqueceu a senha?
-              </Link>
-              <button className="rounded-md border-1 focus:outline focus:outline-blue-400 focus:outline-2 focus:bg-blue-200  hover:bg-blue-200 bg-white w-[250px] py-1 text-black ml-auto mr-auto mt-5 mb-2">
-                Entrar
+                Criar conta
               </button>
             </form>
             <p className="text-xs text-[#888] mx-auto">
-              Ainda não possui uma conta?{" "}
+              Já possui uma conta?{" "}
               <Link
-                href="/signup"
+                href="/signin"
                 className="transition duration-150 ease hover:text-cyan-900 focus:text-cyan-900"
               >
-                <u>Registre-se.</u>
+                <u>Faça login.</u>
               </Link>
             </p>
           </div>

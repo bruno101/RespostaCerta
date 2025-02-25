@@ -105,6 +105,7 @@ export default function UserComment({
               }`}
               width={20}
               height={20}
+              className="w-5 h-5 mt-[1px]"
               alt="responder"
             ></Image>
             <p className="text-[13px] mt-[2px] ml-1 font-bold">
@@ -125,8 +126,9 @@ export default function UserComment({
                   ? "https://img.icons8.com/?size=100&id=7806&format=png&color=737373"
                   : "https://img.icons8.com/?size=100&id=2889&format=png&color=111111"
               }`}
-              width={16}
-              height={16}
+              width={20}
+              height={20}
+              className="w-5 h-5"
               alt="responder"
             ></Image>
             <p className="ml-2 mb-[5px] text-[13px] text-gray-700 font-bold">
