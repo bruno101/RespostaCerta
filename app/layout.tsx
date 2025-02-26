@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Lato } from "next/font/google";
 import "./globals.css";
+import AuthProvider from "@/components/SessionProvider";
 
 const roboto = Lato({
   weight: "400",
@@ -20,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${roboto.className} antialiased z-0 relative`}>
-         {children}
+        <AuthProvider> {children}</AuthProvider>
       </body>
     </html>
   );

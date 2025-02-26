@@ -12,6 +12,7 @@ import Image from "next/image";
 export default function Page() {
   const [error, setError] = useState();
   const [showPassword, setShowPassword] = useState(false);
+  const [signingIn, setSigningIn] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -23,6 +24,7 @@ export default function Page() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setSigningIn(true);
     try {
       const formData = new FormData(event.currentTarget);
 
@@ -113,7 +115,7 @@ flex items-center justify-center transition duration-150 ease hover:bg-blue-100"
                 Esqueceu a senha?
               </Link>
               <button className="rounded-md border-1 focus:outline focus:outline-blue-400 focus:outline-2 focus:bg-blue-200  hover:bg-blue-200 bg-white w-[250px] py-1 text-black ml-auto mr-auto mt-5 mb-2">
-                Entrar
+                {signingIn? "Entrando..." : "Entrar"}
               </button>
             </form>
             <p className="text-xs text-[#888] mx-auto">

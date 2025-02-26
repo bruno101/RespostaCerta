@@ -19,6 +19,7 @@ export default function Page() {
   const [nameBlurred, setNameBlurred] = useState(false);
   const [emailBlurred, setEmailBlurred] = useState(false);
   const [passwordBlurred, setPasswordBlurred] = useState(false);
+  const [signingUp, setSigningUp] = useState(false);
 
   const nameValid = name.trim().length > 0;
   const emailValid = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
@@ -37,6 +38,7 @@ export default function Page() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setSigningUp(true);
     try {
       const formData = new FormData(event.currentTarget);
       const signupResponse = await axios.post(
@@ -173,7 +175,7 @@ flex items-center justify-center transition duration-150 ease hover:bg-blue-100`
                     : "text-slate-400 bg-white"
                 } rounded-md border-1 w-[250px] py-1 ml-auto mr-auto mt-5 mb-2`}
               >
-                Criar conta
+                {signingUp? "Criando conta..." : "Criar conta"}
               </button>
             </form>
             <p className="text-xs text-[#888] mx-auto">

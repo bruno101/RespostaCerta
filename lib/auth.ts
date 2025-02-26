@@ -39,6 +39,8 @@ export const authOptions: AuthOptions = {
           id: user._id.toString(), // Convert _id (ObjectId) to string
           name: user.name,
           email: user.email,
+          image: user.image,
+          role: user.role ? user.role : user,
         };
       },
     }),
@@ -62,7 +64,7 @@ export const authOptions: AuthOptions = {
               name: user?.name,
               email: user?.email,
               image: user?.image,
-              signedUpWithGoogle: true
+              signedUpWithGoogle: true,
             }),
           });
           return true;
@@ -71,7 +73,7 @@ export const authOptions: AuthOptions = {
           return false;
         }
       }
-      
+
       // For other providers (like credentials), just return true
       return true;
     },
@@ -81,10 +83,10 @@ export const authOptions: AuthOptions = {
       session,
       trigger,
     }: {
-      token: JWT; 
-      user?: any; 
-      session?: any; 
-      trigger?: "signIn" | "signUp" | "update"; 
+      token: JWT;
+      user?: any;
+      session?: any;
+      trigger?: "signIn" | "signUp" | "update";
     }) {
       if (trigger === "update" && session?.name) {
         token.name = session.name;
@@ -95,6 +97,7 @@ export const authOptions: AuthOptions = {
       }
 
       if (user) {
+        token.role = user.role ? user.role : "user";
         const u = user as unknown as any;
         return {
           ...token,
@@ -104,6 +107,9 @@ export const authOptions: AuthOptions = {
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
+      if (token) {
+        session.user.role = token.role ? token.role : "user";
+      }
       return {
         ...session,
         user: {
@@ -113,23 +119,5 @@ export const authOptions: AuthOptions = {
         },
       };
     },
-    /*async signIn({ user }) {
-      if (!user?.email) return false;
-      try {
-        await fetch(`${process.env.NEXTAUTH_URL}/api/users/`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: user?.name,
-            email: user?.email,
-            image_link: user?.image,
-          }),
-        });
-        return true;
-      } catch (error) {
-        console.error("Error saving user", error);
-        return false;
-      }
-    }*/
   },
 };

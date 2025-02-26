@@ -1,21 +1,23 @@
-import mongoose, { Document, Schema, Model } from 'mongoose';
+import mongoose, { Document, Schema, Model } from "mongoose";
 import { Types } from "mongoose";
 
 interface IQuestion extends Document {
-    _id: Types.ObjectId;
-    Disciplina: string;
-    Banca: string;
-    Ano: string;
-    Nivel: string;
-    Instituicao: string;
-    Cargo: string;
-    TextoMotivador: string;
-    Questao: string;
-    Criterios: string;
-    Resposta: string;
+  _id: Types.ObjectId;
+  Disciplina: string;
+  Banca: string;
+  Ano: string;
+  Nivel: string;
+  Instituicao: string;
+  Cargo: string;
+  TextoMotivador: string;
+  Questao: string;
+  Criterios: string;
+  Resposta: string;
+  EmailCriador: string;
 }
 
-const QuestionSchema = new Schema<IQuestion>({
+const QuestionSchema = new Schema<IQuestion>(
+  {
     Disciplina: { type: String, required: true },
     Banca: { type: String, required: true },
     Ano: { type: String, required: true },
@@ -26,8 +28,13 @@ const QuestionSchema = new Schema<IQuestion>({
     Questao: { type: String, required: true },
     Criterios: { type: String, required: false },
     Resposta: { type: String, required: false },
-}, { timestamps: true });
+    EmailCriador: { type: String, required: false, select: false },
+  },
+  { timestamps: true }
+);
 
-const Question: Model<IQuestion> = mongoose.models.Question || mongoose.model<IQuestion>('Question', QuestionSchema, "questions");
+const Question: Model<IQuestion> =
+  mongoose.models.Question ||
+  mongoose.model<IQuestion>("Question", QuestionSchema, "questions");
 
 export default Question;

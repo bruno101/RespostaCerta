@@ -58,6 +58,7 @@ export async function POST(req: Request) {
     const newUser = new User({
       name,
       email,
+      signedUpWithGoogle,
       image: image ? image : null,
     });
 
