@@ -10,7 +10,7 @@ import { BiSolidHide } from "react-icons/bi";
 import Image from "next/image";
 
 export default function Page() {
-  const [error, setError] = useState();
+  const [error, setError] = useState<string>();
   const [showPassword, setShowPassword] = useState(false);
   const [signingIn, setSigningIn] = useState(false);
   const router = useRouter();
@@ -35,11 +35,23 @@ export default function Page() {
       });
 
       if (res?.ok) return router.push("/");
+      if (res?.error === "Invalid Password") {
+        setError("Senha incorreta.");
+        setSigningIn(false);
+      } else if (res?.error === "Invalid Email") {
+        setSigningIn(false);
+
+        setError("Email incorreto.");
+      } else if (res?.error) {
+        setSigningIn(false);
+        setError("Ocorreu um erro. Tente novamente.");
+      }
     } catch (error) {
       console.log(error);
       if (error instanceof AxiosError) {
         const errorMessage = error.response?.data.message;
         setError(errorMessage);
+        setSigningIn(false);
       }
     }
   };
@@ -64,6 +76,11 @@ export default function Page() {
             </p>
           </div>
           <div className="flex flex-col bg-slate-50 rounded-b-lg pb-[20px] px-10 sm:px-20">
+            {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mt-4">
+                {error}
+              </div>
+            )}
             <button
               className="flex rounded-md bg-blue-500 hover:bg-blue-400 focus:outline focus:outline-2 focus:outline-blue-700 focus:bg-blue-400 w-[250px] py-1 text-white mx-auto my-5"
               onClick={() => signIn("google", { callbackUrl: "/" })}
@@ -77,11 +94,6 @@ export default function Page() {
               <hr className="w-[104px] mt-[10px] mr-auto" />
             </div>
             <form className="flex flex-col" onSubmit={handleSubmit}>
-              {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
-                  {error}
-                </div>
-              )}
               <label className="text-xs font-bold mt-3 mb-1">Email</label>
               <input
                 type="email"
@@ -115,7 +127,7 @@ flex items-center justify-center transition duration-150 ease hover:bg-blue-100"
                 Esqueceu a senha?
               </Link>
               <button className="rounded-md border-1 focus:outline focus:outline-blue-400 focus:outline-2 focus:bg-blue-200  hover:bg-blue-200 bg-white w-[250px] py-1 text-black ml-auto mr-auto mt-5 mb-2">
-                {signingIn? "Entrando..." : "Entrar"}
+                {signingIn ? "Entrando..." : "Entrar"}
               </button>
             </form>
             <p className="text-xs text-[#888] mx-auto">
