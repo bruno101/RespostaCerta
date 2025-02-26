@@ -39,7 +39,7 @@ export default function Layout({
   ];
   return (
     <div className="flex flex-col w-full max-w-screen h-full min-h-[100vh] bg-slate-50">
-      <div className="min-h-[40px] w-full flex bg-blue-400">
+      <div className="h-[40px] w-full flex bg-blue-400 fixed z-[11]">
         <button
           onClick={() => setShowMobileMenu((x) => !x)}
           className="my-auto ml-5 sm:hidden"
@@ -48,7 +48,7 @@ export default function Layout({
         </button>
         <Link
           href="/"
-          className="text-white font-bold my-auto text-lg ml-5 mr-[130px]"
+          className="text-white font-bold my-auto text-lg ml-5 mr-0 sm:mr-[180px]"
         >
           Resposta Certa
         </Link>
@@ -56,13 +56,13 @@ export default function Layout({
           Painel de Administração
         </p>
       </div>
-      <div className="flex w-full h-full ">
+      <div className="flex w-full h-full mt-[40px]">
         <nav
           className={`transition-all duration-300 transform ${
             showMobileMenu
               ? "w-[180px] sm:w-[300px] flex flex-col translate-x-0 opacity-100"
               : "w-0 sm:w-[300px] opacity-0 sm:opacity-100 -translate-x-full sm:translate-x-0 sm:flex sm:flex-col"
-          } bg-slate-600 min-h-full`}
+          } bg-slate-600 fixed z-10 h-full`}
         >
           <div className="flex flex-row pr-2 ml-2 mt-2">
             <div className="min-w-10 min-h-10 my-auto">
@@ -95,7 +95,7 @@ export default function Layout({
             </Link>
           ))}
         </nav>
-        <div className="w-full">{children}</div>
+        <div className="w-full sm:ml-[300px] min-h-[calc(100vh-40px)]">{children}</div>
       </div>
     </div>
   );
