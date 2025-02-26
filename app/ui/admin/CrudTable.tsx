@@ -37,6 +37,7 @@ export default function CrudTable({
   setData,
   editUrl,
   createUrl,
+  truncatedDataWordLimit,
 }: {
   title: string;
   icon: ReactElement<any, any>;
@@ -45,6 +46,7 @@ export default function CrudTable({
   setData: any;
   editUrl: string;
   createUrl: string;
+  truncatedDataWordLimit?: number[];
 }) {
   // Sample data
 
@@ -59,9 +61,9 @@ export default function CrudTable({
   // Filter data based on search term
   const filteredData = data.filter(
     (item) =>
-      item.concurso.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.text.toLowerCase().includes(searchTerm.toLowerCase())
+      item.concurso?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item._id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.text?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Calculate pagination
@@ -111,14 +113,31 @@ export default function CrudTable({
                 <SelectValue placeholder="10" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem className="text-cyan-700 focus:text-cyan-400" value="5">5</SelectItem>
-                <SelectItem className="text-cyan-700 focus:text-cyan-400" value="10">10</SelectItem>
-                <SelectItem className="text-cyan-700 focus:text-cyan-400" value="20">20</SelectItem>
+                <SelectItem
+                  className="text-cyan-700 focus:text-cyan-400"
+                  value="5"
+                >
+                  5
+                </SelectItem>
+                <SelectItem
+                  className="text-cyan-700 focus:text-cyan-400"
+                  value="10"
+                >
+                  10
+                </SelectItem>
+                <SelectItem
+                  className="text-cyan-700 focus:text-cyan-400"
+                  value="20"
+                >
+                  20
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <p className="ml-auto mt-[6px] text-cyan-700 mr-2 text-[14px]">Buscar:</p>
+          <p className="ml-auto mt-[6px] text-cyan-700 mr-2 text-[14px]">
+            Buscar:
+          </p>
           <input
             type="text"
             className="mt-[5px] border-1 p-1 rounded-sm h-7 w-[100px] sm:w-[150px] md:w-[220px] lg:w-[250px]"
@@ -144,14 +163,21 @@ export default function CrudTable({
             <TableBody>
               {currentItems.map((item, index) => (
                 <TableRow
-                  key={item._id}
+                  key={index}
                   className={index % 2 === 0 ? "bg-gray-50" : ""}
                 >
-                  {Object.keys(data[0]).map((itemKey: any, index) => (
-                    <TableCell key={index}>
-                      {truncateText(item[itemKey])}
-                    </TableCell>
-                  ))}
+                  {Object.keys(data[0]).map((itemKey: any, innerIndex) => {
+                    return (
+                      <TableCell key={innerIndex}>
+                        {truncatedDataWordLimit
+                          ? truncateText(
+                              item[itemKey] ? item[itemKey] : "",
+                              truncatedDataWordLimit[innerIndex]
+                            )
+                          : truncateText(item[itemKey])}
+                      </TableCell>
+                    );
+                  })}
                   <TableCell>
                     <a href={`${editUrl}/${item._id}`}>
                       <button>
@@ -161,7 +187,7 @@ export default function CrudTable({
                   </TableCell>
                   <TableCell>
                     <button>
-                      <FaTrash className="hover:text-cyan-300   text-blue-500 h-4 w-4" />
+                      <FaTrash className="hover:text-cyan-300 my-auto  text-blue-500 h-4 w-4" />
                     </button>
                   </TableCell>
                 </TableRow>
