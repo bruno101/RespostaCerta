@@ -20,6 +20,14 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Link } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function CrudTable({
   title,
@@ -42,7 +50,7 @@ export default function CrudTable({
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const itemsPerPage = 5;
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
   useEffect(() => {
     //fetchquestions
@@ -69,6 +77,10 @@ export default function CrudTable({
       : text;
   };
 
+  const handleItemsPerPageChange = (value: string) => {
+    setItemsPerPage(Number(value));
+  };
+
   return (
     <>
       <div className="flex pt-3 px-3 text-cyan-700">
@@ -88,11 +100,28 @@ export default function CrudTable({
           </a>
         </div>
         <hr className="mt-3 border-slate-100"></hr>
-        <div className="flex ml-auto mr-4 mt-3">
-          <p className="mt-[1px] text-cyan-700 mr-2 text-[15px]">Buscar:</p>
+        <div className="flex mr-4 mt-3">
+          <div className="flex ml-4 text-cyan-700 items-center gap-2">
+            <span className="text-sm">Itens por página:</span>
+            <Select
+              value={itemsPerPage.toString()}
+              onValueChange={handleItemsPerPageChange}
+            >
+              <SelectTrigger className="w-[60px] h-7">
+                <SelectValue placeholder="10" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem className="text-cyan-700 focus:text-cyan-400" value="5">5</SelectItem>
+                <SelectItem className="text-cyan-700 focus:text-cyan-400" value="10">10</SelectItem>
+                <SelectItem className="text-cyan-700 focus:text-cyan-400" value="20">20</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <p className="ml-auto mt-[6px] text-cyan-700 mr-2 text-[14px]">Buscar:</p>
           <input
             type="text"
-            className="border-1 p-1 rounded-sm h-7"
+            className="mt-[5px] border-1 p-1 rounded-sm h-7 w-[100px] sm:w-[150px] md:w-[220px] lg:w-[250px]"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -150,16 +179,35 @@ export default function CrudTable({
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(prev - 1, 1))
-                    }
-                    className={
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={`flex border-0 shadow-white hover:bg-white items-center gap-1 ${
                       currentPage === 1
                         ? "pointer-events-none opacity-50"
                         : "cursor-pointer"
+                    }`}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
                     }
-                  >Anterior</PaginationPrevious>
+                    disabled={currentPage === 1}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="lucide lucide-chevron-left"
+                    >
+                      <path d="m15 18-6-6 6-6" />
+                    </svg>
+                    Anterior
+                  </Button>
                 </PaginationItem>
 
                 {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
@@ -169,10 +217,10 @@ export default function CrudTable({
                       <PaginationLink
                         onClick={() => setCurrentPage(pageNumber)}
                         className={
-                            currentPage === pageNumber
-                              ? "pointer-events-none opacity-50"
-                              : "cursor-pointer"
-                          }
+                          currentPage === pageNumber
+                            ? "pointer-events-none opacity-50"
+                            : "cursor-pointer"
+                        }
                         isActive={currentPage === pageNumber}
                       >
                         {pageNumber}
@@ -198,16 +246,35 @@ export default function CrudTable({
                 )}
 
                 <PaginationItem>
-                  <PaginationNext
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    }
-                    className={
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={`flex border-0 shadow-white hover:bg-white items-center gap-1 ${
                       currentPage === totalPages
                         ? "pointer-events-none opacity-50"
                         : "cursor-pointer"
+                    }`}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                     }
-                  />
+                    disabled={currentPage === totalPages}
+                  >
+                    Próximo
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="lucide lucide-chevron-right"
+                    >
+                      <path d="m9 18 6-6-6-6" />
+                    </svg>
+                  </Button>
                 </PaginationItem>
               </PaginationContent>
             </Pagination>

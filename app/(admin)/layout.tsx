@@ -38,7 +38,7 @@ export default function Layout({
     },
   ];
   return (
-    <div className="flex flex-col w-full max-w-screen h-[100vh] bg-slate-50">
+    <div className="flex flex-col w-full max-w-screen h-full min-h-[100vh] bg-slate-50">
       <div className="min-h-[40px] w-full flex bg-blue-400">
         <button
           onClick={() => setShowMobileMenu((x) => !x)}
@@ -56,13 +56,13 @@ export default function Layout({
           Painel de Administração
         </p>
       </div>
-      <div className="flex w-full h-full">
+      <div className="flex w-full h-full ">
         <nav
           className={`transition-all duration-300 transform ${
             showMobileMenu
               ? "w-[180px] sm:w-[300px] flex flex-col translate-x-0 opacity-100"
               : "w-0 sm:w-[300px] opacity-0 sm:opacity-100 -translate-x-full sm:translate-x-0 sm:flex sm:flex-col"
-          } h-full max-h-screen bg-slate-600 `}
+          } bg-slate-600 min-h-full`}
         >
           <div className="flex flex-row pr-2 ml-2 mt-2">
             <div className="min-w-10 min-h-10 my-auto">
