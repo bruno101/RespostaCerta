@@ -26,7 +26,7 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
     editorProps: {
       attributes: {
         class:
-          "min-h-[150px] w-full rounded-md border-0 bg-transparent p-0 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none",
+        "prose prose-sm dark:prose-invert max-w-none min-h-[150px] w-full rounded-md border-0 bg-transparent p-0 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none"
       },
     },
     onUpdate: ({ editor }) => {

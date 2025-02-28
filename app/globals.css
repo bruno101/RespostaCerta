@@ -78,13 +78,57 @@ body {
   }
 }
 
-
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+.rich-text-editor {
+  .ProseMirror {
+    @apply outline-none;
+
+    > * + * {
+      @apply mt-4;
+    }
+
+    h1 {
+      @apply text-4xl font-bold;
+    }
+
+    h2 {
+      @apply text-3xl font-bold;
+    }
+
+    h3 {
+      @apply text-2xl font-bold;
+    }
+
+    ul {
+      @apply list-disc list-outside ml-6 space-y-1;
+    }
+
+    ol {
+      @apply list-decimal list-outside ml-6 space-y-1;
+    }
+
+    li {
+      @apply pl-2;
+    }
+
+    p {
+      @apply leading-7;
+    }
+
+    blockquote {
+      @apply pl-4 border-l-2 border-gray-300 italic;
+    }
+
+    code {
+      @apply bg-muted rounded px-1.5 py-0.5 font-mono text-sm;
+    }
   }
 }
