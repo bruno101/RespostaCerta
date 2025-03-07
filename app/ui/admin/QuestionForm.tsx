@@ -52,11 +52,6 @@ let initialQuestion: IQuestion = {
   Dificuldade: "",
 };
 
-function strip(html: string) {
-  let doc = new DOMParser().parseFromString(html, "text/html");
-  return doc.body.textContent || "";
-}
-
 export function QuestionForm({
   setPreview,
   filters,
@@ -70,6 +65,16 @@ export function QuestionForm({
 }) {
   if (initialQuestionValues) {
     initialQuestion = initialQuestionValues;
+  }
+  const [parser, setParser] = useState<DOMParser | null>(null);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setParser(new DOMParser());
+    }
+  }, []);
+  function strip(html: string) {
+    let doc = parser?.parseFromString(html, "text/html");
+    return doc?.body.textContent || "";
   }
   const [question, setQuestion] = useState<IQuestion>({ ...initialQuestion });
   const [isSubmitting, setIsSubmitting] = useState(false);
