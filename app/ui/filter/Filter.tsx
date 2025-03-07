@@ -2,6 +2,7 @@ import { SharedSelection } from "@heroui/system";
 import Selector from "./Selector";
 import { Dispatch, MouseEventHandler, SetStateAction, useEffect } from "react";
 import Search from "./Search";
+import ISelector from "@/app/interfaces/ISelector";
 
 export default function Filter({
   onSelectionChange,
@@ -18,7 +19,7 @@ export default function Filter({
   empty: MouseEventHandler<HTMLButtonElement>;
   keyWords: string;
   setKeyWords: Dispatch<SetStateAction<string>>;
-  selectors: { name: string; options: string[] }[];
+  selectors: ISelector[];
 }) {
   
   return (
@@ -26,15 +27,16 @@ export default function Filter({
       <Search keyWords={keyWords} setKeyWords={setKeyWords} />
       <p className="ml-5 mt-3 mb-3 text-[15px] font-bold">Filtrar por</p>
       <div className="ml-3 mr-3 flex flex-wrap gap-3">
-        {selectors.map((selector, index) => (
+        {selectors.map((selector, index) => {
+          return(
           <Selector
             name={selector.name}
             key={index}
-            options={selector.options}
+            options={[...selector.options]}
             onSelectionChange={onSelectionChange}
             selected={[...selected[index].options]}
           />
-        ))}
+        )})}
       </div>
       <hr className="m-6" />
       <div className="flex flex-row mb-5">

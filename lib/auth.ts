@@ -40,7 +40,7 @@ export const authOptions: AuthOptions = {
           name: user.name,
           email: user.email,
           image: user.image,
-          role: user.role ? user.role : user,
+          role: user.role || "user",
         };
       },
     }),
@@ -97,25 +97,19 @@ export const authOptions: AuthOptions = {
       }
 
       if (user) {
-        token.role = user.role ? user.role : "user";
-        const u = user as unknown as any;
-        return {
-          ...token,
-          id: u.id,
-        };
+        token.role = user.role || "user";
+        token.id = user.id;
       }
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
-      if (token) {
-        session.user.role = token.role ? token.role : "user";
-      }
       return {
         ...session,
         user: {
           ...session.user,
           _id: token.id,
           name: token.name,
+          role: token.role || "user"
         },
       };
     },

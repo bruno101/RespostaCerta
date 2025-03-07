@@ -11,11 +11,13 @@ export default function UserComments({
   commentsLoading,
   setComments,
   currentUser,
+  questionId
 }: {
   comments: IComment[];
   commentsLoading: boolean;
   setComments: Dispatch<SetStateAction<IComment[]>>;
   currentUser?: IUser;
+  questionId: string;
 }) {
   const [buttonActive, setButtonActive] = useState(1);
   const orderByLikes = buttonActive === 1;
@@ -81,7 +83,7 @@ export default function UserComments({
             </div>
           )}
           <CommentArea
-            questionId={comments[0].question_id}
+            questionId={questionId}
             setComments={setComments}
             currentUser={currentUser}
           />

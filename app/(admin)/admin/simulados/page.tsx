@@ -8,8 +8,10 @@ export default function Page() {
   const [data, setData] = useState([]);
   return (
     <CrudTable
+      columns={["_id", "title"]}
       editUrl={"/admin/simulados/editar"}
       createUrl={"/admin/simulados/criar"}
+      deleteUrl={"simulados"}
       data={data}
       setData={setData}
       title={"Simulado"}

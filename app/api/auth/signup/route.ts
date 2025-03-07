@@ -90,8 +90,6 @@ export async function PUT(request: Request) {
 
     await userToUpdate.save();
 
-    console.log(userToUpdate);
-
     return NextResponse.json(
       {
         message: "User updated successfully",

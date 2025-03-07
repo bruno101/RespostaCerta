@@ -10,4 +10,6 @@ export default interface IQuestion {
   Codigo: string;
   Instituicao: string;
   Cargo: string;
+  TextoPlano: string;
+  Dificuldade: string
 }

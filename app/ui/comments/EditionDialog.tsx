@@ -45,7 +45,6 @@ export default function EditionDialog({
       newReplies[newReplyIndex] = newReply;
       commentToChange.replies = newReplies;
       newComments[commentIndex] = commentToChange;
-      console.log(newComments);
 
       return newComments;
     });

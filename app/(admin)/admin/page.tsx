@@ -2,7 +2,7 @@
 import CrudTable from "@/app/ui/admin/CrudTable";
 import { useEffect, useState } from "react";
 import { FaFileCircleQuestion } from "react-icons/fa6";
-import { fetchUsers } from "./fetchUsers";
+import { fetchQuestionsFromUser } from "@/app/actions/fetchQuestionsFromUser";
 import IQuestion from "@/app/interfaces/IQuestion";
 
 export default function Page() {
@@ -12,7 +12,7 @@ export default function Page() {
   const truncatedDataWordLimit = [3, 100, 250];
   useEffect(() => {
     async function fetchData() {
-      const fetchedData = await fetchUsers();
+      const fetchedData = await fetchQuestionsFromUser();
       const parsedData = JSON.parse(fetchedData);
       setData(
         parsedData.map((item: IQuestion) => {
@@ -26,11 +26,10 @@ export default function Page() {
               item.Cargo +
               " - " +
               item.Banca,
-            text: item.TextoMotivador + item.Questao + item.Resposta,
+            text: item.TextoPlano ? item.TextoPlano : "",
           };
         })
       );
-      console.log(fetchedData);
     }
     fetchData();
   }, []);
@@ -39,8 +38,10 @@ export default function Page() {
 
   return (
     <CrudTable
+      columns={["_id", "concurso", "text"]}
       editUrl={"/admin/questoes/editar"}
       createUrl={"/admin/questoes/criar"}
+      deleteUrl={"questions"}
       data={data}
       truncatedDataWordLimit={truncatedDataWordLimit}
       setData={setData}

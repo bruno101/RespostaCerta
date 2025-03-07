@@ -22,10 +22,6 @@ export async function GET(
       );
     }
 
-    /*const comments = await Comment.find({
-      question_id: code,
-      $or: [{ reply_to: null }, { reply_to: { $exists: false } }],
-    }).lean();*/
     const commentsWithUserData = await Comment.aggregate([
       {
         $lookup: {
@@ -38,7 +34,7 @@ export async function GET(
     ]);
     const commentsWithExtraData = await Promise.all(
       commentsWithUserData
-        .filter((comment) => !comment.reply_to)
+        .filter((comment) => comment.question_id === code && !comment.reply_to)
         .map(async (comment) => {
           const newComment = { ...comment };
           const didCurrentUserLike = newComment.usersWhoLiked.includes(

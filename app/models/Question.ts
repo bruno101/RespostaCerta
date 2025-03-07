@@ -14,6 +14,8 @@ interface IQuestion extends Document {
   Criterios: string;
   Resposta: string;
   EmailCriador: string;
+  TextoPlano: string;
+  Dificuldade: string;
 }
 
 const QuestionSchema = new Schema<IQuestion>(
@@ -29,6 +31,8 @@ const QuestionSchema = new Schema<IQuestion>(
     Criterios: { type: String, required: false },
     Resposta: { type: String, required: false },
     EmailCriador: { type: String, required: false, select: false },
+    TextoPlano: {type: String, required: true},
+    Dificuldade: {type: String, required: true}
   },
   { timestamps: true }
 );

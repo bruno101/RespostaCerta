@@ -31,7 +31,7 @@ export default function MobileMenu({
         onClick={toggleMobileMenu}
         type="button"
       >
-        <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+        <span className="text-cyan-300 absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="w-8 h-8"
@@ -48,8 +48,17 @@ export default function MobileMenu({
         </span>
       </button>
 
-      <Link href="/" className="text-2xl text-white font-bold ml-3 -mt-2">
-        Questões Discursivas
+      <Link href="/" className="flex text-2xl text-white font-bold -mt-2">
+        <Image
+          alt={"logo"}
+          src={
+            "https://img.icons8.com/?size=100&id=mocKqJgwSoT7&format=png&color=0000000"
+          }
+          width={100}
+          height={100}
+          className="w-11 h-11 ml-2 mr-3 my-auto -mt-[1px]"
+        />
+        Resposta Certa
       </Link>
       {session && (
         <div className="text-white ml-auto mr-1">

@@ -23,8 +23,18 @@ export default function DesktopMenu({
   return (
     <>
       <div className="flex flex-row">
-        <Link href="/" className="text-2xl text-white font-bold">
-          Resposta Certa
+
+        <Link href="/" className="flex text-2xl text-white font-bold">
+        <Image
+          alt={"logo"}
+          src={
+            "https://img.icons8.com/?size=100&id=mocKqJgwSoT7&format=png&color=0000000"
+          }
+          width={100}
+          height={100}
+          className="w-11 h-11 mr-2 my-auto -mt-1"
+        />
+        Resposta Certa
         </Link>
         {session === null && (
           <Link className="ml-auto mr-5" href="/signup">

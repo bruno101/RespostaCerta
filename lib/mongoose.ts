@@ -15,7 +15,6 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
 
   if (!cached.promise) {
     const opts = {};
-    console.log(MONGODB_URI);
     cached.promise = mongoose
       .connect(MONGODB_URI, opts)
       .then((mongooseInstance) => {

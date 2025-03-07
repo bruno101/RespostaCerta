@@ -3,15 +3,16 @@
 import Question from "@/app/models/Question";
 import { connectToDatabase } from "@/lib/mongoose";
 import { getServerSession } from "next-auth";
+import IQuestion from "@/app/interfaces/IQuestion";
 
-export async function fetchUsers() {
+export async function fetchQuestionsFromUser() {
   await connectToDatabase();
   const session = await getServerSession();
   let data = [];
   data = await Question.find({
     EmailCriador: session?.user?.email,
   });
-  let mappedData: any[] = [];
+  let mappedData: IQuestion[] = [];
   if (data) {
     mappedData = data.map((q) => ({
       Codigo: q._id.toString(), // 👈 Convert ObjectId to string
@@ -25,6 +26,8 @@ export async function fetchUsers() {
       Questao: q.Questao,
       Criterios: q.Criterios,
       Resposta: q.Resposta,
+      TextoPlano: q.TextoPlano,
+      Dificuldade: q.Dificuldade
     }));
   }
   return JSON.stringify(mappedData);

@@ -147,6 +147,7 @@ export default function QuestionComments({
             {activeItem === 0 && <QuestionAnswer answer={question.Resposta} />}
             {activeItem === 1 && (
               <UserComments
+                questionId={question.Codigo}
                 comments={[...comments]}
                 setComments={setComments}
                 commentsLoading={commentsLoading}

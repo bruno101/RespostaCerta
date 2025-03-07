@@ -19,7 +19,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Link } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -35,8 +34,10 @@ export default function CrudTable({
   headerNames,
   data,
   setData,
+  columns,
   editUrl,
   createUrl,
+  deleteUrl,
   truncatedDataWordLimit,
 }: {
   title: string;
@@ -44,8 +45,10 @@ export default function CrudTable({
   headerNames: string[];
   data: any[];
   setData: any;
+  columns: string[];
   editUrl: string;
   createUrl: string;
+  deleteUrl: string;
   truncatedDataWordLimit?: number[];
 }) {
   // Sample data
@@ -53,10 +56,28 @@ export default function CrudTable({
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [deleting, setDeleting] = useState<boolean>();
 
-  useEffect(() => {
-    //fetchquestions
-  }, []);
+  async function handleDelete(_id: string) {
+    try {
+      setDeleting(true);
+      const response = await fetch(`/api/${deleteUrl}/${_id}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        console.log("Erro deletando questão.");
+      } else {
+        setData((prev: { _id: string }[]) => {
+          return [...prev].filter((item) => item._id != _id);
+        });
+      }
+    } catch {
+      console.log("Erro deletando questão.");
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   // Filter data based on search term
   const filteredData = data.filter(
@@ -103,13 +124,13 @@ export default function CrudTable({
         </div>
         <hr className="mt-3 border-slate-100"></hr>
         <div className="flex mr-4 mt-3">
-          <div className="flex ml-4 text-cyan-700 items-center gap-2">
+          <div className="flex ml-4 mr-1 w-[35%] text-cyan-700 items-center gap-2">
             <span className="text-sm">Itens por página:</span>
             <Select
               value={itemsPerPage.toString()}
               onValueChange={handleItemsPerPageChange}
             >
-              <SelectTrigger className="w-[60px] h-7">
+              <SelectTrigger className="max-w-[60px] h-7">
                 <SelectValue placeholder="10" />
               </SelectTrigger>
               <SelectContent>
@@ -166,7 +187,7 @@ export default function CrudTable({
                   key={index}
                   className={index % 2 === 0 ? "bg-gray-50" : ""}
                 >
-                  {Object.keys(data[0]).map((itemKey: any, innerIndex) => {
+                  {columns.map((itemKey: any, innerIndex) => {
                     return (
                       <TableCell key={innerIndex}>
                         {truncatedDataWordLimit
@@ -186,7 +207,10 @@ export default function CrudTable({
                     </a>
                   </TableCell>
                   <TableCell>
-                    <button>
+                    <button
+                      disabled={deleting}
+                      onClick={() => handleDelete(item._id)}
+                    >
                       <FaTrash className="hover:text-cyan-300 my-auto  text-blue-500 h-4 w-4" />
                     </button>
                   </TableCell>
