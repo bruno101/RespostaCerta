@@ -19,6 +19,8 @@ export default function FullQuestion({ codigo }: { codigo: string }) {
     Codigo: "",
     Instituicao: "",
     Cargo: "",
+    Dificuldade: "",
+    TextoPlano: ""
   });
   const [loading, setLoading] = useState(true);
   useEffect(() => {
