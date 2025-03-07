@@ -93,7 +93,6 @@ export async function PUT(
 
     // Parse the request body
     const body = await request.json();
-    console.log(body);
 
     // Find and update the question
     const updatedQuestion = await Question.findByIdAndUpdate(

@@ -30,7 +30,6 @@ export default function Page({
       const res = await fetch(`/api/questions/${questaoId}`); // 👈 API call
       if (!res.ok) throw new Error("Failed to fetch questions");
       const data: IQuestion = await res.json();
-      console.log(data);
       setInitialQuestion(data);
     }
     fetchQuestion();

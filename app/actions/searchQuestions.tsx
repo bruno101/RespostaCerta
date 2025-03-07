@@ -17,7 +17,6 @@ export async function searchQuestions(
       }
       return selector;
     });
-    console.log(selected);
     await connectToDatabase();
     let findObject: any = { $and: [] };
     for (let selector of selected) {
@@ -39,7 +38,6 @@ export async function searchQuestions(
         }
       }
     }
-    console.log(findObject);
     const questions = await Question.find(findObject);
     const mappedQuestions: IQuestion[] = questions.map((q) => ({
       Codigo: q._id.toString(), // 👈 Convert ObjectId to string
@@ -56,7 +54,6 @@ export async function searchQuestions(
       TextoPlano: q.TextoPlano,
       Dificuldade: q.Dificuldade,
     }));
-    console.log(questions);
     return mappedQuestions;
   } catch (error) {
     console.error("Error usearching questions:", error);

@@ -23,16 +23,13 @@ export default function QuestionList({
   const [dataLoaded, setDataLoaded] = useState(false);
   const fetchQuestions = async () => {
     try {
-      console.log("fetch");
       const data = await searchQuestions(filtered);
       //const res = await fetch("/api/questions");
       //const data = await res.json();
-      console.log("fetched");
       if (data) {
         setQuestions(data);
         setDataLoaded(true);
       }
-      console.log(data);
     } catch (error) {
       console.error("Error fetching", error);
     } finally {
