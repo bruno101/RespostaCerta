@@ -9,7 +9,7 @@ export default function RootLayout({
 }>) {
   return (
     <div>
-      <div className="bg-cyan-700 w-full h-[25vh] sm:h-[45vh] pt-5 pl-5 sm:pl-7"></div>
+      <div className="bg-cyan-600 w-full h-[25vh] sm:h-[45vh] pt-5 pl-5 sm:pl-7"></div>
 
       <NavLinks />
 

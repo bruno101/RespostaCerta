@@ -34,6 +34,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { updateFilter } from "@/app/actions/updateFilter";
+import Selector from "./Selector";
 
 let initialQuestion: IQuestion = {
   Disciplina: "",
@@ -272,69 +273,19 @@ export function QuestionForm({
             }
           }
 
-          // Combine predefined options with custom options
-          const allOptions = [
-            ...filter.options,
-            ...(customOptions[noSpecialCharacterName] || []),
-          ];
-
           return (
             <div className="space-y-2" key={index}>
               <Label htmlFor={filter.name} className="text-cyan-700">
                 {filter.name} <span className="text-red-400">*</span>
               </Label>
-              <Select
-                value={question[noSpecialCharacterName as keyof IQuestion]}
-                onValueChange={(value) => {
-                  if (value === `adicionar_${noSpecialCharacterName}`) {
-                    // Open modal to add new option
-                    openAddOptionModal(
-                      noSpecialCharacterName as keyof IQuestion,
-                      filter.name
-                    );
-                  } else {
-                    handleSelectChange(
-                      noSpecialCharacterName as keyof IQuestion,
-                      value
-                    );
-                  }
-                }}
-              >
-                <SelectTrigger
-                  id={filter.name}
-                  className="w-full text-cyan-900"
-                >
-                  <SelectValue
-                    placeholder={`Selecione ${
-                      ["Cargo", "Ano", "Nível"].includes(filter.name)
-                        ? "o"
-                        : "a"
-                    } ${filter.name.toLowerCase()}`}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {allOptions.map((option, innerIndex) => (
-                    <SelectItem
-                      className="text-cyan-700 focus:text-cyan-500 font-medium"
-                      value={option}
-                      key={innerIndex}
-                    >
-                      {option}
-                    </SelectItem>
-                  ))}
-                  {!["Dificuldade", "Nível"].includes(filter.name) && (
-                    <SelectItem
-                      value={`adicionar_${noSpecialCharacterName}`}
-                      className="text-cyan-700 focus:text-cyan-500 border-t-1 border-t-cyan-200 rounded-t-none font-medium cursor-pointer"
-                    >
-                      <div className="flex items-center">
-                        <Plus className="h-4 w-4 mr-1" />
-                        Adicionar {filter.name}...
-                      </div>
-                    </SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
+              <Selector
+                filter={filter}
+                openAddOptionModal={openAddOptionModal}
+                handleSelectChange={handleSelectChange}
+                customOptions={customOptions}
+                question={question}
+                noSpecialCharacterName={noSpecialCharacterName}
+              />
             </div>
           );
         })}

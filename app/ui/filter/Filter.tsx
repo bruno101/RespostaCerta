@@ -13,7 +13,7 @@ export default function Filter({
   setKeyWords,
   selectors,
 }: {
-  onSelectionChange: (name: string, key: SharedSelection) => void;
+  onSelectionChange: (name: string, key: string[]) => void;
   selected: { options: string[]; name: string }[];
   onFilter: MouseEventHandler<HTMLButtonElement>;
   empty: MouseEventHandler<HTMLButtonElement>;

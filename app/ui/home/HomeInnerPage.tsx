@@ -78,8 +78,8 @@ export default function HomeInnerPage({
     ]);
   }, [searchParams]);
 
-  const onSelectionChange = (name: string, keys: SharedSelection) => {
-    const nextSelected: { options: any[]; name: string }[] = [...selected].map(
+  const onSelectionChange = (name: string, keys: string[]) => {
+    const nextSelected: { options: string[]; name: string }[] = [...selected].map(
       (selection) => {
         if (selection.name !== name) {
           return selection;
