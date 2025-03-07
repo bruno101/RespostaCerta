@@ -61,7 +61,7 @@ function isValidObjectId(id: string) {
 // PUT route to update a question by ID
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { code: string } }
+  { params }: { params: Promise<{ code: string }> }
 ) {
   try {
     const { code } = await params;
@@ -136,7 +136,7 @@ export async function PUT(
 // DELETE route to delete a question by ID
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { code: string } }
+  { params }: { params: Promise<{ code: string }> }
 ) {
   try {
     const { code } = await params;
