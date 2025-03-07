@@ -21,22 +21,22 @@ export default function Filter({
   setKeyWords: Dispatch<SetStateAction<string>>;
   selectors: ISelector[];
 }) {
-  
   return (
     <div className="w-full">
       <Search keyWords={keyWords} setKeyWords={setKeyWords} />
       <p className="ml-5 mt-3 mb-3 text-[15px] font-bold">Filtrar por</p>
       <div className="ml-3 mr-3 flex flex-wrap gap-3">
         {selectors.map((selector, index) => {
-          return(
-          <Selector
-            name={selector.name}
-            key={index}
-            options={[...selector.options]}
-            onSelectionChange={onSelectionChange}
-            selected={[...selected[index].options]}
-          />
-        )})}
+          return (
+            <Selector
+              name={selector.name}
+              key={index}
+              options={[...selector.options]}
+              onSelectionChange={onSelectionChange}
+              selected={[...selected[index].options]}
+            />
+          );
+        })}
       </div>
       <hr className="m-6" />
       <div className="flex flex-row mb-5">

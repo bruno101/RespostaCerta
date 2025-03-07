@@ -3,10 +3,8 @@ import { useEffect, useState } from "react";
 import Filter from "../filter/Filter";
 import AppliedFilters from "../filter/AppliedFilters";
 import QuestionList from "../questions/QuestionList";
-import { SharedSelection } from "@heroui/system";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import LoadingSkeletons from "../questions/LoadingSkeletons";
 import ISelector from "@/app/interfaces/ISelector";
 
 export default function HomeInnerPage({
@@ -18,6 +16,7 @@ export default function HomeInnerPage({
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
   const [selected, setSelected] = useState(
     [...initialSelected].map((selection) => {
@@ -27,15 +26,10 @@ export default function HomeInnerPage({
     })
   );
   const [keyWords, setKeyWords] = useState("");
-  const [loadingQuestions, setLoadingQuestions] = useState(false);
   const [filtered, setFiltered] = useState([
     ...initialSelected,
     { name: "Palavras Chave", options: [] },
   ]);
-
-  const onFinishedLoading = () => {
-    setLoadingQuestions(false);
-  };
 
   const capitalize = (option: string, name: string): string => {
     const possibleOptions = selectors.filter((item) => item.name === name)[0]
@@ -50,16 +44,18 @@ export default function HomeInnerPage({
     let alreadyHasSelectedItems = false;
     if (keyW) {
       setKeyWords(keyW);
-      !alreadyHasSelectedItems && setLoadingQuestions(true);
+      !alreadyHasSelectedItems;
       alreadyHasSelectedItems = true;
     }
 
-    const newSelected = [...selected];
+    const newSelected = [...selected].map((selector) => {
+      return { name: selector.name, options: [...selector.options] };
+    });
 
     for (const item of newSelected) {
       const value = searchParams.get(item.name.toLowerCase());
       if (value) {
-        !alreadyHasSelectedItems && setLoadingQuestions(true);
+        !alreadyHasSelectedItems;
         alreadyHasSelectedItems = true;
         const valueArr = value.split(",");
         for (const option of valueArr) {
@@ -79,15 +75,15 @@ export default function HomeInnerPage({
   }, [searchParams]);
 
   const onSelectionChange = (name: string, keys: string[]) => {
-    const nextSelected: { options: string[]; name: string }[] = [...selected].map(
-      (selection) => {
-        if (selection.name !== name) {
-          return selection;
-        } else {
-          return { ...selection, options: [...keys] };
-        }
+    const nextSelected: { options: string[]; name: string }[] = [
+      ...selected,
+    ].map((selection) => {
+      if (selection.name !== name) {
+        return selection;
+      } else {
+        return { ...selection, options: [...keys] };
       }
-    );
+    });
     setSelected(nextSelected);
   };
 
@@ -111,7 +107,7 @@ export default function HomeInnerPage({
     }
   };
   const onFilter = () => {
-    setLoadingQuestions(true);
+    //setLoading(true);
     let newKeyWordParams = `?palavras=${keyWords}`;
     for (const item of selected) {
       newKeyWordParams += `&${item.name.toLowerCase()}=${item.options.join(
@@ -136,25 +132,12 @@ export default function HomeInnerPage({
             empty={empty}
             selectors={[...selectors]}
           />
-          {loadingQuestions ? (
-            <>
-              <LoadingSkeletons />
-              {filtered[0].options.length > 0 && (
-                <QuestionList
-                  loading={loadingQuestions}
-                  onFinishedLoading={onFinishedLoading}
-                />
-              )}
-              )
-            </>
-          ) : (
-            filtered[0].options.length > 0 && (
-              <QuestionList
-                loading={loadingQuestions}
-                onFinishedLoading={onFinishedLoading}
-              />
-            )
-          )}
+
+          <QuestionList
+            loading={loading}
+            setLoading={setLoading}
+            filtered={[...filtered]}
+          />
         </div>
         <div className="w-[25%]">
           <AppliedFilters
@@ -177,24 +160,12 @@ export default function HomeInnerPage({
           empty={empty}
           selectors={[...selectors]}
         />
-        {loadingQuestions ? (
-          <>
-            <LoadingSkeletons />
-            {filtered[0].options.length > 0 && (
-              <QuestionList
-                loading={loadingQuestions}
-                onFinishedLoading={onFinishedLoading}
-              />
-            )}
-          </>
-        ) : (
-          filtered[0].options.length > 0 && (
-            <QuestionList
-              loading={loadingQuestions}
-              onFinishedLoading={onFinishedLoading}
-            />
-          )
-        )}
+
+        <QuestionList
+          loading={loading}
+          setLoading={setLoading}
+          filtered={[...filtered]}
+        />
       </div>
     </div>
   );
