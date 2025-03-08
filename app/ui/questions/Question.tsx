@@ -6,7 +6,7 @@ import QuestionBody from "./QuestionBody";
 import QuestionComments from "./QuestionComments";
 import IQuestion from "@/app/interfaces/IQuestion";
 
-export default function QuestionList({
+export default function Question({
   question,
   index,
 }: {

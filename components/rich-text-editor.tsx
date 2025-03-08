@@ -4,6 +4,7 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import { Toggle } from "@/components/ui/toggle";
+import Placeholder from "@tiptap/extension-placeholder"
 import {
   Bold,
   Italic,
@@ -21,13 +22,15 @@ interface RichTextEditorProps {
   onChange: (content: string) => void;
   placeholder?: string;
   setPlainText?: Dispatch<SetStateAction<string>>;
+  className?: string;
 }
 
 export function RichTextEditor({
   content,
   onChange,
   placeholder,
-  setPlainText
+  setPlainText,
+  className = ""
 }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
@@ -37,6 +40,10 @@ export function RichTextEditor({
         },
       }),
       Underline,
+      Placeholder.configure({
+        placeholder: placeholder || "Escreva sua resposta aqui...",
+        emptyEditorClass: "is-editor-empty",
+      }),
     ],
     content,
     immediatelyRender: false,
@@ -65,7 +72,7 @@ export function RichTextEditor({
   }
 
   return (
-    <div className="rich-text-editor">
+    <div className={`rich-text-editor ${className}`}>
       <div className="flex flex-wrap gap-1 pt-2 mb-2 border-b pb-2">
         <Toggle
           className="text-cyan-700"

@@ -8,6 +8,8 @@ import IQuestion from "@/app/interfaces/IQuestion";
 import IComment from "@/app/interfaces/IComment";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import {RiQuestionAnswerLine} from "react-icons/ri"
+import SubmitResponse from "./SubmitResponse";
 
 export default function QuestionComments({
   question,
@@ -53,7 +55,7 @@ export default function QuestionComments({
   }, [session]);
 
   useEffect(() => {
-    if (activeItem != -1 || !commentsLoading) {
+    if (activeItem !== -1 || !commentsLoading) {
       buttonRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [activeItem, commentsLoading]);
@@ -74,7 +76,7 @@ export default function QuestionComments({
             activeItem === 0 &&
             "bg-blue-200 text-cyan-800 font-bold border-b-3 border-b-blue-500 pb-2"
           } ${
-            activeItem === 1 && "hover:pb-[13px]"
+            activeItem !== 1 && "hover:pb-[13px]"
           } py-4 px-5 hover:border-b-3 hover:border-b-blue-500 hover:pb-2 flex flex-row`}
         >
           <Image
@@ -101,7 +103,7 @@ export default function QuestionComments({
             activeItem === 1 &&
             "hover:pb-[16px] bg-blue-200 text-cyan-800 font-bold border-b-3 border-b-blue-500"
           } ${
-            activeItem === 0 && "hover:pb-[13px]"
+            activeItem !== 1 && "hover:pb-[13px]"
           } py-4 px-5 hover:border-b-3 hover:border-b-blue-500 hover:pb-[13px] flex flex-row
           `}
         >
@@ -113,6 +115,30 @@ export default function QuestionComments({
             alt="comentários"
           />
           <p>Comentários de alunos</p>
+          {comments.length > 0 && (
+            <div className="min-w-5 pr-[2px] h-6 ml-3 mt-[-1px] bg-cyan-700 rounded-md text-white">
+              {comments.length}
+            </div>
+          )}
+        </button>
+        <button
+          disabled={sessionReady ? false : true}
+          onClick={() => {
+            if (!session) {
+              router.push("/signin");
+            }
+            setActiveItem(2);
+          }}
+          className={`${
+            activeItem === 2 &&
+            "hover:pb-[16px] bg-blue-200 text-cyan-800 font-bold border-b-3 border-b-blue-500"
+          } ${
+            activeItem !== 2 && "hover:pb-[13px]"
+          } py-4 px-5 hover:border-b-3 hover:border-b-blue-500 hover:pb-[13px] flex flex-row
+          `}
+        >
+          <RiQuestionAnswerLine className="w-4 h-4 mt-[3px] mr-2"/>
+          <p>Submeter Resposta</p>
           {comments.length > 0 && (
             <div className="min-w-5 pr-[2px] h-6 ml-3 mt-[-1px] bg-cyan-700 rounded-md text-white">
               {comments.length}
@@ -151,6 +177,12 @@ export default function QuestionComments({
                 comments={[...comments]}
                 setComments={setComments}
                 commentsLoading={commentsLoading}
+                currentUser={session?.user}
+              />
+            )}
+            {activeItem === 2 && (
+              <SubmitResponse
+                questionId={question.Codigo}
                 currentUser={session?.user}
               />
             )}
