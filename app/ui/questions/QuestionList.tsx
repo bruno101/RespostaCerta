@@ -6,6 +6,7 @@ import { searchQuestions } from "@/app/actions/searchQuestions";
 import Image from "next/image";
 import LoadingSkeletons from "./LoadingSkeletons";
 
+//TODO: add pagination
 export default function QuestionList({
   filtered,
   loading,
@@ -24,8 +25,6 @@ export default function QuestionList({
   const fetchQuestions = async () => {
     try {
       const data = await searchQuestions(filtered);
-      //const res = await fetch("/api/questions");
-      //const data = await res.json();
       if (data) {
         setQuestions(data);
         setDataLoaded(true);

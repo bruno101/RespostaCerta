@@ -3,7 +3,8 @@ import { connectToDatabase } from "@/lib/mongoose";
 import Comment from "@/app/models/Comment";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { user } from "@heroui/theme";
+import { sanitizationSettings } from "@/lib/sanitization";
+import DOMPurify from "isomorphic-dompurify"
 
 export async function PATCH(
   req: Request,
@@ -19,6 +20,7 @@ export async function PATCH(
     await connectToDatabase();
     const body = await req.json();
     let { didCurrentUserLike, text } = body;
+
 
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -43,6 +45,8 @@ export async function PATCH(
         );
       }
 
+      const sanitizedText = DOMPurify.sanitize(text, sanitizationSettings);
+
       const comment = await Comment.findById(commentId);
 
       if (!comment) {
@@ -59,7 +63,7 @@ export async function PATCH(
         );
       }
 
-      comment.text = text;
+      comment.text = sanitizedText;
       comment.save();
 
       return NextResponse.json(

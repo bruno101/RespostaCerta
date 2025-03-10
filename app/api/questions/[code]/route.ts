@@ -5,6 +5,8 @@ import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import IQuestion from "@/app/interfaces/IQuestion";
+import { sanitizationSettings } from "@/lib/sanitization";
+import DOMPurify from "isomorphic-dompurify"
 
 export async function GET(
   request: Request,
@@ -93,11 +95,42 @@ export async function PUT(
 
     // Parse the request body
     const body = await request.json();
+    const {
+      Codigo,
+      Disciplina,
+      Banca,
+      Ano,
+      Nivel,
+      Instituicao,
+      Cargo,
+      TextoMotivador,
+      Questao,
+      Criterios,
+      Resposta,
+      TextoPlano,
+      Dificuldade
+    } = body;
+
+    const newBody = {
+      Disciplina: Disciplina,
+      Banca: Banca,
+      Ano: Ano,
+      Nivel: Nivel,
+      Instituicao: Instituicao,
+      Cargo: Cargo,
+      TextoMotivador: DOMPurify.sanitize(TextoMotivador, sanitizationSettings),
+      Questao: DOMPurify.sanitize(Questao, sanitizationSettings),
+      Criterios: DOMPurify.sanitize(Criterios, sanitizationSettings),
+      Resposta: DOMPurify.sanitize(Resposta, sanitizationSettings),
+      TextoPlano: TextoPlano,
+      Dificuldade: Dificuldade,
+      EmailCriador: session?.user?.email
+    };
 
     // Find and update the question
     const updatedQuestion = await Question.findByIdAndUpdate(
       code,
-      { $set: body },
+      { $set: newBody },
       { new: true, runValidators: true }
     );
 
@@ -110,7 +143,7 @@ export async function PUT(
     }
 
     // Return the updated question
-    return NextResponse.json(updatedQuestion);
+    return NextResponse.json({...updatedQuestion, Codigo: code});
   } catch (error: any) {
     // Handle validation errors
     if (error.name === "ValidationError") {

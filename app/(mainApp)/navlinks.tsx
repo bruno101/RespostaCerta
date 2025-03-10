@@ -9,6 +9,7 @@ export default function NavLinks() {
     { name: "Questões", href: "/" },
     { name: "Cadernos", href: "/cadernos" },
     { name: "Simulados", href: "/simulados" },
+    { name: "Minhas Respostas", href: "/painel/questoes-respondidas" },
   ];
 
   return (

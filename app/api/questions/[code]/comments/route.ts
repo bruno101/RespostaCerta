@@ -3,6 +3,8 @@ import { connectToDatabase } from "@/lib/mongoose";
 import Comment from "@/app/models/Comment";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { sanitizationSettings } from "@/lib/sanitization";
+import DOMPurify from "isomorphic-dompurify"
 
 export async function GET(
   request: Request,
@@ -95,11 +97,13 @@ export async function POST(
       );
     }
 
+    const sanitizedText = DOMPurify.sanitize(text, sanitizationSettings);
+
     const newComment = new Comment({
       name,
       email,
       reply_to: reply_to || null,
-      text,
+      sanitizedText,
       usersWhoLiked: [],
       question_id: code,
     });

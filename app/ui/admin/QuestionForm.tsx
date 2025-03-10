@@ -363,7 +363,7 @@ export function QuestionForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="hover:bg-cyan-300 focus:bg-cyan-300 focus:outline focus:outline-2 focus:outline-cyan-500 bg-cyan-500 text-white text-[15px] rounded-sm mt-2 py-1 px-3"
+          className="disabled:opacity-50 hover:bg-cyan-300 focus:bg-cyan-300 focus:outline focus:outline-2 focus:outline-cyan-500 bg-cyan-500 text-white text-[15px] rounded-sm mt-2 py-1 px-3"
         >
           {edit
             ? isSubmitting

@@ -23,18 +23,17 @@ export default function DesktopMenu({
   return (
     <>
       <div className="flex flex-row">
-
         <Link href="/" className="flex text-2xl text-white font-bold">
-        <Image
-          alt={"logo"}
-          src={
-            "https://img.icons8.com/?size=100&id=mocKqJgwSoT7&format=png&color=0000000"
-          }
-          width={100}
-          height={100}
-          className="w-11 h-11 mr-2 my-auto -mt-1"
-        />
-        Resposta Certa
+          <Image
+            alt={"logo"}
+            src={
+              "https://img.icons8.com/?size=100&id=mocKqJgwSoT7&format=png&color=0000000"
+            }
+            width={100}
+            height={100}
+            className="w-11 h-11 mr-2 my-auto -mt-1"
+          />
+          Resposta Certa
         </Link>
         {session === null && (
           <Link className="ml-auto mr-5" href="/signup">
@@ -54,6 +53,9 @@ export default function DesktopMenu({
                     break;
                   case "admin":
                     router.push("/admin");
+                    break;
+                  case "correction":
+                    router.push("/corrigir-questoes");
                     break;
                   case "logout":
                     signOut();
@@ -90,6 +92,15 @@ export default function DesktopMenu({
                     Painel de Administração
                   </SelectItem>
                 )}
+                {((session?.user as any)?.role === "admin" ||
+                  (session?.user as any)?.role === "corretor") && (
+                  <SelectItem
+                    className="text-cyan-700 cursor-pointer focus:text-cyan-400"
+                    value="correction"
+                  >
+                    Correção de Questões
+                  </SelectItem>
+                )}
                 <SelectItem
                   className="text-cyan-700 cursor-pointer focus:text-cyan-400"
                   value="logout"
@@ -116,7 +127,9 @@ export default function DesktopMenu({
             href={item.href}
             className={`box-border flex items-center pt-2 pb-4 px-4 text-lg text-white hover:bg-[#0a89a8] rounded-t-md ${
               pathName === item.href ||
-              (pathName.startsWith("/questoes") && item.href === "/")
+              (pathName.startsWith("/questoes") && item.href === "/") ||
+              (pathName.startsWith("/painel/questoes-respondidas") &&
+                item.href === "/painel/questoes-respondidas")
                 ? "active"
                 : ""
             }`}

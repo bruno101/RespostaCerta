@@ -72,6 +72,9 @@ export default function MobileMenu({
                 case "admin":
                   router.push("/admin");
                   break;
+                case "correction":
+                  router.push("/corrigir-questoes");
+                  break;
                 case "logout":
                   signOut();
                   break;
@@ -107,6 +110,15 @@ export default function MobileMenu({
                   Painel de Administração
                 </SelectItem>
               )}
+              {((session?.user as any)?.role === "admin" ||
+                  (session?.user as any)?.role === "corretor") && (
+                  <SelectItem
+                    className="text-cyan-700 cursor-pointer focus:text-cyan-400"
+                    value="correction"
+                  >
+                    Correção de Questões
+                  </SelectItem>
+                )}
               <SelectItem
                 className="text-cyan-700 cursor-pointer focus:text-cyan-400"
                 value="logout"
