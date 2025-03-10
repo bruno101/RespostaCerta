@@ -24,14 +24,14 @@ export default function Home() {
 
   return (
     <Suspense fallback={<LoadingSkeletons />}>
-      {ready && (
+      {ready ? (
         <HomeInnerPage
           selectors={[...selectors]}
           initialSelected={[...selectors].map((selector) => {
             return { name: selector.name, options: [] };
           })}
         />
-      )}
+      ) : <LoadingSkeletons/>}
     </Suspense>
   );
 }

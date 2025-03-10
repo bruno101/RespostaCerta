@@ -17,6 +17,8 @@ export default function HomeInnerPage({
   const searchParams = useSearchParams();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [questionsPerPage, setQuestionsPerPage] = useState(5);
+  const [pageIndex, setPageIndex] = useState(1);
 
   const [selected, setSelected] = useState(
     [...initialSelected].map((selection) => {
@@ -46,6 +48,16 @@ export default function HomeInnerPage({
       setKeyWords(keyW);
       !alreadyHasSelectedItems;
       alreadyHasSelectedItems = true;
+    }
+
+    const questionsPerPage = searchParams.get("questionsPerPage")
+    if (questionsPerPage) {
+        setQuestionsPerPage(+questionsPerPage)
+    }
+
+    const pageIndex = searchParams.get("pageIndex")
+    if (pageIndex) {
+        setPageIndex(+pageIndex)
     }
 
     const newSelected = [...selected].map((selector) => {
@@ -108,7 +120,7 @@ export default function HomeInnerPage({
   };
   const onFilter = () => {
     //setLoading(true);
-    let newKeyWordParams = `?palavras=${keyWords}`;
+    let newKeyWordParams = `?palavras=${keyWords}&questionsPerPage=${questionsPerPage}&pageIndex=${pageIndex}`;
     for (const item of selected) {
       newKeyWordParams += `&${item.name.toLowerCase()}=${item.options.join(
         ","
@@ -116,6 +128,7 @@ export default function HomeInnerPage({
     }
     router.replace(newKeyWordParams);
   };
+
   const empty = () => {
     setSelected([...initialSelected]);
   };
@@ -137,6 +150,10 @@ export default function HomeInnerPage({
             loading={loading}
             setLoading={setLoading}
             filtered={[...filtered]}
+            questionsPerPage={questionsPerPage}
+            pageIndex={pageIndex}
+            router={router}
+            searchParams={searchParams}
           />
         </div>
         <div className="w-[25%]">
@@ -165,6 +182,10 @@ export default function HomeInnerPage({
           loading={loading}
           setLoading={setLoading}
           filtered={[...filtered]}
+          questionsPerPage={questionsPerPage}
+          pageIndex={pageIndex}
+          router={router}
+          searchParams={searchParams}
         />
       </div>
     </div>

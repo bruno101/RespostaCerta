@@ -6,9 +6,17 @@ import Question from "../models/Question";
 import IQuestion from "../interfaces/IQuestion";
 
 export async function searchQuestions(
-  selected: ISelector[]
-): Promise<undefined | IQuestion[]> {
+  selected: ISelector[],
+  questionsPerPage: number,
+  pageNumber: number
+): Promise<
+  | { questions: IQuestion[]; totalDocuments: number; totalPages: number }
+  | undefined
+> {
   try {
+    const page = Math.max(1, pageNumber || 1);
+    const limit = Math.max(1, questionsPerPage || 5);
+    const skip = (page - 1) * limit;
     selected.map((selector) => {
       if (selector.name === "Instituição") {
         selector.name = "Instituicao";
@@ -38,7 +46,12 @@ export async function searchQuestions(
         }
       }
     }
-    const questions = await Question.find(findObject);
+    const questions = await Question.find(findObject)
+      .skip(skip)
+      .limit(limit)
+      .exec();
+    const totalDocuments = await Question.countDocuments();
+    const totalPages = Math.ceil(totalDocuments / limit);
     const mappedQuestions: IQuestion[] = questions.map((q) => ({
       Codigo: q._id.toString(), // 👈 Convert ObjectId to string
       Disciplina: q.Disciplina,
@@ -54,7 +67,7 @@ export async function searchQuestions(
       TextoPlano: q.TextoPlano,
       Dificuldade: q.Dificuldade,
     }));
-    return mappedQuestions;
+    return { questions: mappedQuestions, totalDocuments, totalPages };
   } catch (error) {
     console.error("Error usearching questions:", error);
     return;
