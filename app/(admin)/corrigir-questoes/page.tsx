@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AlertCircle, CheckCircle, Clock, Search } from "lucide-react"
+import { AlertCircle, CheckCircle, Clock, Search, Trash2 } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -14,32 +14,21 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-
-interface PendingResponse {
-  id: string
-  questionTitle: string
-  questionId: string
-  createdAt: string
-  student: {
-    id: string
-    name: string
-    image?: string
-  }
-}
-
-interface EvaluatedResponse {
-  id: string
-  questionTitle: string
-  questionId: string
-  evaluatedAt: string
-  grade: number
-  maxGrade: number
-  student: {
-    id: string
-    name: string
-    image?: string
-  }
-}
+import type PendingResponse from "@/app/interfaces/PendingResponse"
+import type EvaluatedResponse from "@/app/interfaces/EvaluatedResponse"
+import { MdFeedback } from "react-icons/md"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { toast } from "sonner"
 
 export default function CorrectQuestionsPage() {
   const { data: session, status } = useSession()
@@ -51,6 +40,7 @@ export default function CorrectQuestionsPage() {
   const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [subjectFilter, setSubjectFilter] = useState<string>("all")
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -86,6 +76,45 @@ export default function CorrectQuestionsPage() {
     }
   }
 
+  const handleDeleteEvaluation = async (id: string) => {
+    try {
+      const response = await fetch(`/api/correction/delete-evaluation/${id}`, {
+        method: "DELETE",
+      })
+
+      if (!response.ok) {
+        throw new Error("Falha ao excluir avaliação")
+      }
+
+      // Remove the deleted evaluation from the list
+      setEvaluatedResponses((prev) => prev.filter((evaluation) => evaluation.id !== id))
+
+      // Add it to pending responses
+      const deletedEvaluation = evaluatedResponses.find((e) => e.id === id)
+      if (deletedEvaluation) {
+        const pendingResponse: PendingResponse = {
+          id: deletedEvaluation.id,
+          questionTitle: deletedEvaluation.questionTitle,
+          questionId: deletedEvaluation.questionId,
+          createdAt: deletedEvaluation.evaluatedAt, // Using evaluated date as created date
+          student: deletedEvaluation.student,
+        }
+        setPendingResponses((prev) => [...prev, pendingResponse])
+      }
+
+      toast.success("Avaliação excluída com sucesso", {
+        description: "A questão voltou para a lista de pendentes.",
+      })
+    } catch (error) {
+      console.error("Error deleting evaluation:", error)
+      toast.error("Erro ao excluir avaliação", {
+        description: "Ocorreu um erro ao tentar excluir a avaliação. Tente novamente.",
+      })
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
   const filteredPendingResponses = pendingResponses.filter((response) => {
     const matchesSearch = response.questionTitle.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesSubject = subjectFilter === "all" || true // In a real app, filter by subject
@@ -100,7 +129,7 @@ export default function CorrectQuestionsPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="container py-8">
+      <div className="container py-8 mx-auto">
         <div className="mb-8">
           <Skeleton className="h-10 w-3/4 mb-2" />
           <Skeleton className="h-6 w-1/2 mb-6" />
@@ -126,7 +155,7 @@ export default function CorrectQuestionsPage() {
 
   if (error) {
     return (
-      <div className="container py-8">
+      <div className="container py-8 px-2 mx-auto">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Erro</AlertTitle>
@@ -138,7 +167,7 @@ export default function CorrectQuestionsPage() {
 
   if (!session || !session.user) {
     return (
-      <div className="container py-8">
+      <div className="container py-8 mx-auto p-2">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Acesso Negado</AlertTitle>
@@ -152,9 +181,12 @@ export default function CorrectQuestionsPage() {
   }
 
   return (
-    <div className="container py-8">
+    <div className="container py-8 mx-auto p-2">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Correção de Questões</h1>
+        <h1 className="flex text-2xl font-bold text-cyan-900 mb-2">
+          <MdFeedback className="h-6 w-6 mt-[6px] mr-2" />
+          Correção de Questões
+        </h1>
         <p className="text-gray-500 mb-6">Avalie as respostas dos alunos e forneça feedback construtivo</p>
 
         <Tabs defaultValue="pending" className="w-full">
@@ -223,8 +255,8 @@ export default function CorrectQuestionsPage() {
               </Alert>
             ) : (
               <div className="space-y-4">
-                {filteredPendingResponses.map((response) => (
-                  <Card key={response.id} className="hover:shadow-md transition-shadow">
+                {filteredPendingResponses.map((response, index) => (
+                  <Card key={index} className="hover:shadow-md transition-shadow">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg font-medium">
                         <Link
@@ -259,9 +291,11 @@ export default function CorrectQuestionsPage() {
                           <Clock className="h-3 w-3 mr-1" /> Aguardando correção
                         </Badge>
 
-                        <Button asChild className="bg-cyan-600 hover:bg-cyan-700 self-end sm:self-center">
-                          <Link href={`/corrigir-questoes/${response.id}`}>Corrigir agora</Link>
-                        </Button>
+                        <Link href={`/corrigir-questoes/${response.id}`}>
+                          <button className="self-end sm:self-center flex text-white px-3 py-2 rounded-lg text-[14px] gap-2 mt-3 bg-cyan-500 hover:bg-cyan-400 focus:bg-cyan-400 focus:outline focus:outline-cyan-300 focus:outline-offset-1">
+                            Corrigir agora
+                          </button>
+                        </Link>
                       </div>
                     </CardContent>
                   </Card>
@@ -296,8 +330,8 @@ export default function CorrectQuestionsPage() {
               </Alert>
             ) : (
               <div className="space-y-4">
-                {filteredEvaluatedResponses.map((response) => (
-                  <Card key={response.id} className="hover:shadow-md transition-shadow">
+                {filteredEvaluatedResponses.map((response, index) => (
+                  <Card key={index} className="hover:shadow-md transition-shadow">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg font-medium">
                         <Link
@@ -332,13 +366,44 @@ export default function CorrectQuestionsPage() {
                           </span>
                         </div>
 
-                        <Button
-                          asChild
-                          variant="outline"
-                          className="border-cyan-200 text-cyan-700 hover:bg-cyan-50 hover:text-cyan-800 self-end sm:self-center"
-                        >
-                          <Link href={`/corrigir-questoes/${response.id}`}>Ver avaliação</Link>
-                        </Button>
+                        <div className="flex gap-2 self-end sm:self-center">
+                          <Button
+                            asChild
+                            variant="outline"
+                            className="border-cyan-200 text-cyan-700 hover:bg-cyan-50 hover:text-cyan-800"
+                          >
+                            <Link href={`/corrigir-questoes/${response.id}`}>Ver avaliação</Link>
+                          </Button>
+
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className="border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Excluir avaliação</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Tem certeza que deseja excluir esta avaliação? Esta ação não pode ser desfeita. A
+                                  questão voltará para a lista de pendentes.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDeleteEvaluation(response.id)}
+                                  className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+                                >
+                                  {deletingId === response.id ? "Excluindo..." : "Excluir"}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>

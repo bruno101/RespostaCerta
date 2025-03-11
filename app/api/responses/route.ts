@@ -5,8 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import ResponseSummary from "@/app/interfaces/ResponseSummary";
 import { sanitizationSettings } from "@/lib/sanitization";
-import DOMPurify from "isomorphic-dompurify"
-
+import DOMPurify from "isomorphic-dompurify";
 
 export async function GET(request: NextRequest) {
   try {
@@ -20,29 +19,35 @@ export async function GET(request: NextRequest) {
 
     // Find all responses for the current user
     const responses = await Response.find({ user: session.user.email })
-      .populate("question", "Banca Ano Instituicao Cargo _id")
+      .populate("question", "Banca Ano Instituicao Cargo Numero _id")
       .populate("feedback", "grade")
       .sort({ createdAt: -1 })
       .lean();
 
     // Format the response data
-    const formattedResponses: ResponseSummary[] = responses.map((response) => ({
-      id: response._id.toString(),
-      questionId: (response.question as any)._id.toString(),
-      questionTitle:
-        (response.question as any).Banca +
-        " - " +
-        (response.question as any).Ano +
-        " - " +
-        (response.question as any).Instituicao +
-        " - " +
-        (response.question as any).Cargo,
-      status: response.status,
-      createdAt: response.createdAt,
-      ...(response.feedback && {
-        grade: (response.feedback as any).grade,
-      }),
-    }));
+    const formattedResponses: ResponseSummary[] = responses.map((response) => {
+      const questionNumber = (response.question as any).Numero
+        ? " - Questão " + String((response.question as any).Numero)
+        : "";
+      return {
+        id: response._id.toString(),
+        questionId: (response.question as any)._id.toString(),
+        questionTitle:
+          (response.question as any).Banca +
+          " - " +
+          (response.question as any).Ano +
+          " - " +
+          (response.question as any).Instituicao +
+          " - " +
+          (response.question as any).Cargo +
+          questionNumber,
+        status: response.status,
+        createdAt: response.createdAt,
+        ...(response.feedback && {
+          grade: (response.feedback as any).grade,
+        }),
+      };
+    });
 
     console.log(formattedResponses);
     return NextResponse.json(formattedResponses);
@@ -89,13 +94,16 @@ export async function POST(request: NextRequest) {
 
     // Create new response
     const newResponse = new Response({
-        sanitizedContent,
+      content: sanitizedContent,
       user: session.user.email,
       question: questionId,
       status: "pending",
     });
+    console.log(newResponse);
 
     await newResponse.save();
+
+    console.log("here")
 
     return NextResponse.json(
       {

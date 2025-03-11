@@ -9,6 +9,7 @@ interface IQuestion extends Document {
   Nivel: string;
   Instituicao: string;
   Cargo: string;
+  Numero: number;
   TextoMotivador: string;
   Questao: string;
   Criterios: string;
@@ -26,6 +27,7 @@ const QuestionSchema = new Schema<IQuestion>(
     Nivel: { type: String, required: true },
     Instituicao: { type: String, required: true },
     Cargo: { type: String, required: true },
+    Numero: {type: Number, required: false},
     TextoMotivador: { type: String, required: false },
     Questao: { type: String, required: true },
     Criterios: { type: String, required: false },

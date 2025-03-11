@@ -42,6 +42,7 @@ let initialQuestion: IQuestion = {
   Ano: "" + new Date().getFullYear(),
   Nivel: "",
   Questao: "",
+  Numero: undefined,
   Resposta: "",
   Criterios: "",
   TextoMotivador: "",
@@ -182,6 +183,7 @@ export function QuestionForm({
     }
   }, [error, createdQuestionLink, messageCount]);
 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -294,6 +296,22 @@ export function QuestionForm({
             </div>
           );
         })}
+        <div className="space-y-2">
+          <Label htmlFor="Numero" className="text-cyan-700">
+            Número da Questão
+          </Label>
+          <Input
+            name="Numero"
+            placeholder="n/a"
+            value={question.Numero}
+            type="number"
+            onChange={(e) =>
+              setQuestion((q) => {
+                return { ...q, Numero: e.target.value };
+              })
+            }
+          />
+        </div>
       </div>
 
       <div className="space-y-2">

@@ -4,6 +4,8 @@ import Question from "@/app/models/Question";
 import IQuestion from "@/app/interfaces/IQuestion";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { sanitizationSettings } from "@/lib/sanitization";
+import DOMPurify from "isomorphic-dompurify"
 
 export async function GET() {
   try {
@@ -19,6 +21,7 @@ export async function GET() {
       Banca: q.Banca,
       Ano: q.Ano,
       Nivel: q.Nivel,
+      Numero: String(q.Numero),
       Instituicao: q.Instituicao,
       Cargo: q.Cargo,
       TextoMotivador: q.TextoMotivador,
@@ -69,12 +72,13 @@ export async function POST(request: NextRequest) {
       Banca: q.Banca,
       Ano: q.Ano,
       Nivel: q.Nivel,
+      Numero: String(q.Numero),
       Instituicao: q.Instituicao,
       Cargo: q.Cargo,
-      TextoMotivador: q.TextoMotivador,
-      Questao: q.Questao,
-      Criterios: q.Criterios,
-      Resposta: q.Resposta,
+      TextoMotivador: DOMPurify.sanitize(q.TextoMotivador, sanitizationSettings),
+      Questao: DOMPurify.sanitize(q.Questao, sanitizationSettings),
+      Criterios: DOMPurify.sanitize(q.Criterios, sanitizationSettings),
+      Resposta: DOMPurify.sanitize(q.Resposta, sanitizationSettings),
       TextoPlano: q.TextoPlano,
       Dificuldade: q.Dificuldade
     };

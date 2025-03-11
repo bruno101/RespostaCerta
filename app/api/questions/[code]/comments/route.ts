@@ -103,7 +103,7 @@ export async function POST(
       name,
       email,
       reply_to: reply_to || null,
-      sanitizedText,
+      text: sanitizedText,
       usersWhoLiked: [],
       question_id: code,
     });

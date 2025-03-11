@@ -5,6 +5,7 @@ export default interface IQuestion {
   Nivel: string;
   Questao: string;
   Resposta: string;
+  Numero?: string;
   Criterios?: string;
   TextoMotivador?: string;
   Codigo: string;

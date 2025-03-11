@@ -35,6 +35,7 @@ export async function GET(
       Banca: q.Banca,
       Ano: q.Ano,
       Nivel: q.Nivel,
+      Numero: String(q.Numero),
       Instituicao: q.Instituicao,
       Cargo: q.Cargo,
       TextoMotivador: q.TextoMotivador,
@@ -101,6 +102,7 @@ export async function PUT(
       Banca,
       Ano,
       Nivel,
+      Numero,
       Instituicao,
       Cargo,
       TextoMotivador,
@@ -117,6 +119,7 @@ export async function PUT(
       Ano: Ano,
       Nivel: Nivel,
       Instituicao: Instituicao,
+      Numero: Numero,
       Cargo: Cargo,
       TextoMotivador: DOMPurify.sanitize(TextoMotivador, sanitizationSettings),
       Questao: DOMPurify.sanitize(Questao, sanitizationSettings),
@@ -141,6 +144,8 @@ export async function PUT(
         { status: 404 }
       );
     }
+
+    console.log(updatedQuestion);
 
     // Return the updated question
     return NextResponse.json({...updatedQuestion, Codigo: code});
