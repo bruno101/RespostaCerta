@@ -42,7 +42,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { AlertCircle, CheckCircle, Clock, Edit, FileText, Flame, HelpCircle, LogOut, MessageSquare, Timer, Trash2, Upload, User } from 'lucide-react'
-import ResponseSummary from "@/app/interfaces/ResponseSummary"
+import IResponseSummary from "@/app/interfaces/IResponseSummary"
 
 interface UserStats {
   questionsAnswered: number
@@ -68,12 +68,10 @@ export default function DashboardPage() {
     level: 1,
     progressToNextLevel: 0
   })
-  const [responses, setResponses] = useState<ResponseSummary[]>([])
+  const [responses, setResponses] = useState<IResponseSummary[]>([])
   const [uploadingImage, setUploadingImage] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   
-  console.log(responses)
-
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/signin")
@@ -433,7 +431,7 @@ export default function DashboardPage() {
                       
                       {response.status === "graded" && response.grade !== undefined && (
                         <div className="font-medium">
-                          Nota: <span className="text-cyan-700">{response.grade}/10</span>
+                          Nota: <span className="text-cyan-700">{response.grade}/{response.maxGrade}</span>
                         </div>
                       )}
                     </div>

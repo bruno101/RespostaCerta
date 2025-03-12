@@ -64,7 +64,7 @@ export default function Page() {
             <Image
               className="mx-auto mt-[30px] mb-5"
               alt="logo"
-              src="/request.png"
+              src="/download.png"
               width={50}
               height={50}
             />

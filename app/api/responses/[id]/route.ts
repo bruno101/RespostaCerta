@@ -37,11 +37,6 @@ export async function GET(
       .populate({
         path: "feedback",
         model: Feedback,
-        populate: {
-          path: "evaluatedBy",
-          select: "name image",
-          model: User,
-        },
       })
       .lean();
 
@@ -50,6 +45,18 @@ export async function GET(
         { error: "Resposta não encontrada" },
         { status: 404 }
       );
+    }
+
+    let evaluatedBy = undefined;
+    const evaluator = await User.findOne({
+      email: (response.feedback as any).evaluatedBy,
+    });
+    if (evaluator) {
+        evaluatedBy = {
+            email: evaluator.email,
+            name: evaluator.name,
+            image: evaluator.image
+        }
     }
 
     // Format the response data
@@ -78,10 +85,7 @@ export async function GET(
           grade: (response.feedback as any).grade,
           comment: (response.feedback as any).comment,
           createdAt: (response.feedback as any).createdAt,
-          /*TBD evaluatedBy: {
-            name: (response.feedback as any).evaluatedBy.name,
-            image: (response.feedback as any).evaluatedBy.image,
-          },*/
+          evaluatedBy,
         },
       }),
     };
@@ -137,8 +141,7 @@ export async function PUT(
         { status: 404 }
       );
     }
-    console.log(updatedResponse);
-
+    
     return NextResponse.json(updatedResponse, { status: 200 });
   } catch (error) {
     console.error("Error updating response:", error);

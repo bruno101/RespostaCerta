@@ -3,9 +3,10 @@ import { connectToDatabase } from "@/lib/mongoose";
 import Response from "@/app/models/Response";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import ResponseSummary from "@/app/interfaces/ResponseSummary";
+import ResponseSummary from "@/app/interfaces/IResponseSummary";
 import { sanitizationSettings } from "@/lib/sanitization";
 import DOMPurify from "isomorphic-dompurify";
+import User from "@/app/models/User";
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,18 +20,42 @@ export async function GET(request: NextRequest) {
 
     // Find all responses for the current user
     const responses = await Response.find({ user: session.user.email })
-      .populate("question", "Banca Ano Instituicao Cargo Numero _id")
-      .populate("feedback", "grade")
+      .populate("question", "Banca Ano Instituicao Cargo Numero _id NotaMaxima")
+      .populate("feedback", "grade evaluatedBy")
       .sort({ createdAt: -1 })
       .lean();
 
-    // Format the response data
-    const formattedResponses: ResponseSummary[] = responses.map((response) => {
+    const getEvaluator = async (
+      email: string
+    ): Promise<undefined | { name: string; email: string; image: string }> => {
+      const evaluator = await User.findOne({
+        email,
+      });
+      if (!evaluator) {
+        return undefined;
+      }
+      return {
+        name: evaluator.name,
+        email: evaluator.email,
+        image: evaluator.image,
+      };
+    };
+
+    const getFormattedResponse = async (
+      response: any
+    ): Promise<ResponseSummary> => {
+      let evaluator = undefined;
+
+      if ((response.feedback as any)?.evaluatedBy) {
+        evaluator = await getEvaluator((response.feedback as any).evaluatedBy);
+      }
+
       const questionNumber = (response.question as any).Numero
         ? " - Questão " + String((response.question as any).Numero)
         : "";
       return {
         id: response._id.toString(),
+        evaluator,
         questionId: (response.question as any)._id.toString(),
         questionTitle:
           (response.question as any).Banca +
@@ -43,13 +68,20 @@ export async function GET(request: NextRequest) {
           questionNumber,
         status: response.status,
         createdAt: response.createdAt,
+        maxGrade: (response.question as any).NotaMaxima || 10,
         ...(response.feedback && {
           grade: (response.feedback as any).grade,
         }),
       };
-    });
+    };
 
-    console.log(formattedResponses);
+    // Format the response data
+    const formattedResponses: ResponseSummary[] = await Promise.all(
+      responses.map(async (response) => {
+        return await getFormattedResponse(response);
+      })
+    );
+
     return NextResponse.json(formattedResponses);
   } catch (error) {
     console.error("Error fetching responses:", error);
@@ -99,11 +131,8 @@ export async function POST(request: NextRequest) {
       question: questionId,
       status: "pending",
     });
-    console.log(newResponse);
 
     await newResponse.save();
-
-    console.log("here")
 
     return NextResponse.json(
       {

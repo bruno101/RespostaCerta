@@ -20,7 +20,8 @@ export default function FullQuestion({ codigo }: { codigo: string }) {
     Instituicao: "",
     Cargo: "",
     Dificuldade: "",
-    TextoPlano: ""
+    TextoPlano: "",
+    NotaMaxima: 10
   });
   const [loading, setLoading] = useState(true);
   useEffect(() => {

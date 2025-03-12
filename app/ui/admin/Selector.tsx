@@ -16,7 +16,7 @@ export default function Selector({
   noSpecialCharacterName,
   openAddOptionModal,
   handleSelectChange,
-  question
+  question,
 }: {
   filter: ISelector;
   customOptions: Record<string, string[]>;
@@ -37,7 +37,7 @@ export default function Selector({
   );*/
   return (
     <Select
-      value={question[noSpecialCharacterName as keyof IQuestion]}
+      value={String(question[noSpecialCharacterName as keyof IQuestion])}
       onValueChange={(value) => {
         if (value === `adicionar_${noSpecialCharacterName}`) {
           // Open modal to add new option
@@ -58,8 +58,7 @@ export default function Selector({
         />
       </SelectTrigger>
       <SelectContent>
-        
-          {/*<input
+        {/*<input
             placeholder={`Buscar ${filter.name.toLowerCase()}`}
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}

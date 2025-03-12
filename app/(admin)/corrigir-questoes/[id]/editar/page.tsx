@@ -9,6 +9,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,8 +18,6 @@ import {
   AlertCircle,
   ArrowLeft,
   CheckCircle,
-  Clock,
-  Edit,
   FileText,
   Save,
   Star,
@@ -33,17 +32,30 @@ import { RichTextEditor } from "@/components/rich-text-editor";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import ResponseDetails from "@/app/interfaces/IResponseDetails";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import IResponseDetails from "@/app/interfaces/IResponseDetails";
 
-export default function CorrectQuestionPage() {
+export default function EditEvaluationPage() {
   const { id } = useParams();
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  const [response, setResponse] = useState<ResponseDetails | null>(null);
+  const [response, setResponse] = useState<IResponseDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   // Form state
   const [grade, setGrade] = useState<number>(0);
@@ -88,28 +100,38 @@ export default function CorrectQuestionPage() {
     }
   };
 
-  const handleSubmitFeedback = async () => {
-    if (!response) return;
+  const validateForm = () => {
+    if (!response) return false;
 
     if (grade < 0 || grade > response.question.maxGrade) {
-      toast.error(`A nota deve estar entre 0 e ${response.question.maxGrade}.`, {
-        description: "Por favor, insira um valor válido.",
-      });
-      return;
+      toast.error(
+        `A nota deve estar entre 0 e ${response.question.maxGrade}.`,
+        {
+          description: "Por favor, insira um valor válido.",
+        }
+      );
+      return false;
     }
 
     if (!feedbackPlainText.trim()) {
       toast.error("Feedback obrigatório", {
         description: "Por favor, forneça um feedback para o aluno.",
       });
-      return;
+      return false;
     }
+
+    return true;
+  };
+
+  const handleSubmitFeedback = async () => {
+    setIsConfirming(true)
+    if (!validateForm()) return;
 
     try {
       setSubmitting(true);
 
       const res = await fetch(`/api/correction/${id}`, {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
@@ -120,40 +142,25 @@ export default function CorrectQuestionPage() {
       });
 
       if (!res.ok) {
-        throw new Error("Falha ao enviar feedback");
+        throw new Error("Falha ao atualizar feedback");
       }
 
-      toast.success("Feedback enviado com sucesso", {
-        description: "O aluno será notificado sobre sua avaliação.",
+      toast.success("Feedback atualizado com sucesso", {
+        description:
+          "O aluno será notificado sobre a atualização da avaliação.",
       });
 
-      // Update local state to reflect the changes
-      setResponse((prev) => {
-        if (!prev) return null;
-
-        return {
-          ...prev,
-          status: "graded",
-          feedback: {
-            grade,
-            comment: feedbackContent,
-            createdAt: new Date().toISOString(),
-            evaluatedBy: {
-              name: session?.user?.name || "Avaliador",
-              email: session?.user?.email || "",
-              image: session?.user?.image || "",
-            },
-          },
-        };
-      });
+      // Redirect back to the response page
+      router.push(`/corrigir-questoes/${id}`);
     } catch (err) {
       console.error(err);
-      toast.error("Erro ao enviar feedback", {
+      toast.error("Erro ao atualizar feedback", {
         description:
-          "Ocorreu um erro ao enviar o feedback. Por favor, tente novamente.",
+          "Ocorreu um erro ao atualizar o feedback. Por favor, tente novamente.",
       });
     } finally {
       setSubmitting(false);
+      setShowConfirmDialog(false);
     }
   };
 
@@ -204,6 +211,7 @@ export default function CorrectQuestionPage() {
           <AlertTitle>Erro</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
+
         <Link href="/corrigir-questoes">
           <button className="mt-4 px-3 py-2 text-[14px] text-white rounded-md bg-cyan-600 hover:bg-cyan-400 focus:bg-cyan-400 focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-cyan-600">
             Voltar
@@ -223,9 +231,32 @@ export default function CorrectQuestionPage() {
             Você precisa estar logado para acessar esta página.
           </AlertDescription>
         </Alert>
-        <Button asChild className="mt-4">
-          <Link href="/signin">Fazer Login</Link>
-        </Button>
+        <Link href="/signin">
+          <button className="mt-4 px-3 py-2 text-[14px] text-white rounded-md bg-cyan-600 hover:bg-cyan-400 focus:bg-cyan-400 focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-cyan-600">
+            Fazer login
+          </button>
+        </Link>
+      </div>
+    );
+  }
+
+  // Check if user has permission (admin or corretor)
+  const userRole = (session.user as any).role;
+  if (userRole !== "admin" && userRole !== "corretor") {
+    return (
+      <div className="container py-8 mx-auto px-4">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Acesso Negado</AlertTitle>
+          <AlertDescription>
+            Você não tem permissão para editar avaliações.
+          </AlertDescription>
+        </Alert>
+        <Link href="/painel">
+          <button className="mt-4 px-3 py-2 text-[14px] text-white rounded-md bg-cyan-600 hover:bg-cyan-400 focus:bg-cyan-400 focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-cyan-600">
+            Voltar ao Painel
+          </button>
+        </Link>
       </div>
     );
   }
@@ -242,9 +273,32 @@ export default function CorrectQuestionPage() {
           </AlertDescription>
         </Alert>
 
-        <Button asChild className="mt-4">
-          <Link href="/corrigir-questoes">Voltar</Link>
-        </Button>
+        <Link href="/corrigir-questoes">
+          <button className="mt-4 px-3 py-2 text-[14px] text-white rounded-md bg-cyan-600 hover:bg-cyan-400 focus:bg-cyan-400 focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-cyan-600">
+            Voltar
+          </button>
+        </Link>
+      </div>
+    );
+  }
+
+  if (response.status !== "graded" || !response.feedback) {
+    return (
+      <div className="container py-8 mx-auto px-4">
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Avaliação não encontrada</AlertTitle>
+          <AlertDescription>
+            Esta resposta ainda não foi avaliada. Você precisa avaliá-la
+            primeiro antes de editar.
+          </AlertDescription>
+        </Alert>
+
+        <Link href={`/corrigir-questoes/${id}`}>
+          <button className="mt-4 px-3 py-2 text-[14px] text-white rounded-md bg-cyan-600 hover:bg-cyan-400 focus:bg-cyan-400 focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-cyan-600">
+            Avaliar Resposta
+          </button>
+        </Link>
       </div>
     );
   }
@@ -257,32 +311,23 @@ export default function CorrectQuestionPage() {
           variant="ghost"
           className="mb-4 -ml-3 text-gray-600 hover:text-gray-900"
         >
-          <Link href="/corrigir-questoes">
+          <Link href={`/corrigir-questoes/${id}`}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar para lista
+            Voltar para resposta
           </Link>
         </Button>
 
-        <h1 className="text-2xl font-bold text-cyan-900 mb-2">
-          Correção de Questão
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          Editar Avaliação
         </h1>
 
         <div className="flex items-center gap-3">
-          {response.status === "pending" ? (
-            <Badge
-              variant="outline"
-              className="bg-yellow-50 text-yellow-700 border-yellow-200"
-            >
-              <Clock className="h-3 w-3 mr-1" /> Aguardando correção
-            </Badge>
-          ) : (
-            <Badge
-              variant="outline"
-              className="bg-green-50 text-green-700 border-green-200"
-            >
-              <CheckCircle className="h-3 w-3 mr-1" /> Avaliada
-            </Badge>
-          )}
+          <Badge
+            variant="outline"
+            className="bg-green-50 text-green-700 border-green-200"
+          >
+            <CheckCircle className="h-3 w-3 mr-1" /> Avaliada
+          </Badge>
           <span className="text-sm text-gray-500">
             Enviada em{" "}
             {new Date(response.createdAt).toLocaleDateString("pt-BR", {
@@ -328,12 +373,10 @@ export default function CorrectQuestionPage() {
       {/* Question */}
       <Card className="mb-8 border-t-4 border-t-cyan-500">
         <CardHeader>
-          <Link href={`/questoes/${response.question.id}`}>
-            <CardTitle className="flex items-center gap-2 text-cyan-800">
-              <FileText className="h-5 w-5" />
-              Questão Original
-            </CardTitle>
-          </Link>
+          <CardTitle className="flex items-center gap-2 text-cyan-800">
+            <FileText className="h-5 w-5" />
+            Questão Original
+          </CardTitle>
           <CardDescription>
             {response.question.banca && (
               <span className="text-sm">
@@ -369,148 +412,125 @@ export default function CorrectQuestionPage() {
         </CardContent>
       </Card>
 
-      {/* Feedback Form or Display */}
+      {/* Edit Feedback Form */}
       <Card className="mb-8 border-t-4 border-t-green-500">
         <CardHeader>
           <CardTitle className="text-green-800 flex items-center gap-2">
             <Star className="h-5 w-5" />
-            {response.feedback ? "Feedback Fornecido" : "Fornecer Feedback"}
+            Editar Feedback
           </CardTitle>
-          {response.feedback && (
-            <CardDescription>
-              Avaliado por {response.feedback.evaluatedBy.name} em{" "}
-              {new Date(response.feedback.createdAt).toLocaleDateString(
-                "pt-BR"
-              )}
-            </CardDescription>
-          )}
+          <CardDescription>
+            Avaliado originalmente por {response.feedback.evaluatedBy.name} em{" "}
+            {new Date(response.feedback.createdAt).toLocaleDateString("pt-BR")}
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          {response.feedback ? (
-            // Display existing feedback
-            <div>
-              <div className="mb-6">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="font-medium">Nota:</span>
-                  <span className="font-bold text-lg">
-                    {response.feedback.grade}/{response.question.maxGrade}
-                  </span>
-                </div>
-                <div className="w-full bg-gray-100 rounded-full h-2.5">
-                  <div
-                    className={`h-2.5 rounded-full ${
-                      response.feedback.grade >= response.question.maxGrade * 0.7
-                        ? "bg-green-500"
-                        : response.feedback.grade >= response.question.maxGrade * 0.4
-                        ? "bg-yellow-500"
-                        : "bg-red-500"
-                    }`}
-                    style={{
-                      width: `${(response.feedback.grade / response.question.maxGrade) * 100}%`,
-                    }}
-                  />
-                </div>
-              </div>
-
-              <Separator className="my-4" />
-
-              <div>
-                <h4 className="font-medium mb-2">Comentários do Avaliador:</h4>
-                <div className="bg-gray-50 p-4 rounded-md border">
-                  <div
-                    className="prose prose-slate max-w-none"
-                    dangerouslySetInnerHTML={{
-                      __html: response.feedback.comment,
-                    }}
-                  />
-                </div>
-              </div>
-
-              <div className="mt-6 flex justify-end">
-                <Button
-                  asChild
-                  variant="outline"
-                  className="border-green-200 text-green-700 hover:bg-green-50 hover:text-green-800"
-                >
-                  <Link href={`/corrigir-questoes/${id}/editar`}>
-                    <Edit className="mr-2 h-4 w-4" />
-                    Editar Avaliação
-                  </Link>
-                </Button>
-              </div>
+          <div className="mb-6">
+            <Label htmlFor="grade" className="text-base font-medium mb-2 block">
+              Nota (0-{response.question.maxGrade})
+            </Label>
+            <div className="flex items-center gap-4">
+              <Input
+                id="grade"
+                type="number"
+                min={0}
+                max={response.question.maxGrade}
+                value={grade}
+                onChange={(e) => setGrade(Number(e.target.value))}
+                className="w-24"
+              />
+              <span className="text-gray-500">
+                / {response.question.maxGrade}
+              </span>
             </div>
-          ) : (
-            // Feedback form
-            <div>
-              <div className="mb-6">
-                <Label
-                  htmlFor="grade"
-                  className="text-base font-medium mb-2 block"
-                >
-                  Nota (0-{response.question.maxGrade})
-                </Label>
-                <div className="flex items-center gap-4">
-                  <Input
-                    id="grade"
-                    type="number"
-                    min={0}
-                    max={response.question.maxGrade}
-                    value={grade}
-                    onChange={(e) => setGrade(Number(e.target.value))}
-                    className="w-24"
-                  />
-                  <span className="w-10 text-gray-500">/ {response.question.maxGrade}</span>
-                </div>
-              </div>
+          </div>
 
-              <Separator className="my-6" />
+          <Separator className="my-6" />
 
-              <div className="mb-6">
-                <Label
-                  htmlFor="feedback"
-                  className="text-base font-medium mb-2 block"
-                >
-                  Feedback para o Aluno
-                </Label>
+          <div className="mb-6">
+            <Label
+              htmlFor="feedback"
+              className="text-base font-medium mb-2 block"
+            >
+              Feedback para o Aluno
+            </Label>
 
-                <Tabs defaultValue="write" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 mb-2">
-                    <TabsTrigger value="write">Escrever</TabsTrigger>
-                    <TabsTrigger value="preview">Visualizar</TabsTrigger>
-                  </TabsList>
+            <Tabs defaultValue="write" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-2">
+                <TabsTrigger value="write">Escrever</TabsTrigger>
+                <TabsTrigger value="preview">Visualizar</TabsTrigger>
+              </TabsList>
 
-                  <TabsContent value="write" className="mt-0">
-                    <RichTextEditor
-                      content={feedbackContent}
-                      onChange={setFeedbackContent}
-                      setPlainText={setFeedbackPlainText}
-                      placeholder="Escreva seu feedback aqui..."
-                      className="min-h-[200px]"
-                    />
-                  </TabsContent>
+              <TabsContent value="write" className="mt-0">
+                <RichTextEditor
+                  content={feedbackContent}
+                  onChange={setFeedbackContent}
+                  setPlainText={setFeedbackPlainText}
+                  placeholder="Escreva seu feedback aqui..."
+                  className="min-h-[200px]"
+                />
+              </TabsContent>
 
-                  <TabsContent value="preview" className="mt-0">
-                    <div
-                      className="prose prose-slate max-w-none min-h-[200px] p-4 border rounded-md bg-muted/30"
-                      dangerouslySetInnerHTML={{ __html: feedbackContent }}
-                    />
-                  </TabsContent>
-                </Tabs>
-              </div>
+              <TabsContent value="preview" className="mt-0">
+                <div
+                  className="prose prose-slate max-w-none min-h-[200px] p-4 border rounded-md bg-muted/30"
+                  dangerouslySetInnerHTML={{ __html: feedbackContent }}
+                />
+              </TabsContent>
+            </Tabs>
+          </div>
+        </CardContent>
+        <CardFooter className="flex justify-between border-t pt-4">
+          <Button
+            variant="outline"
+            onClick={() => router.push(`/corrigir-questoes/${id}`)}
+            disabled={submitting}
+          >
+            Cancelar
+          </Button>
 
-              <div className="flex justify-end">
+          <AlertDialog
+            open={showConfirmDialog}
+            onOpenChange={setShowConfirmDialog}
+          >
+            <AlertDialogTrigger asChild>
+              <button
+                disabled={submitting}
+                onClick={() => {
+                  if (validateForm()) {
+                    setShowConfirmDialog(true);
+                  }
+                }}
+                className="flex disabled:opacity-50 mt-4 px-3 py-2 text-[14px] text-white rounded-md bg-green-600 hover:bg-green-400 focus:bg-green-400 focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-green-600"
+              >
+                <Save className="h-4 w-4 mr-2 my-auto" />
+                {submitting
+                  ? "Atualizando avaliação..."
+                  : "Atualizar avaliação"}
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Confirmar atualização</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Tem certeza que deseja atualizar esta avaliação? O aluno será
+                  notificado sobre as alterações.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+
                 <button
                   onClick={handleSubmitFeedback}
-                  disabled={submitting}
-                  className="gap-2 flex text-white rounded-md px-3 py-2 bg-green-600 disabled:opacity-50 hover:bg-green-700 focus:bg-green-700 focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-green-900"
+                  disabled={isConfirming}
+                  className="disabled:opacity-50 px-3 py-2 text-[14px] text-white rounded-md bg-green-600 hover:bg-green-400 focus:bg-green-400 focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-green-600"
                 >
-                  <Save className="my-auto h-4 w-4" />
-                  {submitting ? "Enviando avaliação..." : "Enviar avaliação"}
+                  Confirmar
                 </button>
-              </div>
-            </div>
-          )}
-        </CardContent>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </CardFooter>
       </Card>
     </div>
   );

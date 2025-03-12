@@ -1,7 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import EvaluatedResponse from "@/app/interfaces/EvaluatedResponse";
+import EvaluatedResponse from "@/app/interfaces/IEvaluatedResponse";
+import { connectToDatabase } from "@/lib/mongoose";
+import Response from "@/app/models/Response";
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,61 +16,86 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
     }
 
-    // Mock data for evaluated responses
-    const mockEvaluatedResponses: EvaluatedResponse[] = [
-      {
-        id: "resp1",
-        questionTitle: "Qual a diferença entre jurisdição e competência?",
-        questionId: "q1",
-        evaluatedAt: new Date(
-          Date.now() - 13 * 24 * 60 * 60 * 1000
-        ).toISOString(), // 13 days ago
-        grade: 8,
-        maxGrade: 10,
-        student: {
-          email: "student4",
-          name: "Ana Souza",
-          image: "https://i.pravatar.cc/150?u=student4",
-        },
-      },
-      {
-        id: "resp2",
-        questionTitle: "Explique o princípio da separação dos poderes",
-        questionId: "q2",
-        evaluatedAt: new Date(
-          Date.now() - 8 * 24 * 60 * 60 * 1000
-        ).toISOString(), // 8 days ago
-        grade: 9,
-        maxGrade: 10,
-        student: {
-          email: "student5",
-          name: "Lucas Ferreira",
-          image: "https://i.pravatar.cc/150?u=student5",
-        },
-      },
-      {
-        id: "resp7",
-        questionTitle:
-          "Discorra sobre o controle de constitucionalidade no Brasil",
-        questionId: "q7",
-        evaluatedAt: new Date(
-          Date.now() - 4 * 24 * 60 * 60 * 1000
-        ).toISOString(), // 4 days ago
-        grade: 7,
-        maxGrade: 10,
-        student: {
-          email: "student6",
-          name: "Juliana Costa",
-          image: "https://i.pravatar.cc/150?u=student6",
-        },
-      },
-    ];
+    await connectToDatabase();
 
-    return NextResponse.json(mockEvaluatedResponses);
+    const responses = await Response.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "email",
+          as: "student",
+        },
+      },
+      {
+        $unwind: "$student",
+      },
+      {
+        $lookup: {
+          from: "questions",
+          localField: "question",
+          foreignField: "_id",
+          as: "question",
+        },
+      },
+      {
+        $unwind: "$question",
+      },
+      {
+        $lookup: {
+          from: "feedbacks",
+          localField: "feedback",
+          foreignField: "_id",
+          as: "feedback",
+        },
+      },
+      {
+        $unwind: "$feedback",
+      },
+    ]);
+
+    // Format the response data
+    const formattedResponses: EvaluatedResponse[] = responses
+      .filter(
+        (response) =>
+          response.status !== "pending" &&
+          response.feedback.evaluatedBy === session.user.email
+      )
+      .map((response) => {
+        const questionNumber = response.question.Numero
+          ? " - Questão " + String(response.question.Numero)
+          : "";
+        return {
+          id: response._id.toString(),
+          evaluatedAt: response.feedback.createdAt,
+          grade: response.feedback.grade,
+          questionId: response.question._id.toString(),
+          subject: response.question.Disciplina,
+          questionTitle:
+            response.question.Banca +
+            " - " +
+            response.question.Ano +
+            " - " +
+            response.question.Instituicao +
+            " - " +
+            response.question.Cargo +
+            questionNumber,
+          status: response.status,
+          maxGrade: response.NotaMaxima,
+          createdAt: response.createdAt,
+          student: {
+            email: response.student.email,
+            name: response.student.name,
+            image: response.student.image,
+          },
+        };
+      });
+
+    return NextResponse.json(formattedResponses);
   } catch (error) {
-    console.error("Error fetching evaluated responses:", error);
+    console.error("Error fetching pending responses:", error);
     return NextResponse.json(
-      { error: "Erro ao buscar respostas avaliadas" },
+      { error: "Erro ao buscar respostas pendentes" },
       { status: 500 }
     );
   }

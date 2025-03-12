@@ -1,9 +1,9 @@
-export default interface EvaluatedResponse {
+export default interface IPendingResponse {
     id: string
     questionTitle: string
     questionId: string
-    evaluatedAt: string
-    grade: number
+    createdAt: string
+    subject: string
     maxGrade: number
     student: {
       email: string

@@ -1,22 +1,28 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AlertCircle, CheckCircle, Clock, Search, Trash2 } from "lucide-react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import type PendingResponse from "@/app/interfaces/PendingResponse"
-import type EvaluatedResponse from "@/app/interfaces/EvaluatedResponse"
-import { MdFeedback } from "react-icons/md"
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AlertCircle, CheckCircle, Clock, Search, Trash2 } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import type PendingResponse from "@/app/interfaces/IPendingResponse";
+import type EvaluatedResponse from "@/app/interfaces/IEvaluatedResponse";
+import { MdFeedback } from "react-icons/md";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,105 +33,135 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { toast } from "sonner"
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 export default function CorrectQuestionsPage() {
-  const { data: session, status } = useSession()
-  const router = useRouter()
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
-  const [pendingResponses, setPendingResponses] = useState<PendingResponse[]>([])
-  const [evaluatedResponses, setEvaluatedResponses] = useState<EvaluatedResponse[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [subjectFilter, setSubjectFilter] = useState<string>("all")
-  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [pendingResponses, setPendingResponses] = useState<PendingResponse[]>(
+    []
+  );
+  const [evaluatedResponses, setEvaluatedResponses] = useState<
+    EvaluatedResponse[]
+  >([]);
+  const [pendingQuestionSubjects, setPendingQuestionSubjects] = useState<
+    string[]
+  >([]);
+  const [evaluatedQuestionSubjects, setEvaluatedQuestionSubjects] = useState<
+    string[]
+  >([]);
+  const subjects = [
+    ...new Set([...pendingQuestionSubjects, ...evaluatedQuestionSubjects]),
+  ];
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [subjectFilter, setSubjectFilter] = useState<string>("all");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/signin")
+      router.push("/signin");
     }
 
     if (status === "authenticated") {
-      fetchResponses()
+      fetchResponses();
     }
-  }, [status, router])
+  }, [status, router]);
 
   const fetchResponses = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
 
       // Fetch pending responses
-      const pendingRes = await fetch("/api/correction/pending")
-      if (!pendingRes.ok) throw new Error("Falha ao carregar questões pendentes")
-      const pendingData = await pendingRes.json()
+      const pendingRes = await fetch("/api/correction/pending");
+      if (!pendingRes.ok)
+        throw new Error("Falha ao carregar questões pendentes");
+      const pendingData: PendingResponse[] = await pendingRes.json();
 
       // Fetch evaluated responses
-      const evaluatedRes = await fetch("/api/correction/evaluated")
-      if (!evaluatedRes.ok) throw new Error("Falha ao carregar questões avaliadas")
-      const evaluatedData = await evaluatedRes.json()
+      const evaluatedRes = await fetch("/api/correction/evaluated");
+      if (!evaluatedRes.ok)
+        throw new Error("Falha ao carregar questões avaliadas");
+      const evaluatedData: EvaluatedResponse[] = await evaluatedRes.json();
 
-      setPendingResponses(pendingData)
-      setEvaluatedResponses(evaluatedData)
+      setPendingResponses(pendingData);
+      setPendingQuestionSubjects(pendingData.map((data) => data.subject));
+      setEvaluatedResponses(evaluatedData);
+      setEvaluatedQuestionSubjects(evaluatedData.map((data) => data.subject));
     } catch (err) {
-      console.error(err)
-      setError("Ocorreu um erro ao carregar as questões. Por favor, tente novamente mais tarde.")
+      console.error(err);
+      setError(
+        "Ocorreu um erro ao carregar as questões. Por favor, tente novamente mais tarde."
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleDeleteEvaluation = async (id: string) => {
     try {
       const response = await fetch(`/api/correction/delete-evaluation/${id}`, {
         method: "DELETE",
-      })
+      });
 
       if (!response.ok) {
-        throw new Error("Falha ao excluir avaliação")
+        throw new Error("Falha ao excluir avaliação");
       }
 
       // Remove the deleted evaluation from the list
-      setEvaluatedResponses((prev) => prev.filter((evaluation) => evaluation.id !== id))
+      setEvaluatedResponses((prev) =>
+        prev.filter((evaluation) => evaluation.id !== id)
+      );
 
       // Add it to pending responses
-      const deletedEvaluation = evaluatedResponses.find((e) => e.id === id)
+      const deletedEvaluation = evaluatedResponses.find((e) => e.id === id);
       if (deletedEvaluation) {
         const pendingResponse: PendingResponse = {
           id: deletedEvaluation.id,
           questionTitle: deletedEvaluation.questionTitle,
           questionId: deletedEvaluation.questionId,
+          subject: deletedEvaluation.subject,
           createdAt: deletedEvaluation.evaluatedAt, // Using evaluated date as created date
           student: deletedEvaluation.student,
-        }
-        setPendingResponses((prev) => [...prev, pendingResponse])
+          maxGrade: deletedEvaluation.maxGrade
+        };
+        setPendingResponses((prev) => [...prev, pendingResponse]);
       }
 
       toast.success("Avaliação excluída com sucesso", {
         description: "A questão voltou para a lista de pendentes.",
-      })
+      });
     } catch (error) {
-      console.error("Error deleting evaluation:", error)
+      console.error("Error deleting evaluation:", error);
       toast.error("Erro ao excluir avaliação", {
-        description: "Ocorreu um erro ao tentar excluir a avaliação. Tente novamente.",
-      })
+        description:
+          "Ocorreu um erro ao tentar excluir a avaliação. Tente novamente.",
+      });
     } finally {
-      setDeletingId(null)
+      setDeletingId(null);
     }
-  }
+  };
 
   const filteredPendingResponses = pendingResponses.filter((response) => {
-    const matchesSearch = response.questionTitle.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesSubject = subjectFilter === "all" || true // In a real app, filter by subject
-    return matchesSearch && matchesSubject
-  })
+    const matchesSearch = response.questionTitle
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesSubject =
+      subjectFilter === "all" || response.subject === subjectFilter;
+    return matchesSearch && matchesSubject;
+  });
 
   const filteredEvaluatedResponses = evaluatedResponses.filter((response) => {
-    const matchesSearch = response.questionTitle.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesSubject = subjectFilter === "all" || true // In a real app, filter by subject
-    return matchesSearch && matchesSubject
-  })
+    const matchesSearch = response.questionTitle
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesSubject =
+      subjectFilter === "all" || response.subject === subjectFilter;
+    return matchesSearch && matchesSubject;
+  });
 
   if (status === "loading" || loading) {
     return (
@@ -150,7 +186,7 @@ export default function CorrectQuestionsPage() {
           </Card>
         ))}
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -162,7 +198,7 @@ export default function CorrectQuestionsPage() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       </div>
-    )
+    );
   }
 
   if (!session || !session.user) {
@@ -171,13 +207,15 @@ export default function CorrectQuestionsPage() {
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Acesso Negado</AlertTitle>
-          <AlertDescription>Você precisa estar logado para acessar esta página.</AlertDescription>
+          <AlertDescription>
+            Você precisa estar logado para acessar esta página.
+          </AlertDescription>
         </Alert>
         <Button asChild className="mt-4">
           <Link href="/signin">Fazer Login</Link>
         </Button>
       </div>
-    )
+    );
   }
 
   return (
@@ -187,7 +225,9 @@ export default function CorrectQuestionsPage() {
           <MdFeedback className="h-6 w-6 mt-[6px] mr-2" />
           Correção de Questões
         </h1>
-        <p className="text-gray-500 mb-6">Avalie as respostas dos alunos e forneça feedback construtivo</p>
+        <p className="text-gray-500 mb-6">
+          Avalie as respostas dos alunos e forneça feedback construtivo
+        </p>
 
         <Tabs defaultValue="pending" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
@@ -219,11 +259,12 @@ export default function CorrectQuestionsPage() {
                   <SelectValue placeholder="Filtrar por matéria" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todas as matérias</SelectItem>
-                  <SelectItem value="direito-constitucional">Direito Constitucional</SelectItem>
-                  <SelectItem value="direito-administrativo">Direito Administrativo</SelectItem>
-                  <SelectItem value="direito-civil">Direito Civil</SelectItem>
-                  <SelectItem value="direito-penal">Direito Penal</SelectItem>
+                  <SelectItem value="all">Todas as disciplinas</SelectItem>
+                  {subjects.map((subject, index: number) => (
+                    <SelectItem value={subject} key={index}>
+                      {subject}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -234,10 +275,13 @@ export default function CorrectQuestionsPage() {
               <div className="flex items-start gap-3">
                 <Clock className="h-5 w-5 text-yellow-600 mt-0.5" />
                 <div>
-                  <h3 className="font-medium text-yellow-800 mb-1">Questões aguardando correção</h3>
+                  <h3 className="font-medium text-yellow-800 mb-1">
+                    Questões aguardando correção
+                  </h3>
                   <p className="text-sm text-yellow-700">
-                    Estas questões foram respondidas pelos alunos e estão aguardando sua avaliação. Clique em uma
-                    questão para avaliá-la.
+                    Estas questões foram respondidas pelos alunos e estão
+                    aguardando sua avaliação. Clique em uma questão para
+                    avaliá-la.
                   </p>
                 </div>
               </div>
@@ -256,7 +300,10 @@ export default function CorrectQuestionsPage() {
             ) : (
               <div className="space-y-4">
                 {filteredPendingResponses.map((response, index) => (
-                  <Card key={index} className="hover:shadow-md transition-shadow">
+                  <Card
+                    key={index}
+                    className="hover:shadow-md transition-shadow"
+                  >
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg font-medium">
                         <Link
@@ -271,15 +318,23 @@ export default function CorrectQuestionsPage() {
                       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                         <div className="flex items-center gap-3">
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={response.student.image || ""} alt={response.student.name} />
+                            <AvatarImage
+                              src={response.student.image || ""}
+                              alt={response.student.name}
+                            />
                             <AvatarFallback className="bg-cyan-100 text-cyan-800">
                               {response.student.name.charAt(0)}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="font-medium text-sm">{response.student.name}</div>
+                            <div className="font-medium text-sm">
+                              {response.student.name}
+                            </div>
                             <div className="text-xs text-gray-500">
-                              Enviada em {new Date(response.createdAt).toLocaleDateString("pt-BR")}
+                              Enviada em{" "}
+                              {new Date(response.createdAt).toLocaleDateString(
+                                "pt-BR"
+                              )}
                             </div>
                           </div>
                         </div>
@@ -309,10 +364,12 @@ export default function CorrectQuestionsPage() {
               <div className="flex items-start gap-3">
                 <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                 <div>
-                  <h3 className="font-medium text-green-800 mb-1">Questões já avaliadas</h3>
+                  <h3 className="font-medium text-green-800 mb-1">
+                    Questões já avaliadas
+                  </h3>
                   <p className="text-sm text-green-700">
-                    Estas questões já foram avaliadas por você. Você pode revisar suas avaliações ou editar o feedback
-                    fornecido.
+                    Estas questões já foram avaliadas por você. Você pode
+                    revisar suas avaliações ou editar o feedback fornecido.
                   </p>
                 </div>
               </div>
@@ -331,7 +388,10 @@ export default function CorrectQuestionsPage() {
             ) : (
               <div className="space-y-4">
                 {filteredEvaluatedResponses.map((response, index) => (
-                  <Card key={index} className="hover:shadow-md transition-shadow">
+                  <Card
+                    key={index}
+                    className="hover:shadow-md transition-shadow"
+                  >
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg font-medium">
                         <Link
@@ -346,15 +406,23 @@ export default function CorrectQuestionsPage() {
                       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                         <div className="flex items-center gap-3">
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={response.student.image || ""} alt={response.student.name} />
+                            <AvatarImage
+                              src={response.student.image || ""}
+                              alt={response.student.name}
+                            />
                             <AvatarFallback className="bg-cyan-100 text-cyan-800">
                               {response.student.name.charAt(0)}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="font-medium text-sm">{response.student.name}</div>
+                            <div className="font-medium text-sm">
+                              {response.student.name}
+                            </div>
                             <div className="text-xs text-gray-500">
-                              Avaliada em {new Date(response.evaluatedAt).toLocaleDateString("pt-BR")}
+                              Avaliada em{" "}
+                              {new Date(
+                                response.evaluatedAt
+                              ).toLocaleDateString("pt-BR")}
                             </div>
                           </div>
                         </div>
@@ -362,7 +430,7 @@ export default function CorrectQuestionsPage() {
                         <div className="font-medium text-sm">
                           Nota:{" "}
                           <span className="text-cyan-700">
-                            {response.grade}/{response.maxGrade}
+                            {response.grade}/{response.maxGrade || 10}
                           </span>
                         </div>
 
@@ -372,7 +440,9 @@ export default function CorrectQuestionsPage() {
                             variant="outline"
                             className="border-cyan-200 text-cyan-700 hover:bg-cyan-50 hover:text-cyan-800"
                           >
-                            <Link href={`/corrigir-questoes/${response.id}`}>Ver avaliação</Link>
+                            <Link href={`/corrigir-questoes/${response.id}`}>
+                              Ver avaliação
+                            </Link>
                           </Button>
 
                           <AlertDialog>
@@ -386,19 +456,26 @@ export default function CorrectQuestionsPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Excluir avaliação</AlertDialogTitle>
+                                <AlertDialogTitle>
+                                  Excluir avaliação
+                                </AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Tem certeza que deseja excluir esta avaliação? Esta ação não pode ser desfeita. A
-                                  questão voltará para a lista de pendentes.
+                                  Tem certeza que deseja excluir esta avaliação?
+                                  Esta ação não pode ser desfeita. A questão
+                                  voltará para a lista de pendentes.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
                                 <AlertDialogAction
-                                  onClick={() => handleDeleteEvaluation(response.id)}
+                                  onClick={() =>
+                                    handleDeleteEvaluation(response.id)
+                                  }
                                   className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
                                 >
-                                  {deletingId === response.id ? "Excluindo..." : "Excluir"}
+                                  {deletingId === response.id
+                                    ? "Excluindo..."
+                                    : "Excluir"}
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
@@ -414,6 +491,5 @@ export default function CorrectQuestionsPage() {
         </Tabs>
       </div>
     </div>
-  )
+  );
 }
-

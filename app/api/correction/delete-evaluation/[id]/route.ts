@@ -1,10 +1,13 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { connectToDatabase } from "@/lib/mongoose";
+import Response from "@/app/models/Response";
+import Feedback from "@/app/models/Feedback";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -22,20 +25,44 @@ export async function DELETE(
       return NextResponse.json({ error: "Permissão negada" }, { status: 403 });
     }
 
-    const responseId = params.id;
+    const responseId = (await params).id;
 
-    // In a real application, you would:
-    // 1. Delete the feedback from the database
-    // 2. Update the response status back to "pending"
+    await connectToDatabase();
+    const response = await Response.findOne({
+      _id: responseId,
+    })
+      .populate("feedback", "evaluatedBy")
+      .lean();
+    if (!response) {
+      return NextResponse.json(
+        { error: "Resposta não encontrada" },
+        { status: 404 }
+      );
+    }
+    if (
+      userRole !== "admin" &&
+      (response.feedback as any).evaluatedBy !== session.user.email
+    ) {
+      return NextResponse.json({ error: "Permissão negada" }, { status: 403 });
+    }
 
-    // Simulate a delay to mimic database operation
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const updatedResponse = await Response.findOneAndUpdate(
+      {
+        _id: responseId,
+      },
+      { $set: { status: "pending", feedback: undefined } }
+    );
 
-    // Mock successful response
-    return NextResponse.json({
-      success: true,
-      message: "Avaliação excluída com sucesso",
+    const deletedFeedback = await Feedback.findOneAndDelete({
+      _id: updatedResponse?.feedback,
     });
+
+    if (deletedFeedback) {
+      return NextResponse.json({
+        success: true,
+        message: "Avaliação excluída com sucesso",
+      });
+    }
   } catch (error) {
     console.error("Error deleting evaluation:", error);
     return NextResponse.json(

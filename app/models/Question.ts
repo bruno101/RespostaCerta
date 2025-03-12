@@ -17,6 +17,7 @@ interface IQuestion extends Document {
   EmailCriador: string;
   TextoPlano: string;
   Dificuldade: string;
+  NotaMaxima?: string;
 }
 
 const QuestionSchema = new Schema<IQuestion>(
@@ -27,17 +28,20 @@ const QuestionSchema = new Schema<IQuestion>(
     Nivel: { type: String, required: true },
     Instituicao: { type: String, required: true },
     Cargo: { type: String, required: true },
-    Numero: {type: Number, required: false},
+    Numero: { type: Number, required: false },
     TextoMotivador: { type: String, required: false },
     Questao: { type: String, required: true },
     Criterios: { type: String, required: false },
     Resposta: { type: String, required: false },
     EmailCriador: { type: String, required: false, select: false },
-    TextoPlano: {type: String, required: true},
-    Dificuldade: {type: String, required: true}
+    TextoPlano: { type: String, required: true },
+    Dificuldade: { type: String, required: true },
+    NotaMaxima: { type: Number, required: false },
   },
   { timestamps: true }
 );
+
+QuestionSchema.index({ createdAt: -1 });
 
 const Question: Model<IQuestion> =
   mongoose.models.Question ||

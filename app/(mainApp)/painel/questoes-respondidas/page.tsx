@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/select";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import ResponseSummary from "@/app/interfaces/ResponseSummary";
+import IResponseSummary from "@/app/interfaces/IResponseSummary";
 
 interface TimelineEvent {
   id: string;
@@ -42,7 +42,7 @@ interface TimelineEvent {
 }
 
 export default function QuestionResponsesPage() {
-  const [responses, setResponses] = useState<ResponseSummary[]>([]);
+  const [responses, setResponses] = useState<IResponseSummary[]>([]);
   const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -67,7 +67,7 @@ export default function QuestionResponsesPage() {
         // Generate mock timeline events based on responses
         const events: TimelineEvent[] = [];
 
-        data.forEach((response: ResponseSummary) => {
+        data.forEach((response: IResponseSummary) => {
           // Add submission event for each response
           events.push({
             id: `submission-${response.id}`,
@@ -90,10 +90,10 @@ export default function QuestionResponsesPage() {
               responseId: response.id,
               questionTitle: response.questionTitle,
               questionId: response.questionId,
-              details: `Avaliação recebida: ${response.grade}/10`,
+              details: `Avaliação recebida: ${response.grade}/${response.maxGrade}`,
               user: {
-                name: "Prof. Avaliador",
-                image: "https://i.pravatar.cc/150?u=evaluator",
+                name: response.evaluator?.name || "Prof. Avaliador",
+                image: response.evaluator?.image || "https://i.pravatar.cc/150?u=evaluator",
               },
             });
           }

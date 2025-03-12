@@ -88,7 +88,6 @@ export default function QuestionList({
   // Handle page change
   const handlePageChange = (page: number) => {
     updateQueryParam([{ key: "pageIndex", value: String(page) }]);
-    console.log("Page changed to:", page);
   };
 
   // Handle questions per page change

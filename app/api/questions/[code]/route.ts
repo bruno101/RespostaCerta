@@ -43,7 +43,8 @@ export async function GET(
       Criterios: q.Criterios,
       Resposta: q.Resposta,
       Dificuldade: q.Dificuldade,
-      TextoPlano: q.TextoPlano
+      TextoPlano: q.TextoPlano,
+      NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,
     };
 
     return NextResponse.json(question);
@@ -110,7 +111,8 @@ export async function PUT(
       Criterios,
       Resposta,
       TextoPlano,
-      Dificuldade
+      Dificuldade,
+      NotaMaxima
     } = body;
 
     const newBody = {
@@ -127,7 +129,8 @@ export async function PUT(
       Resposta: DOMPurify.sanitize(Resposta, sanitizationSettings),
       TextoPlano: TextoPlano,
       Dificuldade: Dificuldade,
-      EmailCriador: session?.user?.email
+      EmailCriador: session?.user?.email,
+      NotaMaxima: NotaMaxima
     };
 
     // Find and update the question
@@ -144,8 +147,6 @@ export async function PUT(
         { status: 404 }
       );
     }
-
-    console.log(updatedQuestion);
 
     // Return the updated question
     return NextResponse.json({...updatedQuestion, Codigo: code});

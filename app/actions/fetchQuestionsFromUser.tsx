@@ -27,7 +27,8 @@ export async function fetchQuestionsFromUser() {
       Criterios: q.Criterios,
       Resposta: q.Resposta,
       TextoPlano: q.TextoPlano,
-      Dificuldade: q.Dificuldade
+      Dificuldade: q.Dificuldade,
+      NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,
     }));
   }
   return JSON.stringify(mappedData);

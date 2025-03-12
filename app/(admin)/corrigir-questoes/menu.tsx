@@ -31,7 +31,7 @@ export default function DesktopMenu() {
               height={100}
               className="w-11 h-11 mr-2 my-auto -mt-1"
             />
-              <p className="font-bold">Resposta Certa</p>
+            <p className="font-bold">Resposta Certa</p>
           </Link>
           <Link
             href="/corrigir-questoes"
@@ -48,7 +48,7 @@ export default function DesktopMenu() {
           Painel de Correção de Questões
         </Link>
         {session === null && (
-          <Link className="ml-auto mr-5" href="/signup">
+          <Link className="xs: hidden sm:flex ml-auto mr-5" href="/signup">
             <button className="focus:bg-cyan-600 focus:outline focus:border-0 focus:outline-2 focus:outline-cyan-300 hover:bg-cyan-600 rounded-3xl px-4 py-1 border-white border-1 text-l text-white font-bold ">
               Criar conta
             </button>
@@ -71,6 +71,7 @@ export default function DesktopMenu() {
                     break;
                   case "logout":
                     signOut();
+                    router.push("/signin");
                     break;
                 }
               }}
@@ -90,12 +91,14 @@ export default function DesktopMenu() {
                 <SelectValue placeholder="" className="" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem
-                  className="text-cyan-700 cursor-pointer focus:text-cyan-400"
-                  value="painel"
-                >
-                  Meu Painel
-                </SelectItem>
+                <Link href={"/painel"}>
+                  <SelectItem
+                    className="text-cyan-700 cursor-pointer focus:text-cyan-400"
+                    value="painel"
+                  >
+                    Meu Painel
+                  </SelectItem>
+                </Link>
                 {(session?.user as any)?.role === "admin" && (
                   <SelectItem
                     className="text-cyan-700 cursor-pointer focus:text-cyan-400"
@@ -125,7 +128,7 @@ export default function DesktopMenu() {
         )}
         {session === null && (
           <Link href="/signin" className="mr-5">
-            <button className=" rounded-3xl px-4 py-1 bg-[#15bdb2] focus:outline focus:outline-2 focus:outline-blue-400 hover:bg-[#2ee8dc] focus:bg-[#2ee8dc] text-l text-white font-bold ">
+            <button className="xs:ml-auto rounded-3xl px-4 py-1 bg-[#15bdb2] focus:outline focus:outline-2 focus:outline-blue-400 hover:bg-[#2ee8dc] focus:bg-[#2ee8dc] text-l text-white font-bold ">
               Entrar
             </button>
           </Link>

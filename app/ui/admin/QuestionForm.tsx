@@ -51,6 +51,7 @@ let initialQuestion: IQuestion = {
   Codigo: "",
   TextoPlano: "",
   Dificuldade: "",
+  NotaMaxima: 10,
 };
 
 export function QuestionForm({
@@ -183,7 +184,6 @@ export function QuestionForm({
     }
   }, [error, createdQuestionLink, messageCount]);
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -308,6 +308,23 @@ export function QuestionForm({
             onChange={(e) =>
               setQuestion((q) => {
                 return { ...q, Numero: e.target.value };
+              })
+            }
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="NotaMaxima" className="text-cyan-700">
+            Nota Máxima
+          </Label>
+          <Input
+            name="NotaMaxima"
+            placeholder="10"
+            step="0.1"
+            value={question.NotaMaxima}
+            type="number"
+            onChange={(e) =>
+              setQuestion((q) => {
+                return { ...q, NotaMaxima: +e.target.value };
               })
             }
           />

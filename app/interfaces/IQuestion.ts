@@ -12,5 +12,6 @@ export default interface IQuestion {
   Instituicao: string;
   Cargo: string;
   TextoPlano: string;
-  Dificuldade: string
+  Dificuldade: string;
+  NotaMaxima: number
 }

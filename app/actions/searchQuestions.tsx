@@ -47,6 +47,7 @@ export async function searchQuestions(
       }
     }
     const questions = await Question.find(findObject)
+    .sort({createdAt: -1})
       .skip(skip)
       .limit(limit)
       .exec();
@@ -66,6 +67,7 @@ export async function searchQuestions(
       Resposta: q.Resposta,
       TextoPlano: q.TextoPlano,
       Dificuldade: q.Dificuldade,
+      NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,
     }));
     return { questions: mappedQuestions, totalDocuments, totalPages };
   } catch (error) {

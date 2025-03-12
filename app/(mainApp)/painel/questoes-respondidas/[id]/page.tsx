@@ -193,7 +193,7 @@ export default function QuestionResponsePage() {
 
   if (loading) {
     return (
-      <div className="container max-w-4xl py-8 mx-auto">
+      <div className="container py-8 mx-auto">
         <div className="mb-8">
           <Skeleton className="h-10 w-3/4 mb-2" />
           <Skeleton className="h-6 w-1/4" />
@@ -232,23 +232,24 @@ export default function QuestionResponsePage() {
 
   if (error) {
     return (
-      <div className="container mx-auto max-w-4xl py-8">
+      <div className="container mx-auto py-8">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Erro</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
-
-        <Button asChild className="mt-4">
-          <Link href="/painel">Voltar ao Painel</Link>
-        </Button>
+        <Link href="/painel">
+          <button className="text-[14px] mt-4 px-3 py-2 rounded-md text-white bg-cyan-600 hover:bg-cyan-400 focus:bg-cyan-400 focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-cyan-700">
+            Voltar ao Painel
+          </button>
+        </Link>
       </div>
     );
   }
 
   if (!response) {
     return (
-      <div className="container max-w-4xl py-8">
+      <div className="container py-8">
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Resposta não encontrada</AlertTitle>

@@ -5,7 +5,7 @@ import IQuestion from "@/app/interfaces/IQuestion";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { sanitizationSettings } from "@/lib/sanitization";
-import DOMPurify from "isomorphic-dompurify"
+import DOMPurify from "isomorphic-dompurify";
 
 export async function GET() {
   try {
@@ -29,7 +29,8 @@ export async function GET() {
       Criterios: q.Criterios,
       Resposta: q.Resposta,
       TextoPlano: q.TextoPlano,
-      Dificuldade: q.Dificuldade
+      Dificuldade: q.Dificuldade,
+      NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,
     }));
 
     return NextResponse.json(mappedQuestions);
@@ -51,12 +52,14 @@ export async function POST(request: NextRequest) {
     // Connect to the database
     await connectToDatabase();
 
-    const userRole = session?.user?.role
+    const userRole = session?.user?.role;
     if (userRole !== "admin") {
       return NextResponse.json(
-        { error: "Insufficient permissions. Only admins can create questions." },
-        { status: 403 },
-      )
+        {
+          error: "Insufficient permissions. Only admins can create questions.",
+        },
+        { status: 403 }
+      );
     }
 
     // Parse the request body
@@ -75,12 +78,16 @@ export async function POST(request: NextRequest) {
       Numero: String(q.Numero),
       Instituicao: q.Instituicao,
       Cargo: q.Cargo,
-      TextoMotivador: DOMPurify.sanitize(q.TextoMotivador, sanitizationSettings),
+      TextoMotivador: DOMPurify.sanitize(
+        q.TextoMotivador,
+        sanitizationSettings
+      ),
       Questao: DOMPurify.sanitize(q.Questao, sanitizationSettings),
       Criterios: DOMPurify.sanitize(q.Criterios, sanitizationSettings),
       Resposta: DOMPurify.sanitize(q.Resposta, sanitizationSettings),
       TextoPlano: q.TextoPlano,
-      Dificuldade: q.Dificuldade
+      Dificuldade: q.Dificuldade,
+      NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,
     };
 
     // Return the created question
