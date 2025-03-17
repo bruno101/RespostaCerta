@@ -9,12 +9,15 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "avatar.iran.liara.run"
+        hostname: "avatar.iran.liara.run",
       },
       {
         protocol: "https",
-        hostname: "lh3.googleusercontent.com"
-      }
+        hostname: "lh3.googleusercontent.com",
+      },
+      { protocol: "https", hostname: "i.pravatar.cc" },
+      { protocol: "https", hostname: "m0jejd1oc5.ufs.sh" },
+      { protocol: "https", hostname: "upload.wikimedia.org" },
     ],
   },
 };

@@ -1,139 +1,189 @@
 "use client";
-import Link from "next/link";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { useSession, signOut } from "next-auth/react";
+import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
+import { Menu, X } from "lucide-react";
 import {
   Select,
-  SelectContent,
-  SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectContent,
+  SelectItem,
 } from "@/components/ui/select";
-import { IoIosArrowForward } from "react-icons/io";
 
-export default function DesktopMenu() {
+const navItems = [
+  { name: "Questões", href: "/questoes" },
+  { name: "Cadernos", href: "/cadernos" },
+  { name: "Simulados", href: "/simulados" },
+  { name: "Minhas Respostas", href: "/painel/questoes-respondidas" },
+];
+
+export default function TopMenu() {
   const { data: session } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <>
-      <div className="flex flex-row w-full">
-        <div className="flex flex-col text-2xl text-white">
-          <Link href="/" className="flex">
+    <nav className="fixed top-0 left-0 right-0 bg-cyan-800 shadow-lg z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo and App Name */}
+          <a href="/" className="flex items-center">
             <Image
-              alt={"logo"}
-              src={
-                "https://img.icons8.com/?size=100&id=mocKqJgwSoT7&format=png&color=0000000"
-              }
-              width={100}
-              height={100}
-              className="w-11 h-11 mr-2 my-auto -mt-1"
+              src="/logo.png"
+              alt="Resposta Certa Logo"
+              width={40}
+              height={40}
+              className="rounded-full"
             />
-            <p className="font-bold">Resposta Certa</p>
-          </Link>
-          <Link
-            href="/corrigir-questoes"
-            className="flex sm:hidden flex text-[16px] text-cyan-50"
-          >
-            Painel de Correção de Questões
-          </Link>
-        </div>
-        <Link
-          href="/corrigir-questoes"
-          className="hidden sm:flex ml-2 mt-1 flex text-lg text-cyan-50"
-        >
-          <IoIosArrowForward className="w-5 h-5 mt-[5px] mr-1" />
-          Painel de Correção de Questões
-        </Link>
-        {session === null && (
-          <Link className="xs: hidden sm:flex ml-auto mr-5" href="/signup">
-            <button className="focus:bg-cyan-600 focus:outline focus:border-0 focus:outline-2 focus:outline-cyan-300 hover:bg-cyan-600 rounded-3xl px-4 py-1 border-white border-1 text-l text-white font-bold ">
-              Criar conta
-            </button>
-          </Link>
-        )}
-        {session && (
-          <div className="text-white ml-auto mr-5">
-            <Select
-              value={""}
-              onValueChange={(value) => {
-                switch (value) {
-                  case "painel":
-                    router.push("/painel");
-                    break;
-                  case "admin":
-                    router.push("/admin");
-                    break;
-                  case "correction":
-                    router.push("/corrigir-questoes");
-                    break;
-                  case "logout":
-                    signOut();
-                    router.push("/signin");
-                    break;
-                }
-              }}
-            >
-              <SelectTrigger className="w-[90px] h-[50px] [&>svg]:w-5 [&>svg]:h-5 [&>svg]:stroke-white text-white border-cyan-700 hover:bg-cyan-600 focus:ring-0 data-[state=open]:bg-cyan-600 shadow-cyan-700">
-                <Image
-                  src={
-                    session?.user?.image
-                      ? session?.user?.image
-                      : "https://img.icons8.com/?size=100&id=z-JBA_KtSkxG&format=png&color=000000"
-                  }
-                  alt="Circle Image"
-                  width={64}
-                  height={64}
-                  className="object-cover w-9 h-9 rounded-full overflow-hidden"
-                />
-                <SelectValue placeholder="" className="" />
-              </SelectTrigger>
-              <SelectContent>
-                <Link href={"/painel"}>
-                  <SelectItem
-                    className="text-cyan-700 cursor-pointer focus:text-cyan-400"
-                    value="painel"
-                  >
-                    Meu Painel
-                  </SelectItem>
-                </Link>
-                {(session?.user as any)?.role === "admin" && (
-                  <SelectItem
-                    className="text-cyan-700 cursor-pointer focus:text-cyan-400"
-                    value="admin"
-                  >
-                    Painel de Administração
-                  </SelectItem>
-                )}
-                {((session?.user as any)?.role === "admin" ||
-                  (session?.user as any)?.role === "corretor") && (
-                  <SelectItem
-                    className="text-cyan-700 cursor-pointer focus:text-cyan-400"
-                    value="correction"
-                  >
-                    Correção de Questões
-                  </SelectItem>
-                )}
-                <SelectItem
-                  className="text-cyan-700 cursor-pointer focus:text-cyan-400"
-                  value="logout"
-                >
-                  Sair
-                </SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex flex-col text-white ml-2">
+              <p className="text-xl font-semibold">Resposta Certa</p>
+              <p className="hidden lg:flex text-slate-100 text-[14px] font-light">
+                Painel de Correção
+              </p>
+            </div>
+          </a>
+
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center space-x-4">
+            {navItems.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  pathname.startsWith(item.href)
+                    ? "bg-cyan-700 text-white"
+                    : "text-white hover:bg-cyan-700"
+                }`}
+              >
+                {item.name}
+              </a>
+            ))}
           </div>
-        )}
-        {session === null && (
-          <Link href="/signin" className="mr-5">
-            <button className="xs:ml-auto rounded-3xl px-4 py-1 bg-[#15bdb2] focus:outline focus:outline-2 focus:outline-blue-400 hover:bg-[#2ee8dc] focus:bg-[#2ee8dc] text-l text-white font-bold ">
-              Entrar
-            </button>
-          </Link>
-        )}
+
+          <div className="flex items-center">
+            {/* Authentication Section */}
+            <div className="flex items-center ml-1 mr-5">
+              {session ? (
+                <Select
+                  value=""
+                  onValueChange={(value) => {
+                    switch (value) {
+                      case "painel":
+                        router.push("/painel");
+                        break;
+                      case "admin":
+                        router.push("/admin");
+                        break;
+                      case "correction":
+                        router.push("/corrigir-questoes");
+                        break;
+                      case "logout":
+                        signOut();
+                        break;
+                    }
+                  }}
+                >
+                  <SelectTrigger className="w-[90px] h-[50px] [&>svg]:w-5 [&>svg]:h-5 [&>svg]:stroke-white text-white border-cyan-700 hover:bg-cyan-600 focus:ring-0 data-[state=open]:bg-cyan-600 shadow-cyan-700">
+                    <Image
+                      src={
+                        session.user?.image ||
+                        "https://img.icons8.com/?size=100&id=z-JBA_KtSkxG&format=png&color=000000"
+                      }
+                      alt="User Profile"
+                      width={36}
+                      height={36}
+                      className="rounded-full"
+                    />
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem
+                      className="text-cyan-900 cursor-pointer focus:text-cyan-500"
+                      value="painel"
+                    >
+                      Meu Painel
+                    </SelectItem>
+                    {(session.user as any)?.role === "admin" && (
+                      <SelectItem
+                        className="text-cyan-900 cursor-pointer focus:text-cyan-500"
+                        value="admin"
+                      >
+                        Painel de Administração
+                      </SelectItem>
+                    )}
+                    {((session.user as any)?.role === "admin" ||
+                      (session.user as any)?.role === "corretor") && (
+                      <SelectItem
+                        className="text-cyan-900 cursor-pointer focus:text-cyan-500"
+                        value="correction"
+                      >
+                        Correção de Questões
+                      </SelectItem>
+                    )}
+                    <SelectItem
+                      className="text-cyan-900 cursor-pointer focus:text-cyan-500"
+                      value="logout"
+                    >
+                      Sair
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              ) : (
+                <>
+                  <a
+                    href="/signin"
+                    className="text-white hover:bg-cyan-700 px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    Entrar
+                  </a>
+                  <a
+                    href="/signup"
+                    className="hidden md:inline text-white hover:bg-cyan-700 px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    Criar conta
+                  </a>
+                </>
+              )}
+            </div>
+
+            {/* Mobile Menu Toggle */}
+            <div className="md:hidden flex items-center">
+              <button
+                onClick={toggleMenu}
+                className="text-white hover:bg-cyan-700 p-2 rounded-md focus:outline-none"
+              >
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-    </>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-cyan-800">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            {navItems.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                className={`block px-3 py-2 rounded-md text-base font-medium ${
+                  pathname.startsWith(item.href)
+                    ? "bg-cyan-700 text-white"
+                    : "text-white hover:bg-cyan-700"
+                }`}
+              >
+                {item.name}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </nav>
   );
 }

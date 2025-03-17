@@ -124,7 +124,7 @@ export default function EditEvaluationPage() {
   };
 
   const handleSubmitFeedback = async () => {
-    setIsConfirming(true)
+    setIsConfirming(true);
     if (!validateForm()) return;
 
     try {

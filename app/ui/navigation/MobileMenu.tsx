@@ -97,14 +97,14 @@ export default function MobileMenu({
             </SelectTrigger>
             <SelectContent>
               <SelectItem
-                className="text-cyan-700 cursor-pointer focus:text-cyan-400"
+                className="text-cyan-900 cursor-pointer focus:text-cyan-500"
                 value="painel"
               >
                 Meu Painel
               </SelectItem>
               {(session?.user as any)?.role === "admin" && (
                 <SelectItem
-                  className="text-cyan-700 cursor-pointer focus:text-cyan-400"
+                  className="text-cyan-900 cursor-pointer focus:text-cyan-500"
                   value="admin"
                 >
                   Painel de Administração
@@ -113,14 +113,14 @@ export default function MobileMenu({
               {((session?.user as any)?.role === "admin" ||
                   (session?.user as any)?.role === "corretor") && (
                   <SelectItem
-                    className="text-cyan-700 cursor-pointer focus:text-cyan-400"
+                    className="text-cyan-900 cursor-pointer focus:text-cyan-500"
                     value="correction"
                   >
                     Correção de Questões
                   </SelectItem>
                 )}
               <SelectItem
-                className="text-cyan-700 cursor-pointer focus:text-cyan-400"
+                className="text-cyan-900 cursor-pointer focus:text-cyan-500"
                 value="logout"
               >
                 Sair

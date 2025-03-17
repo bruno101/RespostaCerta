@@ -41,6 +41,6 @@ const ResponseSchema = new Schema<IResponse>(
 )
 
 // Check if the model already exists to prevent overwriting
-const Response: Model<IResponse> = mongoose.models.Response || mongoose.model<IResponse>("Response", ResponseSchema)
+const Response: Model<IResponse> = mongoose.models.Response || mongoose.model<IResponse>("Response", ResponseSchema, "responses")
 
 export default Response

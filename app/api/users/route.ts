@@ -59,6 +59,7 @@ export async function POST(req: Request) {
       name,
       email,
       signedUpWithGoogle,
+      verified: signedUpWithGoogle,
       image: image ? image : null,
     });
 

@@ -3,6 +3,8 @@ import User from "@/app/models/User";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
+import crypto from "crypto";
+import { sendEmail } from "@/lib/email";
 
 export async function POST(request: Request) {
   try {
@@ -17,9 +19,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const userFound = await User.findOne({ email });
+    let user = await User.findOne({ email });
 
-    if (userFound) {
+    if (user && user.verified === true) {
       return NextResponse.json(
         { message: "Email already exists" },
         { status: 409 }
@@ -28,13 +30,53 @@ export async function POST(request: Request) {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const user = new User({
-      name,
-      email,
-      password: hashedPassword,
-    });
+    const verifyToken = crypto.randomBytes(32).toString("hex");
+    const verifyTokenExpiry = Date.now() + 3600000; // 1 hour from now
+
+    if (!user) {
+      user = new User({
+        name,
+        email,
+        password: hashedPassword,
+        verified: false,
+        verifyToken,
+        verifyTokenExpiry,
+      });
+    } else {
+      user.name = name;
+      user.email = email;
+      user.password = hashedPassword;
+      user.verified = false;
+      user.verifyToken = verifyToken;
+      user.verifyTokenExpiry = verifyTokenExpiry;
+    }
 
     const savedUser = await user.save();
+
+    const verifyUrl = `${process.env.NEXTAUTH_URL}/verify-account?token=${verifyToken}`;
+
+    // Send email
+    await sendEmail({
+      to: user.email,
+      subject: "Ativação de Conta - Resposta Certa",
+      html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2>Ativação de Conta</h2>
+              <p>Olá,</p>
+              <p>Você é o mais novo aluno do Resposta Certa! Para acessar o site, basta ativar agora sua conta, clicando no link abaixo.</p>
+              <p>
+                <a 
+                  href="${verifyUrl}" 
+                  style="display: inline-block; background-color: #3b82f6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;"
+                >
+                  Clique aqui para ativar!
+                </a>
+              </p>
+              <p>Seja bem-vindo!</p>
+              <p>Atenciosamente,<br>Equipe Resposta Certa</p>
+            </div>
+          `,
+    });
 
     return NextResponse.json(
       {
@@ -59,8 +101,7 @@ export async function PUT(request: Request) {
   try {
     await connectToDatabase();
 
-    const { userId, name, email, password } =
-      await request.json();
+    const { userId, name, email, password } = await request.json();
 
     if (password && password.length < 6) {
       return NextResponse.json(

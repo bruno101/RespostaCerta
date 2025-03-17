@@ -36,6 +36,6 @@ const FeedbackSchema = new Schema<IFeedback>(
 )
 
 // Check if the model already exists to prevent overwriting
-const Feedback: Model<IFeedback> = mongoose.models.Feedback || mongoose.model<IFeedback>("Feedback", FeedbackSchema)
+const Feedback: Model<IFeedback> = mongoose.models.Feedback || mongoose.model<IFeedback>("Feedback", FeedbackSchema, "feedbacks")
 
 export default Feedback

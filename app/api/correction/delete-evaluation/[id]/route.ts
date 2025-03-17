@@ -31,7 +31,7 @@ export async function DELETE(
     const response = await Response.findOne({
       _id: responseId,
     })
-      .populate("feedback", "evaluatedBy")
+      .populate("feedback", "evaluatedBy", Feedback)
       .lean();
     if (!response) {
       return NextResponse.json(
@@ -41,7 +41,7 @@ export async function DELETE(
     }
     if (
       userRole !== "admin" &&
-      (response.feedback as any).evaluatedBy !== session.user.email
+      (response.feedback as any)?.evaluatedBy !== session.user.email
     ) {
       return NextResponse.json({ error: "Permissão negada" }, { status: 403 });
     }

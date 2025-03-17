@@ -4,7 +4,7 @@ import Comment from "@/app/models/Comment";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { sanitizationSettings } from "@/lib/sanitization";
-import DOMPurify from "isomorphic-dompurify"
+import DOMPurify from "isomorphic-dompurify";
 
 export async function GET(
   request: Request,
@@ -34,9 +34,13 @@ export async function GET(
         },
       },
     ]);
+
     const commentsWithExtraData = await Promise.all(
       commentsWithUserData
-        .filter((comment) => comment.question_id === code && !comment.reply_to)
+        .filter(
+          (comment) =>
+            comment.question_id.toString() === code && !comment.reply_to
+        )
         .map(async (comment) => {
           const newComment = { ...comment };
           const didCurrentUserLike = newComment.usersWhoLiked.includes(
@@ -56,6 +60,7 @@ export async function GET(
           };
         })
     );
+    console.log(commentsWithExtraData);
     return NextResponse.json(commentsWithExtraData);
   } catch (error) {
     console.error("Error fetching comments:", error);

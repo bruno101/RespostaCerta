@@ -10,6 +10,7 @@ import User from "@/app/models/User";
 import { connectToDatabase } from "@/lib/mongoose";
 import Feedback from "@/app/models/Feedback";
 import { sendEmail } from "@/lib/email";
+import Question from "@/app/models/Question";
 
 export async function GET(
   request: NextRequest,
@@ -35,9 +36,10 @@ export async function GET(
     })
       .populate(
         "question",
-        "TextoMotivador NotaMaxima Questao Banca Ano Instituicao Cargo Numero _id"
+        "TextoMotivador NotaMaxima Questao Banca Ano Instituicao Cargo Numero _id",
+        Question
       )
-      .populate("feedback", "grade comment createdAt evaluatedBy")
+      .populate("feedback", "grade comment createdAt evaluatedBy", Feedback)
       .sort({ createdAt: -1 })
       .lean();
 

@@ -16,6 +16,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { RichTextEditor } from "@/components/rich-text-editor";
 import type IUser from "@/app/interfaces/IUser";
 import Link from "next/link";
+import LoadingSkeletons from "./LoadingSkeletons";
 
 export default function SubmitResponse({
   questionId,
@@ -27,7 +28,7 @@ export default function SubmitResponse({
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
     const seeIfHasSubmitted = async () => {
@@ -38,7 +39,7 @@ export default function SubmitResponse({
           setHasSubmitted(true);
         }
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     };
     seeIfHasSubmitted();
@@ -92,6 +93,15 @@ export default function SubmitResponse({
     );
   }
 
+
+  if (hasSubmitted === undefined) {
+    return (
+      <div className="h-[100vh]">
+        <LoadingSkeletons></LoadingSkeletons>
+      </div>
+    );
+  }
+
   if (hasSubmitted) {
     return (
       <Alert className="bg-cyan-50 mb-8 border-cyan-200">
@@ -117,59 +127,59 @@ export default function SubmitResponse({
   }
 
   return (
-    <Card className="mt-3 border-t-4 border-t-gray-100 shadow-sm">
-      <CardHeader className="pb-3">
-        <div className="flex items-center gap-3">
-          <Avatar className="h-8 w-8">
-            <AvatarImage
-              src={currentUser.image || ""}
-              alt={currentUser.name || "Usuário"}
-            />
-            <AvatarFallback>
-              {currentUser.name?.charAt(0) || "U"}
-            </AvatarFallback>
-          </Avatar>
-          <CardTitle className="text-lg font-medium text-cyan-800">
-            Sua resposta
-          </CardTitle>
-        </div>
-      </CardHeader>
+      <Card className="mt-3 border-t-4 border-t-gray-100 shadow-sm">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-3">
+            <Avatar className="h-8 w-8">
+              <AvatarImage
+                src={currentUser.image || ""}
+                alt={currentUser.name || "Usuário"}
+              />
+              <AvatarFallback>
+                {currentUser.name?.charAt(0) || "U"}
+              </AvatarFallback>
+            </Avatar>
+            <CardTitle className="text-lg font-medium text-cyan-800">
+              Sua resposta
+            </CardTitle>
+          </div>
+        </CardHeader>
 
-      <Tabs defaultValue="write" className="w-full">
-        <TabsContent value="write" className="mt-0">
-          <CardContent>
-            <RichTextEditor
-              content={content}
-              onChange={setContent}
-              placeholder="Escreva sua resposta aqui..."
-              className="h-[300px]"
-            />
-          </CardContent>
-        </TabsContent>
-      </Tabs>
+        <Tabs defaultValue="write" className="w-full">
+          <TabsContent value="write" className="mt-0">
+            <CardContent>
+              <RichTextEditor
+                content={content}
+                onChange={setContent}
+                placeholder="Escreva sua resposta aqui..."
+                className="h-[300px]"
+              />
+            </CardContent>
+          </TabsContent>
+        </Tabs>
 
-      {error && (
-        <div className="px-6 mb-2">
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        </div>
-      )}
+        {error && (
+          <div className="px-6 mb-2">
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          </div>
+        )}
 
-      <CardFooter className="flex justify-between border-t bg-muted/20 py-3">
-        <div className="text-xs mt-3 text-muted-foreground">
-          Formatação com Markdown é suportada
-        </div>
-        <button
-          onClick={handleSubmit}
-          disabled={isSubmitting || !content.trim()}
-          className="flex text-white px-3 py-2 rounded-lg font-bold text-[15px] disabled:opacity-50 gap-2 mt-3 bg-cyan-700 hover:bg-[#0891b2] focus:bg-[#0891b2] focus:outline focus:outline-cyan-300 focus:outline-offset-1"
-        >
-          <Send className="h-4 w-4 mt-1" />
-          {isSubmitting ? "Enviando resposta" : "Enviar resposta"}
-        </button>
-      </CardFooter>
-    </Card>
+        <CardFooter className="flex justify-between border-t bg-muted/20 py-3">
+          <div className="text-xs mt-3 text-muted-foreground">
+            Formatação com Markdown é suportada
+          </div>
+          <button
+            onClick={handleSubmit}
+            disabled={isSubmitting || !content.trim()}
+            className="flex text-white px-3 py-2 rounded-lg font-bold text-[15px] disabled:opacity-50 gap-2 mt-3 bg-cyan-700 hover:bg-[#0891b2] focus:bg-[#0891b2] focus:outline focus:outline-cyan-300 focus:outline-offset-1"
+          >
+            <Send className="h-4 w-4 mt-1" />
+            {isSubmitting ? "Enviando resposta" : "Enviar resposta"}
+          </button>
+        </CardFooter>
+      </Card>
   );
 }

@@ -7,6 +7,9 @@ import ResponseSummary from "@/app/interfaces/IResponseSummary";
 import { sanitizationSettings } from "@/lib/sanitization";
 import DOMPurify from "isomorphic-dompurify";
 import User from "@/app/models/User";
+import Question from "@/app/models/Question";
+import Feedback from "@/app/models/Feedback";
+
 
 export async function GET(request: NextRequest) {
   try {
@@ -17,11 +20,12 @@ export async function GET(request: NextRequest) {
     }
 
     await connectToDatabase();
+    console.log(session.user.email)
 
     // Find all responses for the current user
     const responses = await Response.find({ user: session.user.email })
-      .populate("question", "Banca Ano Instituicao Cargo Numero _id NotaMaxima")
-      .populate("feedback", "grade evaluatedBy")
+      .populate("question", "Banca Ano Instituicao Cargo Numero _id NotaMaxima", Question)
+      .populate("feedback", "grade evaluatedBy", Feedback)
       .sort({ createdAt: -1 })
       .lean();
 
@@ -46,31 +50,31 @@ export async function GET(request: NextRequest) {
     ): Promise<ResponseSummary> => {
       let evaluator = undefined;
 
-      if ((response.feedback as any)?.evaluatedBy) {
-        evaluator = await getEvaluator((response.feedback as any).evaluatedBy);
+      if (response.feedback?.evaluatedBy) {
+        evaluator = await getEvaluator(response.feedback?.evaluatedBy);
       }
 
-      const questionNumber = (response.question as any).Numero
-        ? " - Questão " + String((response.question as any).Numero)
+      const questionNumber = response.question.Numero
+        ? " - Questão " + String(response.question.Numero)
         : "";
       return {
         id: response._id.toString(),
         evaluator,
-        questionId: (response.question as any)._id.toString(),
+        questionId: response.question._id.toString(),
         questionTitle:
-          (response.question as any).Banca +
+          response.question.Banca +
           " - " +
-          (response.question as any).Ano +
+          response.question.Ano +
           " - " +
-          (response.question as any).Instituicao +
+          response.question.Instituicao +
           " - " +
-          (response.question as any).Cargo +
+           response.question.Cargo +
           questionNumber,
         status: response.status,
         createdAt: response.createdAt,
-        maxGrade: (response.question as any).NotaMaxima || 10,
+        maxGrade: response.question.NotaMaxima || 10,
         ...(response.feedback && {
-          grade: (response.feedback as any).grade,
+          grade: response.feedback?.grade,
         }),
       };
     };

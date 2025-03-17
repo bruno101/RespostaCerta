@@ -34,6 +34,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import ResponseDetails from "@/app/interfaces/IResponseDetails";
+import CustomButton from "@/components/ui/custom-button";
 
 export default function CorrectQuestionPage() {
   const { id } = useParams();
@@ -223,9 +224,8 @@ export default function CorrectQuestionPage() {
             Você precisa estar logado para acessar esta página.
           </AlertDescription>
         </Alert>
-        <Button asChild className="mt-4">
-          <Link href="/signin">Fazer Login</Link>
-        </Button>
+        <Link href="/signin"><CustomButton bgColor="cyan" className="mt-4">Fazer Login        </CustomButton>
+        </Link>
       </div>
     );
   }
@@ -398,13 +398,12 @@ export default function CorrectQuestionPage() {
                 </div>
                 <div className="w-full bg-gray-100 rounded-full h-2.5">
                   <div
-                    className={`h-2.5 rounded-full ${
-                      response.feedback.grade >= response.question.maxGrade * 0.7
-                        ? "bg-green-500"
-                        : response.feedback.grade >= response.question.maxGrade * 0.4
+                    className={`h-2.5 rounded-full ${response.feedback.grade >= response.question.maxGrade * 0.7
+                      ? "bg-green-500"
+                      : response.feedback.grade >= response.question.maxGrade * 0.4
                         ? "bg-yellow-500"
                         : "bg-red-500"
-                    }`}
+                      }`}
                     style={{
                       width: `${(response.feedback.grade / response.question.maxGrade) * 100}%`,
                     }}

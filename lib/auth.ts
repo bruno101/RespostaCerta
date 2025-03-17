@@ -23,6 +23,7 @@ export const authOptions: AuthOptions = {
         await connectToDatabase();
         const userFound = await User.findOne({
           email: credentials?.email,
+          verified: true,
         }).select("+password");
 
         if (!userFound) throw new Error("Invalid Email");
@@ -65,6 +66,7 @@ export const authOptions: AuthOptions = {
               email: user?.email,
               image: user?.image,
               signedUpWithGoogle: true,
+              verified: true,
             }),
           });
           return true;
@@ -82,21 +84,55 @@ export const authOptions: AuthOptions = {
       user,
       session,
       trigger,
+      account,
     }: {
       token: JWT;
       user?: any;
       session?: any;
       trigger?: "signIn" | "signUp" | "update";
+      account?: any;
     }) {
-      if (trigger === "update" && session?.name) {
-        token.name = session.name;
-      }
-
-      if (trigger === "update" && session?.email) {
-        token.email = session.email;
-      }
-
-      if (user) {
+      if (account?.provider === "google") {
+        const userFound = await User.findOne({
+          email: user?.email || session?.user?.email,
+        });
+        if (userFound) {
+          if (userFound.name) {
+            token.name = userFound?.name;
+          } else {
+            token.name = user?.name || session?.user?.name;
+          }
+          if (userFound.email) {
+            token.email = userFound?.email;
+          } else {
+            token.email = user?.email || session?.user?.email;
+          }
+          if (userFound.image) {
+            token.image = userFound?.image;
+          } else {
+            token.image = user?.image || session?.user?.image;
+          }
+          if (userFound.role) {
+            token.role = userFound?.role;
+          } else {
+            token.role = user?.role || session?.user?.role || "user";
+          }
+          if (userFound._id) {
+            token.id = userFound?.id;
+          } else {
+            token.id = user?.id || session?.user?.id;
+          }
+        }
+      } else if (session?.user) {
+        token.name = session.user.name;
+        token.email = session.user.email;
+        token.image = session.user.image;
+        token.role = session.user.role || "user";
+        token.id = session.user.id;
+      } else if (user) {
+        token.name = user.name;
+        token.email = user.email;
+        token.image = user.image;
         token.role = user.role || "user";
         token.id = user.id;
       }
@@ -108,8 +144,9 @@ export const authOptions: AuthOptions = {
         user: {
           ...session.user,
           _id: token.id,
+          image: token.image,
           name: token.name,
-          role: token.role || "user"
+          role: token.role || "user",
         },
       };
     },

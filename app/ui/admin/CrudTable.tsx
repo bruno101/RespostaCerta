@@ -64,14 +64,14 @@ export default function CrudTable({
       });
       const data = await response.json();
       if (!response.ok) {
-        console.log("Erro deletando questão.");
+        console.error("Erro deletando questão.");
       } else {
         setData((prev: { _id: string }[]) => {
           return [...prev].filter((item) => item._id != _id);
         });
       }
     } catch {
-      console.log("Erro deletando questão.");
+      console.error("Erro deletando questão.");
     } finally {
       setDeleting(false);
     }

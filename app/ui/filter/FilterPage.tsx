@@ -1,13 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
-import Filter from "../filter/Filter";
-import AppliedFilters from "../filter/AppliedFilters";
+import Filter from "./Filter";
+import AppliedFilters from "./AppliedFilters";
 import QuestionList from "../questions/QuestionList";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import ISelector from "@/app/interfaces/ISelector";
 
-export default function HomeInnerPage({
+export default function FilterPage({
   selectors,
   initialSelected,
 }: {
@@ -135,7 +135,7 @@ export default function HomeInnerPage({
   return (
     <div className="w-full">
       <div className="hidden lg:w-full lg:flex lg:flex-row">
-        <div className="w-[75%]">
+        <div className="w-[75%] px-[50px]">
           <Filter
             onSelectionChange={onSelectionChange}
             selected={selected}

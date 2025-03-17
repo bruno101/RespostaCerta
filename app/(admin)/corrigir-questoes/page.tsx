@@ -35,6 +35,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import CustomButton from "@/components/ui/custom-button";
 
 export default function CorrectQuestionsPage() {
   const { data: session, status } = useSession();
@@ -126,7 +127,7 @@ export default function CorrectQuestionsPage() {
           subject: deletedEvaluation.subject,
           createdAt: deletedEvaluation.evaluatedAt, // Using evaluated date as created date
           student: deletedEvaluation.student,
-          maxGrade: deletedEvaluation.maxGrade
+          maxGrade: deletedEvaluation.maxGrade,
         };
         setPendingResponses((prev) => [...prev, pendingResponse]);
       }
@@ -211,9 +212,11 @@ export default function CorrectQuestionsPage() {
             Você precisa estar logado para acessar esta página.
           </AlertDescription>
         </Alert>
-        <Button asChild className="mt-4">
-          <Link href="/signin">Fazer Login</Link>
-        </Button>
+        <Link href="/signin">
+          <CustomButton bgColor="cyan" className="mt-4">
+            Fazer Login
+          </CustomButton>
+        </Link>
       </div>
     );
   }

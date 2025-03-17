@@ -33,7 +33,7 @@ export default function FullQuestion({ codigo }: { codigo: string }) {
         const data = await res.json();
         setQuestion(data);
       } catch (err: any) {
-        console.log(err);
+        console.error(err);
       } finally {
         setLoading(false);
       }

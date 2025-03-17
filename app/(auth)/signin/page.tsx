@@ -47,7 +47,7 @@ export default function Page() {
         setError("Ocorreu um erro. Tente novamente.");
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       if (error instanceof AxiosError) {
         const errorMessage = error.response?.data.message;
         setError(errorMessage);
@@ -64,7 +64,7 @@ export default function Page() {
             <Image
               className="mx-auto mt-[30px] mb-5"
               alt="logo"
-              src="/download.png"
+              src="/logo.png"
               width={50}
               height={50}
             />
@@ -126,7 +126,7 @@ flex items-center justify-center transition duration-150 ease hover:bg-blue-100"
               >
                 Esqueceu a senha?
               </Link>
-              <button className="rounded-md border-1 focus:outline focus:outline-blue-400 focus:outline-2 focus:bg-blue-200  hover:bg-blue-200 bg-white w-[250px] py-1 text-black ml-auto mr-auto mt-5 mb-2">
+              <button disabled={signingIn} className="disabled:opacity-50 rounded-md border-1 focus:outline focus:outline-blue-400 focus:outline-2 focus:bg-blue-200  hover:bg-blue-200 bg-white w-[250px] py-1 text-black ml-auto mr-auto mt-5 mb-2">
                 {signingIn ? "Entrando..." : "Entrar"}
               </button>
             </form>

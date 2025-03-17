@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import QuestionAnswer from "./QuestionAnswer";
 import UserComments from "../comments/UserComments";
 import Image from "next/image";
@@ -8,8 +8,9 @@ import IQuestion from "@/app/interfaces/IQuestion";
 import IComment from "@/app/interfaces/IComment";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import {RiQuestionAnswerLine} from "react-icons/ri"
+import { RiQuestionAnswerLine } from "react-icons/ri";
 import SubmitResponse from "./SubmitResponse";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function QuestionComments({
   question,
@@ -18,7 +19,7 @@ export default function QuestionComments({
 }) {
   const { data: session } = useSession();
   const router = useRouter();
-  const [activeItem, setActiveItem] = useState(-1);
+  const [activeItem, setActiveItem] = useState<number | undefined>(undefined);
   const [comments, setComments] = useState<IComment[]>([]);
   const [commentsLoading, setCommentsLoading] = useState(true);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -43,7 +44,7 @@ export default function QuestionComments({
           })
         );
       } catch (err: any) {
-        console.log(err);
+        console.error(err);
       } finally {
         setCommentsLoading(false);
       }
@@ -55,8 +56,17 @@ export default function QuestionComments({
   }, [session]);
 
   useEffect(() => {
-    if (activeItem !== -1 || !commentsLoading) {
-      buttonRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (activeItem !== undefined) {
+      console.log(activeItem);
+      const element = buttonRef.current
+      if (element) {
+        const y = element.getBoundingClientRect().top + window.scrollY - 65;
+        window.scrollTo({top: y, behavior: "smooth"});
+      }
+      /*buttonRef.current?.scrollIntoView({
+        block: "start",
+        inline: "nearest",
+      });*/
     }
   }, [activeItem, commentsLoading]);
 
@@ -64,8 +74,8 @@ export default function QuestionComments({
     <div>
       <div
         className={`pt-2 ${
-          activeItem != -1 ? "border-b-1" : "rounded-b-lg"
-        } border-t-1 bg-slate-50 text-[14px] flex flex-row`}
+          activeItem !== -1 ? "border-b-1" : "rounded-b-lg"
+        } overflow-y-auto custom-horizontal-scrollbar h-[70px] border-t-1 bg-slate-50 text-[14px] flex flex-row`}
       >
         <button
           onClick={() => {
@@ -86,7 +96,7 @@ export default function QuestionComments({
             src="https://img.icons8.com/?size=100&id=14570&format=png&color=000000"
             alt="comentários"
           />
-          <p>Questão comentada</p>
+          <p className="whitespace-nowrap">Questão comentada</p>
           {question.Resposta && (
             <div className="w-2 h-2 ml-3 mt-2 bg-blue-500 rounded-full"></div>
           )}
@@ -100,7 +110,7 @@ export default function QuestionComments({
             setActiveItem(1);
           }}
           className={`${
-            activeItem === 1 &&
+            (activeItem === 1 || activeItem === undefined) &&
             "hover:pb-[16px] bg-blue-200 text-cyan-800 font-bold border-b-3 border-b-blue-500"
           } ${
             activeItem !== 1 && "hover:pb-[13px]"
@@ -114,7 +124,7 @@ export default function QuestionComments({
             src="https://img.icons8.com/windows/32/messaging-.png"
             alt="comentários"
           />
-          <p>Comentários de alunos</p>
+          <p className="whitespace-nowrap">Comentários de alunos</p>
           {comments.length > 0 && (
             <div className="min-w-5 pr-[2px] h-6 ml-3 mt-[-1px] bg-cyan-700 rounded-md text-white">
               {comments.length}
@@ -137,13 +147,8 @@ export default function QuestionComments({
           } py-4 px-5 hover:border-b-3 hover:border-b-blue-500 hover:pb-[13px] flex flex-row
           `}
         >
-          <RiQuestionAnswerLine className="w-4 h-4 mt-[3px] mr-2"/>
-          <p>Submeter Resposta</p>
-          {comments.length > 0 && (
-            <div className="min-w-5 pr-[2px] h-6 ml-3 mt-[-1px] bg-cyan-700 rounded-md text-white">
-              {comments.length}
-            </div>
-          )}
+          <RiQuestionAnswerLine className="w-4 h-4 mt-[3px] mr-2" />
+          <p className="whitespace-nowrap">Submeter Resposta</p>
         </button>
       </div>
       {activeItem != -1 && (
@@ -171,7 +176,7 @@ export default function QuestionComments({
           </button>
           <div>
             {activeItem === 0 && <QuestionAnswer answer={question.Resposta} />}
-            {activeItem === 1 && (
+            {(activeItem === 1 || activeItem === undefined) && (
               <UserComments
                 questionId={question.Codigo}
                 comments={[...comments]}
@@ -181,10 +186,22 @@ export default function QuestionComments({
               />
             )}
             {activeItem === 2 && (
-              <SubmitResponse
-                questionId={question.Codigo}
-                currentUser={session?.user}
-              />
+              <Suspense
+                fallback={
+                  <div className="flex items-center space-x-4 w-full h-[100vh]">
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="space-y-2 w-full">
+                      <Skeleton className="h-4 min-w-[250px] mr-10" />
+                      <Skeleton className="h-4 min-w-[200px] mr-10" />
+                    </div>
+                  </div>
+                }
+              >
+                <SubmitResponse
+                  questionId={question.Codigo}
+                  currentUser={session?.user}
+                />
+              </Suspense>
             )}
           </div>
         </div>

@@ -49,7 +49,7 @@ export async function GET(
 
     let evaluatedBy = undefined;
     const evaluator = await User.findOne({
-      email: (response.feedback as any).evaluatedBy,
+      email: (response.feedback as any)?.evaluatedBy,
     });
     if (evaluator) {
         evaluatedBy = {
@@ -141,7 +141,7 @@ export async function PUT(
         { status: 404 }
       );
     }
-    
+
     return NextResponse.json(updatedResponse, { status: 200 });
   } catch (error) {
     console.error("Error updating response:", error);

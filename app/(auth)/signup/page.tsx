@@ -49,16 +49,17 @@ export default function Page() {
           name: formData.get("name"),
         }
       );
-
-      const res = await signIn("credentials", {
+      /*const res = await signIn("credentials", {
         email: signupResponse.data.email,
         password: formData.get("password"),
         redirect: false,
-      });
+      });*/
 
-      if (res?.ok) return router.push("/");
+      if (signupResponse) {
+        router.push("/account-activation" + "?email=" + formData.get("email"));
+      }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       if (error instanceof AxiosError) {
         const errorMessage = error.response?.data.message;
         setError(errorMessage);
@@ -74,7 +75,7 @@ export default function Page() {
             <Image
               className="mx-auto mt-[30px] mb-5"
               alt="logo"
-              src="/download.png"
+              src="/logo.png"
               width={50}
               height={50}
             />
@@ -168,14 +169,14 @@ flex items-center justify-center transition duration-150 ease hover:bg-blue-100`
                 </button>
               </div>
               <button
-                disabled={formValid ? false : true}
+                disabled={formValid && !signingUp ? false : true}
                 className={`${
                   formValid
                     ? "text-black focus:outline focus:outline-blue-400 focus:outline-2 focus:bg-blue-200  hover:bg-blue-200 bg-white"
                     : "text-slate-400 bg-white"
-                } rounded-md border-1 w-[250px] py-1 ml-auto mr-auto mt-5 mb-2`}
+                } disabled:opacity-50 rounded-md border-1 w-[250px] py-1 ml-auto mr-auto mt-5 mb-2`}
               >
-                {signingUp? "Criando conta..." : "Criar conta"}
+                {signingUp ? "Criando conta..." : "Criar conta"}
               </button>
             </form>
             <p className="text-xs text-[#888] mx-auto">

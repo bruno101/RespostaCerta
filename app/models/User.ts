@@ -6,6 +6,7 @@ interface IUser extends Document {
   name: string;
   email: string;
   image: string;
+  imageKey?: string;
   password: string;
   role: string;
   createdAt: Date;
@@ -13,6 +14,9 @@ interface IUser extends Document {
   signedUpWithGoogle?: boolean;
   resetPasswordToken?: string;
   resetPasswordExpires?: number;
+  verified: boolean;
+  verifyToken?: string;
+  verifyTokenExpiry?: number;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -28,11 +32,15 @@ const UserSchema = new Schema<IUser>(
       ],
     },
     image: { type: String, required: false },
+    imageKey: {type: String, required: false},
     password: { type: String, required: false, select: false },
     role: { type: String, required: false },
     signedUpWithGoogle: { type: String, required: false },
     resetPasswordToken: { type: String, required: false },
     resetPasswordExpires: { type: Number, required: false },
+    verified: {type: Boolean, required: true},
+    verifyToken: {type: String, required: false},
+    verifyTokenExpiry: {type: Number, required: false}
   },
   { timestamps: true }
 );
