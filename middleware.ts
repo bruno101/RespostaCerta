@@ -26,5 +26,6 @@ export const config = {
     "/painel/:path*",
     "/questoes/:path+",
     "/simulados/:path+",
+    "/cadernos/:path*",
   ],
 };

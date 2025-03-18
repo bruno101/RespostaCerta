@@ -246,20 +246,18 @@ export default function SimuladosPage() {
                       <CardContent>
                         <div className="flex justify-between text-sm text-gray-600">
                           <span>{simulado.concurso}</span>
-                          <span>
-                            {Math.floor(
-                              simulado.questions.reduce(
-                                (previous, current) =>
-                                  previous + current.timeLimit,
-                                0
-                              ) / 60
-                            )}{" "}
-                            minutos
-                          </span>
+                          <span>{simulado.questions.length} questões</span>
                         </div>
                         <div className="mt-4 flex items-center gap-2 text-sm text-gray-600">
                           <Clock className="h-4 w-4 text-pink-500" />{" "}
-                          {simulado.questions.length} questões
+                          {Math.floor(
+                            simulado.questions.reduce(
+                              (previous, current) =>
+                                previous + current.timeLimit,
+                              0
+                            ) / 60
+                          )}{" "}
+                          minutos
                         </div>
                       </CardContent>
                     </Card>
@@ -327,18 +325,15 @@ export default function SimuladosPage() {
                       <CardContent>
                         <div className="flex justify-between text-sm text-gray-800">
                           <span>{simulado.concurso}</span>
-                          <span>
-                            {simulado.questions.reduce(
-                              (previous, current) =>
-                                previous + current.timeLimit,
-                              0
-                            ) / 60}{" "}
-                            minutos
-                          </span>
+                          <span>{simulado.questions.length} questões</span>
                         </div>
                         <div className="mt-4 flex items-center gap-2 text-sm text-gray-800">
                           <Clock className="h-4 w-4 text-orange-600" />{" "}
-                          {simulado.questions.length} questões
+                          {simulado.questions.reduce(
+                            (previous, current) => previous + current.timeLimit,
+                            0
+                          ) / 60}{" "}
+                          minutos
                         </div>
                       </CardContent>
                     </Card>
