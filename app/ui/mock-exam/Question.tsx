@@ -5,15 +5,10 @@ import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress"; // shadcn Progress
 import { BookOpen, Clock, ArrowRight } from "lucide-react"; // Icons
 import { toast } from "sonner";
+import IExamQuestion from "@/app/interfaces/IExamQuestion";
 
 interface QuestionProps {
-  question: {
-    id: number;
-    question: string; // HTML string
-    correctAnswer: string; // HTML string
-    timeLimit: number; // Time limit in seconds
-    points: number; // Points this question is worth
-  };
+  question: IExamQuestion;
   numberOfQuestions: number;
   onNext: (answer: string) => void;
 }
@@ -106,7 +101,7 @@ export default function Question({
       {/* Answer Input */}
       <textarea
         className="w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 mb-8"
-        rows={6}
+        rows={10}
         placeholder="Digite sua resposta aqui..."
         value={userAnswer}
         onChange={(e) => {

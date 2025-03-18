@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.7.4",
+    "@google/generative-ai": "^0.24.0",
     "@heroui/select": "^2.4.10",
     "@heroui/system": "^2.4.7",
     "@heroui/theme": "^2.4.9",

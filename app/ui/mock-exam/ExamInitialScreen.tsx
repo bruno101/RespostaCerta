@@ -14,26 +14,11 @@ import {
 import { toast } from "sonner";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import Link from "next/link";
-
-interface Question {
-  id: number;
-  question: string; // HTML string
-  correctAnswer: string; // HTML string
-  timeLimit: number; // Time limit in seconds for this question
-  points: number; // Points this question is worth
-}
-
-interface Simulado {
-  id: number;
-  title: string;
-  questions: Question[];
-  disciplina: string[]; // Array of disciplines
-  cargo: string; // Job role
-  concurso: string; // Exam name
-}
+import ISimulado from "@/app/interfaces/ISimulado";
+import { useRouter } from "next/navigation";
 
 interface ExamInitialScreenProps {
-  simulado: Simulado;
+  simulado: ISimulado;
   totalTime: number; // Total time in seconds
   onStart: () => void;
 }
@@ -45,6 +30,7 @@ export default function ExamInitialScreen({
 }: ExamInitialScreenProps) {
   // Convert total time to minutes
   const totalTimeMinutes = Math.floor(totalTime / 60);
+  const router = useRouter();
 
   // Handle printing the simulado content
   const handlePrint = () => {
@@ -126,6 +112,27 @@ export default function ExamInitialScreen({
     }
   };
 
+  const markAsDone = async () => {
+    const res = await fetch(`/api/mock-exams/${simulado.id}/mark-as-done`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({}),
+    });
+    const data = await res.json();
+    if (data && !data.error) {
+      toast.success("Simulado marcado como concluído", {
+        description: "Redirecionando para a página de simulados",
+      });
+      router.push("/simulados");
+    } else {
+      toast.success("Erro marcando como concluído", {
+        description: "Simulado não pôde ser marcado como concluído",
+      });
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -172,7 +179,13 @@ export default function ExamInitialScreen({
           <li>Leia cada questão com atenção antes de responder.</li>
           <li>Você terá um tempo limite para cada pergunta.</li>
           <li>Não é possível voltar à pergunta anterior após avançar.</li>
-          <li>As respostas corretas serão exibidas ao final do simulado.</li>
+          <li>
+            As respostas corretas, as suas notas e os comentários serão exibidas
+            ao final do simulado.
+          </li>
+          <li>
+            O simulado será corrigido com o auxílio de inteligência artificial.
+          </li>
         </ul>
       </div>
 
@@ -213,21 +226,15 @@ export default function ExamInitialScreen({
           <Printer size={16} />
           Imprimir
         </motion.button>
-        <Link href={"/simulados"}>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              toast.success("Simulado marcado como concluído", {
-                description: "Redirecionando para a página de simulados",
-              });
-            }}
-            className="flex items-center justify-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-lg shadow-md hover:bg-green-700 transition-colors text-sm"
-          >
-            <CheckCircle size={16} />
-            Marcar como Concluído
-          </motion.button>
-        </Link>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={markAsDone}
+          className="flex items-center justify-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-lg shadow-md hover:bg-green-700 transition-colors text-sm"
+        >
+          <CheckCircle size={16} />
+          Marcar como Concluído
+        </motion.button>
       </div>
     </motion.div>
   );

@@ -5,30 +5,14 @@ import ExamInitialScreen from "@/app/ui/mock-exam/ExamInitialScreen"; // To be c
 import Question from "@/app/ui/mock-exam/Question"; // To be created
 import ExamReviewScreen from "@/app/ui/mock-exam/ExamReviewScreen"; // To be created
 import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn Skeleton
-
-interface Question {
-  id: number;
-  question: string; // HTML string
-  correctAnswer: string; // HTML string
-  timeLimit: number; // Time limit in seconds for this question
-  points: number; // Points this question is worth
-}
-
-interface Simulado {
-  id: number;
-  title: string;
-  questions: Question[];
-  disciplina: string[];
-  cargo: string;
-  concurso: string;
-}
+import ISimulado from "@/app/interfaces/ISimulado";
 
 export default function SimuladoPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const [simulado, setSimulado] = useState<Simulado | null>(null);
+  const [simulado, setSimulado] = useState<ISimulado | null>(null);
   const [currentComponent, setCurrentComponent] = useState<
     "initial" | "question" | "review"
   >("initial");
@@ -44,6 +28,12 @@ export default function SimuladoPage({
       const data = await response.json();
       setSimulado(data);
       setIsLoading(false);
+      console.log(data.completed);
+      if (data.completed) {
+        console.log("ok");
+        setCurrentComponent("review");
+        setAnswers(data.userResponses);
+      }
     };
 
     fetchData();
@@ -136,7 +126,12 @@ export default function SimuladoPage({
         )}
 
         {currentComponent === "review" && (
-          <ExamReviewScreen simulado={simulado} answers={answers} />
+          <ExamReviewScreen
+            setIsLoading={setIsLoading}
+            simulado={simulado}
+            answers={answers}
+            setSimulado={setSimulado}
+          />
         )}
       </div>
     </div>

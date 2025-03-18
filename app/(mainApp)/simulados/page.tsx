@@ -22,20 +22,10 @@ import {
 } from "lucide-react"; // lucide-react icons
 import { FaGraduationCap, FaBook, FaUserTie } from "react-icons/fa"; // react-icons
 import { motion } from "framer-motion"; // Framer Motion
-
-interface Simulado {
-  id: number;
-  title: string;
-  disciplina: string[]; // Updated to an array of strings
-  cargo: string;
-  concurso: string;
-  questions: number;
-  duration: number;
-  completed: boolean;
-}
+import ISimulado from "@/app/interfaces/ISimulado";
 
 export default function SimuladosPage() {
-  const [simulados, setSimulados] = useState<Simulado[]>([]);
+  const [simulados, setSimulados] = useState<ISimulado[]>([]);
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [currentAvailablePage, setCurrentAvailablePage] = useState(1);
@@ -159,7 +149,7 @@ export default function SimuladosPage() {
 
         <button
           onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
+          disabled={currentPage === totalPages || !totalPages}
           className="flex items-center gap-2 px-3 py-1.5 text-sm text-cyan-600 border border-cyan-600 rounded-lg hover:bg-cyan-700 hover:text-white focus:bg-cyan-700 focus:text-white disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Próximo <ArrowRight className="h-4 w-4" />
@@ -232,7 +222,7 @@ export default function SimuladosPage() {
               ))
             : currentAvailableSimulados.map((simulado, index) => (
                 <motion.div
-                  key={simulado.id}
+                  key={index}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -256,11 +246,20 @@ export default function SimuladosPage() {
                       <CardContent>
                         <div className="flex justify-between text-sm text-gray-600">
                           <span>{simulado.concurso}</span>
-                          <span>{simulado.duration} minutos</span>
+                          <span>
+                            {Math.floor(
+                              simulado.questions.reduce(
+                                (previous, current) =>
+                                  previous + current.timeLimit,
+                                0
+                              ) / 60
+                            )}{" "}
+                            minutos
+                          </span>
                         </div>
                         <div className="mt-4 flex items-center gap-2 text-sm text-gray-600">
                           <Clock className="h-4 w-4 text-pink-500" />{" "}
-                          {simulado.questions} questões
+                          {simulado.questions.length} questões
                         </div>
                       </CardContent>
                     </Card>
@@ -328,11 +327,18 @@ export default function SimuladosPage() {
                       <CardContent>
                         <div className="flex justify-between text-sm text-gray-800">
                           <span>{simulado.concurso}</span>
-                          <span>{simulado.duration} minutos</span>
+                          <span>
+                            {simulado.questions.reduce(
+                              (previous, current) =>
+                                previous + current.timeLimit,
+                              0
+                            ) / 60}{" "}
+                            minutos
+                          </span>
                         </div>
                         <div className="mt-4 flex items-center gap-2 text-sm text-gray-800">
                           <Clock className="h-4 w-4 text-orange-600" />{" "}
-                          {simulado.questions} questões
+                          {simulado.questions.length} questões
                         </div>
                       </CardContent>
                     </Card>
