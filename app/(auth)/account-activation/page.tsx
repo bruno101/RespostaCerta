@@ -1,8 +1,10 @@
-"use client"
+"use client";
+import LoadingSkeletons from "@/app/ui/questions/LoadingSkeletons";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function VerifyAccount() {
+function VerifyAccountContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
 
@@ -18,17 +20,18 @@ export default function VerifyAccount() {
               width={50}
               height={50}
             />
-            <p className="font-bold text-[17px] mb-2">
-              Vamos verificar
-            </p>
+            <p className="font-bold text-[17px] mb-2">Vamos verificar</p>
             <p className="font-bold text-[17px] mb-2 -mt-3 text-cyan-800">
               seu endereço de email
             </p>
             <p className="mx-auto text-[13px] mb-4 text-gray-700 ml-auto mr-auto">
-              Para poder fazer login e aproveitar ao máximo o Resposta Certa, por favor clique
-              no link de confirmação no email que enviamos para:
+              Para poder fazer login e aproveitar ao máximo o Resposta Certa,
+              por favor clique no link de confirmação no email que enviamos
+              para:
             </p>
-            <div className="px-3 py-1 text-cyan-900 rounded-sm w-full bg-cyan-50 border-1 border-cyan-300"><p className="mb-[2px]">{email}</p></div>
+            <div className="px-3 py-1 text-cyan-900 rounded-sm w-full bg-cyan-50 border-1 border-cyan-300">
+              <p className="mb-[2px]">{email}</p>
+            </div>
             <p className="text-[12px] mt-4">
               <b>Não recebeu o email?</b> Cheque a sua pasta de spam, ele pode
               ter sido capturado por um filtro.
@@ -37,5 +40,13 @@ export default function VerifyAccount() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VerifyAccount() {
+  return (
+    <Suspense fallback={<LoadingSkeletons />}>
+      <VerifyAccountContent />
+    </Suspense>
   );
 }
