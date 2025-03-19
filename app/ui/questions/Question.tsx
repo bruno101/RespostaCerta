@@ -5,6 +5,8 @@ import { useState } from "react";
 import QuestionBody from "./QuestionBody";
 import QuestionComments from "./QuestionComments";
 import IQuestion from "@/app/interfaces/IQuestion";
+import CustomButton from "@/components/ui/custom-button";
+import { Eye, FileText, HelpCircle, MessageCircle } from "lucide-react";
 
 export default function Question({
   question,
@@ -74,9 +76,9 @@ export default function Question({
         <>
           <QuestionBody question={question} />
           <Link href={`/questoes/${question.Codigo}`}>
-            <button className="ml-7 mb-10 text-sm text-white bg-cyan-700 font-bold px-4 py-2 rounded-lg hover:bg-cyan-600 focus:outline focus:outline-5 focus:outline-cyan-200 focus:outline-offset-2">
-              Ver questão
-            </button>
+            <CustomButton bgColor="cyan" className="ml-7 mb-10 px-4 py-2">
+              <FileText className="w-4 h-4 mr-2" /> Ver questão
+            </CustomButton>
           </Link>
         </>
       )}

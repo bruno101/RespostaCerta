@@ -1,4 +1,5 @@
 import { MouseEventHandler } from "react";
+import { motion } from "framer-motion";
 
 export default function CustomButton({
   className,
@@ -38,13 +39,15 @@ export default function CustomButton({
     | "rose";
 }) {
   return (
-    <button
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
       type={type || "button"}
       disabled={disabled || false}
       onClick={onClick || undefined}
       className={`bg-${bgColor}-600 hover:bg-${bgColor}-500 focus:bg-${bgColor}-500 focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-${bgColor}-600 text-white disabled:opacity-50 rounded-md flex items-center text-[14px] px-3 py-2 ${className}`}
     >
       {children}
-    </button>
+    </motion.button>
   );
 }

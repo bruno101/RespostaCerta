@@ -6,6 +6,7 @@ import QuestionList from "../questions/QuestionList";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import ISelector from "@/app/interfaces/ISelector";
+import SaveFilter from "./SaveFilter";
 
 export default function FilterPage({
   selectors,
@@ -28,9 +29,11 @@ export default function FilterPage({
     })
   );
   const [keyWords, setKeyWords] = useState("");
+  const [solved, setSolved] = useState<"" | "y" | "n">("");
   const [filtered, setFiltered] = useState([
     ...initialSelected,
     { name: "Palavras Chave", options: [] },
+    { name: "Resolvidas", options: [""] },
   ]);
 
   const capitalize = (option: string, name: string): string => {
@@ -50,14 +53,21 @@ export default function FilterPage({
       alreadyHasSelectedItems = true;
     }
 
-    const questionsPerPage = searchParams.get("questionsPerPage")
-    if (questionsPerPage) {
-        setQuestionsPerPage(+questionsPerPage)
+    const s = searchParams.get("resolvidas");
+    if (s && (s === "" || s === "y" || s === "n")) {
+      setSolved(s);
+      !alreadyHasSelectedItems;
+      alreadyHasSelectedItems = true;
     }
 
-    const pageIndex = searchParams.get("pageIndex")
+    const questionsPerPage = searchParams.get("questionsPerPage");
+    if (questionsPerPage) {
+      setQuestionsPerPage(+questionsPerPage);
+    }
+
+    const pageIndex = searchParams.get("pageIndex");
     if (pageIndex) {
-        setPageIndex(+pageIndex)
+      setPageIndex(+pageIndex);
     }
 
     const newSelected = [...selected].map((selector) => {
@@ -83,6 +93,7 @@ export default function FilterPage({
     setFiltered([
       ...newSelected,
       { name: "Palavras Chave", options: [keyW ? keyW : ""] },
+      { name: "Resolvidas", options: [solved] },
     ]);
   }, [searchParams]);
 
@@ -102,6 +113,8 @@ export default function FilterPage({
   const onRemoveSelection = (name: string, option: string) => {
     if (name === "Palavras Chave") {
       setKeyWords("");
+    } else if (name === "Resolvidas") {
+      setSolved("");
     } else {
       const nextSelected = [...selected].map((selection) => {
         if (selection.name !== name) {
@@ -120,7 +133,9 @@ export default function FilterPage({
   };
   const onFilter = () => {
     //setLoading(true);
-    let newKeyWordParams = `?palavras=${keyWords}&questionsPerPage=${questionsPerPage}&pageIndex=${pageIndex}`;
+    let newKeyWordParams = `?palavras=${keyWords}${
+      solved && "&resolvidas=" + solved
+    }&questionsPerPage=${questionsPerPage}&pageIndex=${pageIndex}`;
     for (const item of selected) {
       newKeyWordParams += `&${item.name.toLowerCase()}=${item.options.join(
         ","
@@ -132,43 +147,13 @@ export default function FilterPage({
   const empty = () => {
     setSelected([...initialSelected]);
   };
-  return (
-    <div className="w-full">
-      <div className="hidden lg:w-full lg:flex lg:flex-row">
-        <div className="w-[75%] px-[50px]">
-          <Filter
-            onSelectionChange={onSelectionChange}
-            selected={selected}
-            keyWords={keyWords}
-            setKeyWords={setKeyWords}
-            onFilter={onFilter}
-            empty={empty}
-            selectors={[...selectors]}
-          />
 
-          <QuestionList
-            loading={loading}
-            setLoading={setLoading}
-            filtered={[...filtered]}
-            questionsPerPage={questionsPerPage}
-            pageIndex={pageIndex}
-            router={router}
-            searchParams={searchParams}
-          />
-        </div>
-        <div className="w-[25%]">
-          <AppliedFilters
-            selected={
-              keyWords === ""
-                ? selected
-                : [{ name: "Palavras Chave", options: [keyWords] }, ...selected]
-            }
-            onRemoveSelection={onRemoveSelection}
-          />
-        </div>
-      </div>
-      <div className="flex flex-col w-full lg:hidden">
+  const mainContent = () => {
+    return (
+      <>
         <Filter
+          solved={solved}
+          setSolved={setSolved}
           onSelectionChange={onSelectionChange}
           selected={selected}
           keyWords={keyWords}
@@ -187,7 +172,28 @@ export default function FilterPage({
           router={router}
           searchParams={searchParams}
         />
+        <SaveFilter filtered={[...filtered]} router={router} />
+      </>
+    );
+  };
+
+  return (
+    <div className="w-full">
+      <div className="hidden lg:w-full lg:flex lg:flex-row">
+        <div className="w-[75%] px-[50px]">{mainContent()}</div>
+        <div className="w-[25%]">
+          <AppliedFilters
+            selected={
+              keyWords === ""
+                ? selected
+                : [{ name: "Palavras Chave", options: [keyWords] }, ...selected]
+            }
+            solved={solved}
+            onRemoveSelection={onRemoveSelection}
+          />
+        </div>
       </div>
+      <div className="flex flex-col w-full lg:hidden">{mainContent()}</div>
     </div>
   );
 }

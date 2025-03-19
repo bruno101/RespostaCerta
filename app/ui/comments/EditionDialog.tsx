@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { RichTextEditor } from "@/components/rich-text-editor";
 
 export default function EditionDialog({
   setComments,
@@ -26,7 +27,7 @@ export default function EditionDialog({
   initialText: string;
 }) {
   const [open, setOpen] = useState(false);
-  const [text, setText] = useState(initialText);
+  const [text, setText] = useState(initialText); // State for rich text content
 
   const updateReplyEditionOnUi = () => {
     setComments((comments) => {
@@ -41,7 +42,7 @@ export default function EditionDialog({
         (repl) => repl._id === commentId
       );
       const newReply = { ...newReplies[newReplyIndex] };
-      newReply.text = text;
+      newReply.text = text; // Update the rich text content
       newReplies[newReplyIndex] = newReply;
       commentToChange.replies = newReplies;
       newComments[commentIndex] = commentToChange;
@@ -55,7 +56,7 @@ export default function EditionDialog({
       const newComments = [...comments];
       const index = newComments.findIndex((comm) => comm._id === commentId);
       const newComment = { ...newComments[index] };
-      newComment.text = text;
+      newComment.text = text; // Update the rich text content
       newComments[index] = newComment;
       return newComments;
     });
@@ -70,7 +71,7 @@ export default function EditionDialog({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          text: text,
+          text: text, // Send the rich text content
         }),
       });
       const data = await response.json();
@@ -114,12 +115,12 @@ export default function EditionDialog({
             Clique em "confirmar" para salvar suas alterações.
           </DialogDescription>
         </DialogHeader>
-        <textarea
-          className="mt-5 mb-5 h-[10em] bg-white border-1 rounded-lg"
-          value={text}
-          onChange={(e) => {
-            setText(e.target.value);
-          }}
+        {/* Replace textarea with RichTextEditor */}
+        <RichTextEditor
+          content={text}
+          onChange={(newContent) => setText(newContent)}
+          placeholder="Edite seu comentário..."
+          className="bg-white border border-gray-300 rounded-lg p-4 min-h-[10em] focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
         />
         <DialogFooter>
           <div className="flex">

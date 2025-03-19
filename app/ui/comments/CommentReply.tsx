@@ -18,21 +18,29 @@ export default function CommentReply({
   const date = new Date(comment.createdAt);
   const isThisCurrentUserComment =
     currentUser?.email && comment.email === currentUser.email;
+
   return (
-    <div className="ml-20">
-      <div className="mt-5 mb-5 shadow-sm border-1 w-full rounded-xl bg-white">
-        <div className="flex flex-row">
+    <div className="ml-4  sm:ml-10 border-l-2  border-gray-100 pl-4 sm:pl-6">
+      <div className="border-1 shadow-sm w-full my-5 rounded-xl bg-white">
+        {/* User Info Section */}
+        <div className="flex flex-col sm:flex-row sm:items-center p-4 sm:p-5">
+          <div className="flex items-center">
             <Image
-              src={comment.user_image_link? comment.user_image_link: "https://img.icons8.com/?size=100&id=z-JBA_KtSkxG&format=png&color=000000"}
+              src={
+                comment.user_image_link
+                  ? comment.user_image_link
+                  : "https://img.icons8.com/?size=100&id=z-JBA_KtSkxG&format=png&color=000000"
+              }
               alt="Circle Image"
               width={48}
               height={48}
-              className="object-cover w-6 h-6 rounded-full overflow-hidden mt-5 ml-5 mr-2"
+              className="object-cover w-6 h-6 rounded-full overflow-hidden"
             />
-          <p className="font-bold mt-6 mr-2 text-[13px] text-gray-800">
-            {isThisCurrentUserComment ? "Você" : comment.name}
-          </p>
-          <p className="ml-auto mr-5 mt-5 text-[12px] text-gray-800">
+            <p className="font-bold ml-3 text-[13px] sm:text-[14px] text-gray-800">
+              {isThisCurrentUserComment ? "Você" : comment.name}
+            </p>
+          </div>
+          <p className="sm:ml-auto mt-2 sm:mt-0 text-[12px] sm:text-[13px] text-gray-800">
             {date.getDate() +
               "/" +
               date.getMonth() +
@@ -45,22 +53,24 @@ export default function CommentReply({
               date.getMinutes()}
           </p>
         </div>
-        <div className="mb-5 flex flex-col">
-          <div className="ml-0 mr-auto">
-            <TruncatedText text={comment.text} small={true} />
-          </div>
-          {isThisCurrentUserComment && (
-            <div className="ml-auto mr-5 mt-3">
-              <EditionAndDeletionPopover
-                commentId={comment._id}
-                setComments={setComments}
-                isReply={true}
-                replyTo={comment.reply_to}
-                text={comment.text}
-              />
-            </div>
-          )}
+
+        {/* Comment Text */}
+        <div className="px-1 sm:px-5 pb-4">
+          <TruncatedText text={comment.text} small={true} />
         </div>
+
+        {/* Edit/Delete Popover */}
+        {isThisCurrentUserComment && (
+          <div className="flex justify-end px-4 sm:px-5 pb-4">
+            <EditionAndDeletionPopover
+              commentId={comment._id}
+              setComments={setComments}
+              isReply={true}
+              replyTo={comment.reply_to}
+              text={comment.text}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

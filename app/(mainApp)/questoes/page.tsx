@@ -39,7 +39,9 @@ export default function Home() {
             })}
           />
         ) : (
-          <LoadingSkeletons />
+          <div className="pt-5">
+            <LoadingSkeletons />
+          </div>
         )}
       </Suspense>
     </div>

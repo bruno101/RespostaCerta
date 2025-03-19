@@ -1,8 +1,8 @@
-import mongoose, { Document, Schema, Model } from "mongoose";
+import mongoose, { Document, Schema, Model, ObjectId } from "mongoose";
 import { Types } from "mongoose";
 
-interface IQuestion extends Document {
-  _id: Types.ObjectId;
+export interface IQuestionSchema extends Document {
+  _id: ObjectId;
   Disciplina: string;
   Banca: string;
   Ano: string;
@@ -20,8 +20,9 @@ interface IQuestion extends Document {
   NotaMaxima?: string;
 }
 
-const QuestionSchema = new Schema<IQuestion>(
+const QuestionSchema = new Schema<IQuestionSchema>(
   {
+    _id: { type: mongoose.Schema.Types.ObjectId, required: true },
     Disciplina: { type: String, required: true },
     Banca: { type: String, required: true },
     Ano: { type: String, required: true },
@@ -43,8 +44,8 @@ const QuestionSchema = new Schema<IQuestion>(
 
 QuestionSchema.index({ createdAt: -1 });
 
-const Question: Model<IQuestion> =
+const Question: Model<IQuestionSchema> =
   mongoose.models.Question ||
-  mongoose.model<IQuestion>("Question", QuestionSchema, "questions");
+  mongoose.model<IQuestionSchema>("Question", QuestionSchema, "questions");
 
 export default Question;

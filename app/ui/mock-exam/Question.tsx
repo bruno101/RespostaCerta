@@ -94,7 +94,7 @@ export default function Question({
 
       {/* Question */}
       <div
-        className="prose prose-lg mb-8"
+        className="rich-text-editor prose prose-lg mb-8"
         dangerouslySetInnerHTML={{ __html: question.question }}
       />
 

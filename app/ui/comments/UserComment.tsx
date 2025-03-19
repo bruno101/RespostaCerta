@@ -22,6 +22,7 @@ export default function UserComment({
     currentUser?.email && comment.email === currentUser.email;
   const date = new Date(comment.createdAt);
   const liked = comment.didCurrentUserLike;
+
   const updateLikesOnUi = () => {
     setComments((c) => {
       let newComments = [...c];
@@ -58,25 +59,29 @@ export default function UserComment({
       console.error("Error liking comment:", error);
     }
   };
+
   return (
     <div>
       <div className="mt-5 mb-5 shadow-md border-1 w-full rounded-xl bg-white">
-        <div className="flex flex-row">
-          <Image
-            src={
-              comment.user_image_link
-                ? comment.user_image_link
-                : "https://img.icons8.com/?size=100&id=z-JBA_KtSkxG&format=png&color=000000"
-            }
-            alt="Circle Image"
-            width={64}
-            height={64}
-            className="object-cover w-8 h-8 rounded-full overflow-hidden mt-5 ml-5 mr-4"
-          />
-          <p className="font-bold mt-6 mr-3 text-[15px] text-gray-800">
-            {isThisCurrentUserComment ? "Você" : comment.name}
-          </p>
-          <p className="ml-auto mr-5 mt-5 text-[13px] text-gray-800">
+        {/* User Info Section */}
+        <div className="flex flex-col sm:flex-row sm:items-center px-4 pt-5 sm:px-5 sm:pt-5">
+          <div className="flex items-center">
+            <Image
+              src={
+                comment.user_image_link
+                  ? comment.user_image_link
+                  : "https://img.icons8.com/?size=100&id=z-JBA_KtSkxG&format=png&color=000000"
+              }
+              alt="Circle Image"
+              width={64}
+              height={64}
+              className="object-cover w-8 h-8 rounded-full overflow-hidden"
+            />
+            <p className="font-bold ml-3 text-[15px] text-gray-800">
+              {isThisCurrentUserComment ? "Você" : comment.name}
+            </p>
+          </div>
+          <p className="sm:ml-auto mt-2 sm:mt-0 text-[13px] text-gray-800">
             {date.getDate() +
               "/" +
               date.getMonth() +
@@ -89,54 +94,60 @@ export default function UserComment({
               date.getMinutes()}
           </p>
         </div>
-        <TruncatedText text={comment.text} small={false} />
-        <div className="flex border-t mt-7">
-          <button
-            className={`flex ml-5 hover:bg-blue-100 hover:text-cyan-700 rounded-2xl border-1 mt-3 mb-3 pl-3 pr-3 pt-[2px] pb-[1px] ${
-              liked ? "bg-blue-200 text-cyan-700" : "text-gray-700"
-            }`}
-            onClick={onClickLike}
-          >
-            <Image
-              src={`${
-                liked
-                  ? "https://img.icons8.com/?size=100&id=33479&format=png&color=22C3E6"
-                  : "https://img.icons8.com/?size=100&id=24816&format=png&color=000000"
+
+        {/* Comment Text */}
+        <div className="px-1 sm:px-5">
+          <TruncatedText text={comment.text} small={false} />
+        </div>
+
+        {/* Actions Section */}
+        <div className="flex flex-col sm:flex-row sm:items-center border-t mt-4 p-4 sm:p-5">
+          <div className="flex space-x-4">
+            <button
+              className={`flex items-center hover:bg-blue-100 hover:text-cyan-700 rounded-2xl border-1 px-3 py-1 ${
+                liked ? "bg-blue-200 text-cyan-700" : "text-gray-700"
               }`}
-              width={20}
-              height={20}
-              className="w-5 h-5 mt-[1px]"
-              alt="responder"
-            ></Image>
-            <p className="text-[13px] mt-[2px] ml-1 font-bold">
-              {comment.likes}
-            </p>
-          </button>
-          <button
-            className={`flex hover:bg-gray-100 rounded-2xl ml-5 mr-5 mt-3 mb-3 pl-3 pt-[5px] pr-4 ${
-              showReplies && "bg-gray-100"
-            }`}
-            onClick={() => {
-              setShowReplies((x) => !x);
-            }}
-          >
-            <Image
-              src={`${
-                showReplies
-                  ? "https://img.icons8.com/?size=100&id=7806&format=png&color=737373"
-                  : "https://img.icons8.com/?size=100&id=2889&format=png&color=111111"
+              onClick={onClickLike}
+            >
+              <Image
+                src={`${
+                  liked
+                    ? "https://img.icons8.com/?size=100&id=33479&format=png&color=22C3E6"
+                    : "https://img.icons8.com/?size=100&id=24816&format=png&color=000000"
+                }`}
+                width={20}
+                height={20}
+                className="w-5 h-5"
+                alt="like"
+              />
+              <p className="text-[13px] ml-1 font-bold">{comment.likes}</p>
+            </button>
+            <button
+              className={`flex items-center hover:bg-gray-100 rounded-2xl px-3 py-1 ${
+                showReplies && "bg-gray-100"
               }`}
-              width={20}
-              height={20}
-              className="w-5 h-5"
-              alt="responder"
-            ></Image>
-            <p className="ml-2 mb-[5px] text-[13px] text-gray-700 font-bold">
-              {comment.replies.length}
-            </p>
-          </button>
+              onClick={() => {
+                setShowReplies((x) => !x);
+              }}
+            >
+              <Image
+                src={`${
+                  showReplies
+                    ? "https://img.icons8.com/?size=100&id=7806&format=png&color=737373"
+                    : "https://img.icons8.com/?size=100&id=2889&format=png&color=111111"
+                }`}
+                width={20}
+                height={20}
+                className="w-5 h-5"
+                alt="responder"
+              />
+              <p className="ml-2 text-[13px] text-gray-700 font-bold">
+                {comment.replies.length}
+              </p>
+            </button>
+          </div>
           {isThisCurrentUserComment && (
-            <div className="ml-auto mr-10 mt-[15px]">
+            <div className="sm:ml-auto mt-4 sm:mt-0">
               <EditionAndDeletionPopover
                 setComments={setComments}
                 isReply={false}
@@ -147,8 +158,10 @@ export default function UserComment({
           )}
         </div>
       </div>
+
+      {/* Replies Section */}
       {showReplies && (
-        <div>
+        <div className="space-y-0">
           {comment.replies.map((comm, index) => (
             <CommentReply
               key={index}
@@ -157,7 +170,7 @@ export default function UserComment({
               currentUser={currentUser}
             />
           ))}
-          <div className="ml-10">
+          <div className="ml-4 sm:ml-10">
             <CommentArea
               replyTo={comment._id}
               questionId={comment.question_id}

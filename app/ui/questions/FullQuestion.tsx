@@ -21,7 +21,7 @@ export default function FullQuestion({ codigo }: { codigo: string }) {
     Cargo: "",
     Dificuldade: "",
     TextoPlano: "",
-    NotaMaxima: 10
+    NotaMaxima: 10,
   });
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function FullQuestion({ codigo }: { codigo: string }) {
     }
 
     fetchQuestions();
-  }, []);
+  }, [codigo]);
 
   if (loading) {
     return (

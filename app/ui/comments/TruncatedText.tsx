@@ -21,8 +21,10 @@ export default function TruncatedText({
     <>
       <div
         className={`${
-          small ? "mt-5 text-[14px] break-words" : "mt-10 text-[15px]"
-        } mx-5 break-words`}
+          small
+            ? "mt-3 sm:mt-5 text-[14px] break-all"
+            : "mt-5 sm:mt-10 text-[15px]"
+        } mx-5 break-all rich-text-editor`}
         ref={textRef}
         style={{
           display: "-webkit-box",
@@ -30,12 +32,11 @@ export default function TruncatedText({
           WebkitLineClamp: isExpanded ? "unset" : 10,
           overflow: "hidden",
         }}
-      >
-        {text}
-      </div>
+        dangerouslySetInnerHTML={{ __html: text }}
+      ></div>
       {isTruncated && !isExpanded && (
         <button
-          className={`ml-5 mt-2 ${
+          className={`ml-5 break-all mt-2 ${
             small ? "text-[13px]" : "text-[14px]"
           } font-bold text-slate-500`}
           onClick={() => setIsExpanded(true)}
@@ -45,7 +46,7 @@ export default function TruncatedText({
       )}
       {isTruncated && isExpanded && (
         <button
-          className={`ml-5 mt-2 ${
+          className={`ml-5 mt-2 break-all ${
             small ? "text-[13px]" : "text-[14px]"
           } font-bold text-slate-500`}
           onClick={() => setIsExpanded(false)}

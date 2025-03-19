@@ -28,7 +28,11 @@ export async function searchQuestions(
     await connectToDatabase();
     let findObject: any = { $and: [] };
     for (let selector of selected) {
-      if (selector.name !== "Palavras Chave" && selector.options.length > 0) {
+      if (
+        selector.name !== "Palavras Chave" &&
+        selector.name !== "Resolvidas" &&
+        selector.options.length > 0
+      ) {
         const orArray: {}[] = [];
         for (let option of selector.options) {
           const newObject: any = {};
@@ -36,6 +40,8 @@ export async function searchQuestions(
           orArray.push(newObject);
         }
         findObject.$and.push({ $or: orArray });
+      } else if (selector.name === "Resolvidas") {
+        //tbd
       } else {
         if (selector.options) {
           findObject.$and.push({
@@ -47,7 +53,7 @@ export async function searchQuestions(
       }
     }
     const questions = await Question.find(findObject)
-    .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .exec();

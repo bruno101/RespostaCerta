@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -26,7 +25,7 @@ body:has([data-state="open"]) {
 .custom-scrollbar::-webkit-scrollbar-thumb {
   -webkit-border-radius: 10px;
   border-radius: 10px;
-  background: rgba(50,50,50,0.15);
+  background: rgba(50, 50, 50, 0.15);
 }
 
 .custom-horizontal-scrollbar {
@@ -37,11 +36,13 @@ body:has([data-state="open"]) {
   width: 0px;
 }
 
-.custom-horizontal-scrollbar:hover, .custom-horizontal-scrollbar:focus {
+.custom-horizontal-scrollbar:hover,
+.custom-horizontal-scrollbar:focus {
   scrollbar-width: thin;
 }
 
-.custom-horizontal-scrollbar:hover::-webkit-scrollbar, .custom-horizontal-scrollbar:focus::-webkit-scrollbar {
+.custom-horizontal-scrollbar:hover::-webkit-scrollbar,
+.custom-horizontal-scrollbar:focus::-webkit-scrollbar {
   width: 5px;
 }
 
@@ -52,7 +53,7 @@ body:has([data-state="open"]) {
 .custom-horizontal-scrollbar:hover::-webkit-scrollbar-thumb {
   -webkit-border-radius: 10px;
   border-radius: 10px;
-  background: rgba(50,50,50,0.15);
+  background: rgba(50, 50, 50, 0.15);
 }
 
 .active {
@@ -118,24 +119,6 @@ body:has([data-state="open"]) {
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
 .rich-text-editor {
   .ProseMirror {
     @apply outline-none;
@@ -180,6 +163,42 @@ body:has([data-state="open"]) {
       @apply bg-muted rounded px-1.5 py-0.5 font-mono text-sm;
     }
   }
+}
+
+h1 {
+  @apply text-4xl font-bold;
+}
+
+h2 {
+  @apply text-3xl font-bold;
+}
+
+h3 {
+  @apply text-2xl font-bold;
+}
+
+ul {
+  @apply list-disc list-outside ml-6 space-y-1;
+}
+
+ol {
+  @apply list-decimal list-outside ml-6 space-y-1;
+}
+
+li {
+  @apply pl-2;
+}
+
+p {
+  @apply leading-7;
+}
+
+blockquote {
+  @apply pl-4 border-l-2 border-gray-300 italic;
+}
+
+code {
+  @apply bg-muted rounded px-1.5 py-0.5 font-mono text-sm;
 }
 
 .is-editor-empty:first-child::before {

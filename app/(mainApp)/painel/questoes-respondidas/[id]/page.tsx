@@ -307,7 +307,7 @@ export default function QuestionResponsePage() {
             {response.question.title}
           </h3>
           <div
-            className="prose prose-slate max-w-none"
+            className="rich-text-editor prose prose-slate max-w-none"
             dangerouslySetInnerHTML={{ __html: response.question.content }}
           />
         </CardContent>
@@ -382,14 +382,14 @@ export default function QuestionResponsePage() {
 
               <TabsContent value="preview" className="mt-0">
                 <div
-                  className="prose prose-slate max-w-none min-h-[200px] p-4 border rounded-md bg-muted/30"
+                  className="rich-text-editor prose prose-slate max-w-none min-h-[200px] p-4 border rounded-md bg-muted/30"
                   dangerouslySetInnerHTML={{ __html: editedContent }}
                 />
               </TabsContent>
             </Tabs>
           ) : (
             <div
-              className="prose prose-slate max-w-none"
+              className="rich-text-editor prose prose-slate max-w-none"
               dangerouslySetInnerHTML={{ __html: response.content }}
             />
           )}
@@ -483,7 +483,7 @@ export default function QuestionResponsePage() {
               <h4 className="font-medium mb-2">Comentários do Avaliador:</h4>
               <div className="bg-gray-50 p-4 rounded-md border">
                 <div
-                  className="prose prose-slate max-w-none"
+                  className="rich-text-editor prose prose-slate max-w-none"
                   dangerouslySetInnerHTML={{
                     __html: response.feedback.comment,
                   }}

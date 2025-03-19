@@ -49,7 +49,7 @@ export default function Page({
             setPreview={setPreview}
           />
         ) : (
-          <LoadingSkeletons/>
+          <LoadingSkeletons />
         )}
       </div>
       {preview.length > 0 && (
@@ -59,7 +59,7 @@ export default function Page({
             Prévia
           </h1>
           <div
-            className="mt-4 py-7 px-10 rounded-lg border-1 bg-white shadow-md border-t-4"
+            className="rich-text-editor mt-4 py-7 px-10 rounded-lg border-1 bg-white shadow-md border-t-4"
             dangerouslySetInnerHTML={{ __html: preview }}
           ></div>
         </>

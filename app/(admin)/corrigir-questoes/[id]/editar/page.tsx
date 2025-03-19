@@ -393,7 +393,7 @@ export default function EditEvaluationPage() {
             {response.question.title}
           </h3>
           <div
-            className="prose prose-slate max-w-none"
+            className="rich-text-editor prose prose-slate max-w-none"
             dangerouslySetInnerHTML={{ __html: response.question.content }}
           />
         </CardContent>
@@ -406,7 +406,7 @@ export default function EditEvaluationPage() {
         </CardHeader>
         <CardContent>
           <div
-            className="prose prose-slate max-w-none"
+            className="rich-text-editor prose prose-slate max-w-none"
             dangerouslySetInnerHTML={{ __html: response.content }}
           />
         </CardContent>
@@ -473,7 +473,7 @@ export default function EditEvaluationPage() {
 
               <TabsContent value="preview" className="mt-0">
                 <div
-                  className="prose prose-slate max-w-none min-h-[200px] p-4 border rounded-md bg-muted/30"
+                  className="rich-text-editor prose prose-slate max-w-none min-h-[200px] p-4 border rounded-md bg-muted/30"
                   dangerouslySetInnerHTML={{ __html: feedbackContent }}
                 />
               </TabsContent>

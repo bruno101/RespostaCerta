@@ -53,15 +53,15 @@ export default function QuestionComments({
     if (session && session.user) {
       fetchComments();
     }
-  }, [session]);
+  }, [session, question?.Codigo]);
 
   useEffect(() => {
     if (activeItem !== undefined) {
       console.log(activeItem);
-      const element = buttonRef.current
+      const element = buttonRef.current;
       if (element) {
         const y = element.getBoundingClientRect().top + window.scrollY - 65;
-        window.scrollTo({top: y, behavior: "smooth"});
+        window.scrollTo({ top: y, behavior: "smooth" });
       }
       /*buttonRef.current?.scrollIntoView({
         block: "start",

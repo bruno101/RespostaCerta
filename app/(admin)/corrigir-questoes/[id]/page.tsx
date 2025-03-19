@@ -93,9 +93,12 @@ export default function CorrectQuestionPage() {
     if (!response) return;
 
     if (grade < 0 || grade > response.question.maxGrade) {
-      toast.error(`A nota deve estar entre 0 e ${response.question.maxGrade}.`, {
-        description: "Por favor, insira um valor válido.",
-      });
+      toast.error(
+        `A nota deve estar entre 0 e ${response.question.maxGrade}.`,
+        {
+          description: "Por favor, insira um valor válido.",
+        }
+      );
       return;
     }
 
@@ -224,7 +227,10 @@ export default function CorrectQuestionPage() {
             Você precisa estar logado para acessar esta página.
           </AlertDescription>
         </Alert>
-        <Link href="/signin"><CustomButton bgColor="cyan" className="mt-4">Fazer Login        </CustomButton>
+        <Link href="/signin">
+          <CustomButton bgColor="cyan" className="mt-4">
+            Fazer Login{" "}
+          </CustomButton>
         </Link>
       </div>
     );
@@ -350,7 +356,7 @@ export default function CorrectQuestionPage() {
             {response.question.title}
           </h3>
           <div
-            className="prose prose-slate max-w-none"
+            className="rich-text-editor prose prose-slate max-w-none"
             dangerouslySetInnerHTML={{ __html: response.question.content }}
           />
         </CardContent>
@@ -363,7 +369,7 @@ export default function CorrectQuestionPage() {
         </CardHeader>
         <CardContent>
           <div
-            className="prose prose-slate max-w-none"
+            className="rich-text-editor prose prose-slate max-w-none"
             dangerouslySetInnerHTML={{ __html: response.content }}
           />
         </CardContent>
@@ -398,14 +404,20 @@ export default function CorrectQuestionPage() {
                 </div>
                 <div className="w-full bg-gray-100 rounded-full h-2.5">
                   <div
-                    className={`h-2.5 rounded-full ${response.feedback.grade >= response.question.maxGrade * 0.7
-                      ? "bg-green-500"
-                      : response.feedback.grade >= response.question.maxGrade * 0.4
+                    className={`h-2.5 rounded-full ${
+                      response.feedback.grade >=
+                      response.question.maxGrade * 0.7
+                        ? "bg-green-500"
+                        : response.feedback.grade >=
+                          response.question.maxGrade * 0.4
                         ? "bg-yellow-500"
                         : "bg-red-500"
-                      }`}
+                    }`}
                     style={{
-                      width: `${(response.feedback.grade / response.question.maxGrade) * 100}%`,
+                      width: `${
+                        (response.feedback.grade / response.question.maxGrade) *
+                        100
+                      }%`,
                     }}
                   />
                 </div>
@@ -417,7 +429,7 @@ export default function CorrectQuestionPage() {
                 <h4 className="font-medium mb-2">Comentários do Avaliador:</h4>
                 <div className="bg-gray-50 p-4 rounded-md border">
                   <div
-                    className="prose prose-slate max-w-none"
+                    className="rich-text-editor prose prose-slate max-w-none"
                     dangerouslySetInnerHTML={{
                       __html: response.feedback.comment,
                     }}
@@ -458,7 +470,9 @@ export default function CorrectQuestionPage() {
                     onChange={(e) => setGrade(Number(e.target.value))}
                     className="w-24"
                   />
-                  <span className="w-10 text-gray-500">/ {response.question.maxGrade}</span>
+                  <span className="w-10 text-gray-500">
+                    / {response.question.maxGrade}
+                  </span>
                 </div>
               </div>
 
@@ -490,7 +504,7 @@ export default function CorrectQuestionPage() {
 
                   <TabsContent value="preview" className="mt-0">
                     <div
-                      className="prose prose-slate max-w-none min-h-[200px] p-4 border rounded-md bg-muted/30"
+                      className="rich-text-editor prose prose-slate max-w-none min-h-[200px] p-4 border rounded-md bg-muted/30"
                       dangerouslySetInnerHTML={{ __html: feedbackContent }}
                     />
                   </TabsContent>

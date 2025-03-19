@@ -7,4 +7,7 @@ export default interface INotebook {
   id: string;
   createdAt: Date;
   updatedAt: Date;
+  numberOfQuestions: number;
+  subjects: string[];
+  bancas: string[];
 }

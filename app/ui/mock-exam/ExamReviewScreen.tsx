@@ -172,7 +172,7 @@ export default function ExamReviewScreen({
             >
               {/* Question */}
               <div className="prose prose-lg">
-                <h3 className="font-semibold text-gray-800">
+                <h3 className="rich-text-editor font-semibold text-gray-800">
                   Questão {question.id}
                 </h3>
                 <div dangerouslySetInnerHTML={{ __html: question.question }} />
@@ -194,7 +194,7 @@ export default function ExamReviewScreen({
                   </p>
                   <div className="p-3 bg-green-50 rounded-lg">
                     <p
-                      className="text-green-800"
+                      className="rich-text-editor text-green-800"
                       dangerouslySetInnerHTML={{
                         __html: question.correctAnswer,
                       }}
