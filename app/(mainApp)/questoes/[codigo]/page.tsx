@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import FullQuestion from "./_components/FullQuestion";
 import { Skeleton } from "@/components/ui/skeleton";
 import LoadingSkeletons from "@/app/ui/questions/LoadingSkeletons";
+import FullQuestion from "@/app/ui/questions/FullQuestion";
 
 export default async function Page({
   params,
@@ -12,11 +12,7 @@ export default async function Page({
 
   return (
     <div className="">
-      <Suspense
-        fallback={
-          <LoadingSkeletons/>
-        }
-      >
+      <Suspense fallback={<LoadingSkeletons />}>
         <FullQuestion codigo={codigo} />
       </Suspense>
     </div>
