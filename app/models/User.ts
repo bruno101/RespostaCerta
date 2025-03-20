@@ -8,7 +8,7 @@ interface IUser extends Document {
   image: string;
   imageKey?: string;
   password: string;
-  role: string;
+  role: "user" | "admin" | "corretor";
   createdAt: Date;
   updatedAt: Date;
   signedUpWithGoogle?: boolean;
@@ -17,6 +17,9 @@ interface IUser extends Document {
   verified: boolean;
   verifyToken?: string;
   verifyTokenExpiry?: number;
+  subscription: "free" | "premium";
+  customerId?: string;
+  subscriptionId?: string;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -32,15 +35,22 @@ const UserSchema = new Schema<IUser>(
       ],
     },
     image: { type: String, required: false },
-    imageKey: {type: String, required: false},
+    imageKey: { type: String, required: false },
     password: { type: String, required: false, select: false },
-    role: { type: String, required: false },
+    role: {
+      type: String,
+      enum: ["user", "admin", "corretor"],
+      default: "user",
+    },
     signedUpWithGoogle: { type: String, required: false },
     resetPasswordToken: { type: String, required: false },
     resetPasswordExpires: { type: Number, required: false },
-    verified: {type: Boolean, required: true},
-    verifyToken: {type: String, required: false},
-    verifyTokenExpiry: {type: Number, required: false}
+    verified: { type: Boolean, required: true },
+    verifyToken: { type: String, required: false },
+    verifyTokenExpiry: { type: Number, required: false },
+    subscription: { type: String, enum: ["free", "premium"], default: "free" },
+    subscriptionId: { type: String, required: false },
+    customerId: { type: String, required: false },
   },
   { timestamps: true }
 );

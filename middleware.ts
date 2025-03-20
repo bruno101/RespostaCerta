@@ -27,5 +27,6 @@ export const config = {
     "/questoes/:path+",
     "/simulados/:path+",
     "/cadernos/:path*",
+    "/subscribe/:path*",
   ],
 };

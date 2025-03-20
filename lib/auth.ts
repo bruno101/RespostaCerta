@@ -42,6 +42,7 @@ export const authOptions: AuthOptions = {
           email: user.email,
           image: user.image,
           role: user.role || "user",
+          subscription: user.subscription || "free",
         };
       },
     }),
@@ -117,6 +118,12 @@ export const authOptions: AuthOptions = {
           } else {
             token.role = user?.role || session?.user?.role || "user";
           }
+          if (userFound.subscription) {
+            token.subscription = userFound?.subscription;
+          } else {
+            token.subscription =
+              user?.subscription || session?.user?.subscription || "free";
+          }
           if (userFound._id) {
             token.id = userFound?.id;
           } else {
@@ -128,12 +135,14 @@ export const authOptions: AuthOptions = {
         token.email = session.user.email;
         token.image = session.user.image;
         token.role = session.user.role || "user";
+        token.subscription = session.user.subscription || "free";
         token.id = session.user.id;
       } else if (user) {
         token.name = user.name;
         token.email = user.email;
         token.image = user.image;
         token.role = user.role || "user";
+        token.subscription = user.subscription || "free";
         token.id = user.id;
       }
       return token;
@@ -147,6 +156,7 @@ export const authOptions: AuthOptions = {
           image: token.image,
           name: token.name,
           role: token.role || "user",
+          subscription: token.subcription || "free",
         },
       };
     },

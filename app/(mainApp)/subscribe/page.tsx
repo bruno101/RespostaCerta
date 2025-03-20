@@ -34,7 +34,7 @@ export default function SubscribePage() {
 
     try {
       // Step 1: Create a customer in ASAAS
-      const customerResponse = await axios.post("/api/create-customer", {
+      const customerResponse = await axios.post("/api/customer", {
         name: formData.name,
         cpfCnpj: formData.cpfCnpj,
       });
@@ -42,27 +42,24 @@ export default function SubscribePage() {
       const customerId = customerResponse.data.id;
 
       // Step 2: Create a subscription in ASAAS
-      const subscriptionResponse = await axios.post(
-        "/api/create-subscription",
-        {
-          customerId,
-          cardNumber: formData.cardNumber,
-          expiryMonth: formData.expiryMonth,
-          expiryYear: formData.expiryYear,
-          ccv: formData.ccv,
-          holderName: formData.holderName,
-          cpfCnpj: formData.cpfCnpj,
-          postalCode: formData.postalCode,
-          addressNumber: formData.addressNumber,
-          phone: formData.phone,
-        }
-      );
+      const subscriptionResponse = await axios.post("/api/subscription", {
+        customerId,
+        cardNumber: formData.cardNumber,
+        expiryMonth: formData.expiryMonth,
+        expiryYear: formData.expiryYear,
+        ccv: formData.ccv,
+        holderName: formData.holderName,
+        cpfCnpj: formData.cpfCnpj,
+        postalCode: formData.postalCode,
+        addressNumber: formData.addressNumber,
+        phone: formData.phone,
+      });
 
       // Redirect to a success page
       router.push("/subscribe/success");
     } catch (error) {
       console.error("Subscription failed:", (error as any).response?.data);
-      setError("Subscription failed. Please try again.");
+      setError("A subscrição ffalhou:\n" + error);
     } finally {
       setLoading(false);
     }

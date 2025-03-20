@@ -16,57 +16,26 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { UploadButton } from "@/utils/uploadthing";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   AlertCircle,
   CheckCircle,
   Clock,
-  Edit,
   FileText,
   Flame,
   HelpCircle,
-  LogOut,
   MessageSquare,
   Timer,
-  Trash,
-  Trash2,
-  Trash2Icon,
-  TrashIcon,
-  Upload,
-  User,
 } from "lucide-react";
 import IResponseSummary from "@/app/interfaces/IResponseSummary";
 import CustomButton from "@/components/ui/custom-button";
 import { toast } from "sonner";
+import AccountManagement from "@/app/ui/panel/AccountManagement";
+import UserProfileHeader from "@/app/ui/panel/AccountHeader";
 
 interface UserStats {
   questionsAnswered: number;
@@ -93,47 +62,9 @@ export default function DashboardPage() {
     progressToNextLevel: 0,
   });
   const [responses, setResponses] = useState<IResponseSummary[]>([]);
-  const [deleteImage, setDeleteImage] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [image, setImage] = useState<File | null>(null);
-  const [imageDialogOpen, setImageDialogOpen] = useState<boolean | undefined>();
-  const { startUpload } = useUploadThing("imageUploader", {
-    onClientUploadComplete: async (data) => {
-      const uploadData = data[0];
-      const imageUrl = uploadData?.serverData?.imageUrl;
-      if (session?.user) {
-        const newSession = {
-          ...session,
-          user: {
-            ...session.user,
-            image: imageUrl,
-          },
-        };
-        await update({ ...newSession });
-        setUploadingImage(false);
-        setImageDialogOpen(false);
-        toast.success("Imagem atualizada", {
-          description: "A sua foto de perfil foi atualizada com sucesso.",
-        });
-        router.refresh();
-      } else {
-        toast.error("Erro atualizando imagem", {
-          description: "Por favor tente novamente.",
-        });
-      }
-    },
-    onUploadError: () => {
-      setUploadingImage(false);
-      setImageDialogOpen(false);
-      toast.error("Erro atualizando imagem", {
-        description: "Por favor tente novamente.",
-      });
-    },
-    onUploadBegin: (file) => {},
-  });
-
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<
+    boolean | undefined
+  >();
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/signin");
@@ -163,57 +94,6 @@ export default function DashboardPage() {
       console.error("Error fetching user data:", error);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleProfileImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setImage(file);
-    setDeleteImage(false);
-
-    try {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } catch (error) {
-      console.error("Error uploading profile image:", error);
-    }
-  };
-
-  const handleDeleteImage = async () => {
-    try {
-      if (session?.user) {
-        const response = await fetch(
-          `/api/users/${session?.user?.email}/profile-picture`,
-          {
-            method: "DELETE",
-          }
-        );
-        if (!response.ok) {
-          throw new Error("Failed to delete account");
-        }
-        const newSession = {
-          ...session,
-          user: {
-            ...session.user,
-            image: "",
-          },
-        };
-        await update({ ...newSession });
-        setImageDialogOpen(false);
-        toast.success("Imagem deletada", {
-          description: "A sua foto de perfil foi deletada com sucesso.",
-        });
-        router.refresh();
-      }
-    } catch (e) {
-      console.error(e);
-      toast.error("Erro deletando imagem", {
-        description: "Ocorreu um erro ao deletarmos foto de perfil.",
-      });
     }
   };
 
@@ -324,152 +204,13 @@ export default function DashboardPage() {
 
   return (
     <div className="container py-8 px-4 mx-auto">
-      {/* User Profile Header */}
-      <div className="mx-auto flex flex-col md:flex-row gap-6 mb-8">
-        <div className="relative group">
-          <Avatar className="h-32 w-32 border-4 border-white shadow-md">
-            <AvatarImage
-              src={
-                session.user.image ||
-                "https://img.icons8.com/?size=100&id=z-JBA_KtSkxG&format=png&color=000000"
-              }
-              alt={session.user.name || "Usuário"}
-            />
-            <AvatarFallback className="text-4xl">
-              {session.user.name?.charAt(0) || "U"}
-            </AvatarFallback>
-          </Avatar>
-
-          <Dialog open={imageDialogOpen} onOpenChange={setImageDialogOpen}>
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="absolute bottom-0 right-0 rounded-full bg-white shadow-md hover:bg-gray-100"
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle className="text-cyan-800">
-                  Alterar foto de perfil
-                </DialogTitle>
-                <DialogDescription>
-                  Escolha uma nova imagem para o seu perfil.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="flex flex-col items-center gap-4 py-4">
-                <div className="relative group">
-                  <Avatar className="h-24 w-24">
-                    <AvatarImage
-                      src={
-                        imagePreview ||
-                        session.user.image ||
-                        "https://img.icons8.com/?size=100&id=z-JBA_KtSkxG&format=png&color=000000"
-                      }
-                      alt={session.user.name || "Usuário"}
-                    />
-                    <AvatarFallback className="text-2xl">
-                      {session.user.name?.charAt(0) || "U"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <button
-                    onClick={() => {
-                      setDeleteImage(true);
-                      setImagePreview(
-                        "https://img.icons8.com/?size=100&id=z-JBA_KtSkxG&format=png&color=000000"
-                      );
-                    }}
-                    className="absolute h-7 w-7 flex border-1 bottom-0 right-0 rounded-md bg-white shadow-md hover:bg-gray-100"
-                  >
-                    <Trash2Icon className="h-4 w-4 m-auto text-red-500" />
-                  </button>
-                </div>
-                <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <label
-                    htmlFor="profile-image"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Selecione uma imagem
-                  </label>
-                  <Input
-                    id="profile-image"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleProfileImageUpload}
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <CustomButton
-                  bgColor="cyan"
-                  onClick={() => {
-                    if (deleteImage) {
-                      handleDeleteImage();
-                    } else if (image) {
-                      startUpload([image]);
-                      setUploadingImage(true);
-                    }
-                  }}
-                  disabled={uploadingImage || !imagePreview}
-                  type="submit"
-                >
-                  {uploadingImage ? "Enviando..." : "Salvar alterações"}
-                </CustomButton>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">
-            {session.user.name || "Usuário"}
-          </h1>
-          <p className="text-gray-500 mb-4">{session.user.email}</p>
-
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button asChild variant="outline" className="gap-2">
-              <Link href="/perfil/editar">
-                <User className="h-4 w-4" />
-                Editar Perfil
-              </Link>
-            </Button>
-
-            <AlertDialog
-              open={deleteDialogOpen}
-              onOpenChange={setDeleteDialogOpen}
-            >
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive" className="gap-2">
-                  <Trash2 className="h-4 w-4" />
-                  Excluir Conta
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Esta ação não pode ser desfeita. Isso excluirá
-                    permanentemente sua conta e removerá seus dados dos nossos
-                    servidores.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDeleteAccount}
-                    className="bg-red-500 hover:bg-red-600"
-                  >
-                    Sim, excluir minha conta
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        </div>
-      </div>
-
+      <UserProfileHeader
+        update={update}
+        session={session}
+        router={router}
+        deleteDialogOpen={deleteDialogOpen}
+        setDeleteDialogOpen={setDeleteDialogOpen}
+      />
       {/* User Level and Progress */}
       <Card className="mb-8 border-t-4 border-t-cyan-500">
         <CardHeader className="pb-2">
@@ -718,75 +459,11 @@ export default function DashboardPage() {
       </Tabs>
 
       {/* Account Management */}
-      <h2 className="text-xl font-semibold mb-4 text-gray-900">
-        Gerenciamento de Conta
-      </h2>
-      <Card>
-        <CardContent className="pt-6">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Alterar senha</h3>
-                <p className="text-sm text-gray-500">
-                  Atualize sua senha para manter sua conta segura
-                </p>
-              </div>
-              <Button asChild variant="outline">
-                <Link href="/perfil/alterar-senha">Alterar senha</Link>
-              </Button>
-            </div>
-
-            <Separator />
-
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Notificações</h3>
-                <p className="text-sm text-gray-500">
-                  Gerencie suas preferências de notificação
-                </p>
-              </div>
-              <Button asChild variant="outline">
-                <Link href="/perfil/notificacoes">Configurar</Link>
-              </Button>
-            </div>
-
-            <Separator />
-
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium text-red-600">Excluir conta</h3>
-                <p className="text-sm text-gray-500">
-                  Exclua permanentemente sua conta e todos os seus dados
-                </p>
-              </div>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="destructive">Excluir conta</Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Esta ação não pode ser desfeita. Isso excluirá
-                      permanentemente sua conta e removerá seus dados dos nossos
-                      servidores.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={handleDeleteAccount}
-                      className="bg-red-500 hover:bg-red-600"
-                    >
-                      Sim, excluir minha conta
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <AccountManagement
+        update={update}
+        session={session}
+        handleDeleteAccount={handleDeleteAccount}
+      />
     </div>
   );
 }

@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import axios from "axios";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { connectToDatabase } from "@/lib/mongoose";
+import User from "@/app/models/User";
 
 const ASAAS_API_KEY = process.env.ASAAS_API_KEY;
 const ASAAS_API_URL = "https://api-sandbox.asaas.com/v3";
@@ -91,8 +93,6 @@ export async function POST(request: Request) {
     );
   }
 
-  console.log("first validations ok");
-
   // Validate CPF/CNPJ format and checksum
   const cleanedCpfCnpj = cpfCnpj.replace(/[^\d]+/g, ""); // Remove non-numeric characters
   if (cleanedCpfCnpj.length === 11) {
@@ -110,6 +110,21 @@ export async function POST(request: Request) {
     );
   }
 
+  let response;
+
+  try {
+    connectToDatabase();
+    const user = await User.findOne({ email });
+    if (user?.customerId) {
+      return NextResponse.json({ id: user.customerId });
+    }
+  } catch (e) {
+    console.log("Falha ao buscar usuário no banco de dados", e);
+    return NextResponse.json(
+      { error: "Falha na assinatura. Tente novamente." },
+      { status: 500 }
+    );
+  }
   try {
     console.log(`${ASAAS_API_URL}/customers`, {
       name,
@@ -117,7 +132,7 @@ export async function POST(request: Request) {
       cpfCnpj: cleanedCpfCnpj, // Send cleaned CPF/CNPJ (without formatting)
     });
     // Create customer in ASAAS
-    const response = await axios.post(
+    response = await axios.post(
       `${ASAAS_API_URL}/customers`,
       {
         name,
@@ -131,12 +146,29 @@ export async function POST(request: Request) {
         },
       }
     );
-
-    return NextResponse.json(response.data);
   } catch (error) {
     console.error("Error creating customer:", (error as any)?.response?.data);
     return NextResponse.json(
-      { error: "Falha ao criar cliente no ASAAS" },
+      { error: "Falha na assinatura. Tente novamente." },
+      { status: 500 }
+    );
+  }
+
+  console.log("Salvando", response.data.id);
+  try {
+    await User.findOneAndUpdate(
+      { email },
+      {
+        $set: {
+          customerId: response.data.id,
+        },
+      }
+    );
+    return NextResponse.json(response.data);
+  } catch (error) {
+    console.error("Erro salvando customerId no banco de dados:", error);
+    return NextResponse.json(
+      { error: "Falha na assinatura. Tente novamente." },
       { status: 500 }
     );
   }
