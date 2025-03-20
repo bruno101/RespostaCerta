@@ -34,7 +34,7 @@ export default function SaveFilter({
     try {
       setSaving(true);
       const data = await generateNotebook(filtered, cadernoName);
-      if (data.id) {
+      if ("id" in data) {
         toast.success("Caderno criado com sucesso", {
           description: "Redirecionando para caderno criado",
         });
