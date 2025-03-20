@@ -1,25 +1,38 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress"; // shadcn Progress
 import { BookOpen, Clock, ArrowRight } from "lucide-react"; // Icons
 import { toast } from "sonner";
 import IExamQuestion from "@/app/interfaces/IExamQuestion";
+import ISimulado from "@/app/interfaces/ISimulado";
+import { RichTextEditor } from "@/components/rich-text-editor";
 
 interface QuestionProps {
-  question: IExamQuestion;
   numberOfQuestions: number;
   onNext: (answer: string) => void;
+  simulado: ISimulado | null;
+  currentQuestionIndex: number;
 }
 
 export default function Question({
-  question,
   onNext,
+  simulado,
   numberOfQuestions,
+  currentQuestionIndex,
 }: QuestionProps) {
-  const [timeLeft, setTimeLeft] = useState(question.timeLimit);
+  const question = simulado?.questions[currentQuestionIndex];
+  const [timeLeft, setTimeLeft] = useState(question?.timeLimit || 10000000);
   const [userAnswer, setUserAnswer] = useState("");
+
+  console.log(
+    "\ninside question",
+    currentQuestionIndex,
+    numberOfQuestions,
+    currentQuestionIndex === numberOfQuestions,
+    "\n"
+  );
 
   // Handle the countdown timer
   useEffect(() => {
@@ -47,7 +60,7 @@ export default function Question({
   };
 
   // Calculate the progress of the timer (for the circular progress indicator)
-  const timerProgress = (timeLeft / question.timeLimit) * 100;
+  const timerProgress = (timeLeft / (question?.timeLimit || 1000000)) * 100;
 
   // Handle submitting the answer
   const handleSubmit = () => {
@@ -70,9 +83,9 @@ export default function Question({
             Simulado de IA
           </h1>
           <p className="text-sm text-gray-600">
-            Questão {question.id} de {numberOfQuestions} •{" "}
+            Questão {question?.id} de {numberOfQuestions} •{" "}
             <span className="text-cyan-600">
-              {question.points} ponto{question.points !== 1 ? "s" : ""}
+              {question?.points} ponto{question?.points !== 1 ? "s" : ""}
             </span>
           </p>
         </div>
@@ -80,11 +93,12 @@ export default function Question({
         {/* Progress Bar */}
         <div className="w-full sm:w-32">
           <Progress
-            value={(question.id / numberOfQuestions) * 100}
+            value={((question?.id || 0) / numberOfQuestions) * 100}
             className="h-2"
           />
           <p className="text-xs text-gray-600 text-right mt-1">
-            {Math.round((question.id / numberOfQuestions) * 100)}% concluído
+            {Math.round(((question?.id || 0) / numberOfQuestions) * 100)}%
+            concluído
           </p>
         </div>
       </div>
@@ -95,18 +109,15 @@ export default function Question({
       {/* Question */}
       <div
         className="rich-text-editor prose prose-lg mb-8"
-        dangerouslySetInnerHTML={{ __html: question.question }}
+        dangerouslySetInnerHTML={{ __html: question?.question || "" }}
       />
 
       {/* Answer Input */}
-      <textarea
-        className="w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 mb-8"
-        rows={10}
-        placeholder="Digite sua resposta aqui..."
-        value={userAnswer}
-        onChange={(e) => {
-          setUserAnswer(e.target.value);
-        }}
+      <RichTextEditor
+        content={userAnswer} // Pass the current value of the answer
+        onChange={(newContent) => setUserAnswer(newContent)} // Update the state with new content
+        placeholder="Digite sua resposta aqui..." // Set the placeholder text
+        className="w-full min-h-[350px] p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 mb-8" // Apply the same styling
       />
 
       {/* Timer and Submit Button */}
@@ -150,7 +161,7 @@ export default function Question({
           onClick={handleSubmit}
           className="bg-orange-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-orange-600 transition-colors flex items-center gap-2 w-full sm:w-auto justify-center"
         >
-          {question.id === numberOfQuestions
+          {currentQuestionIndex + 1 === numberOfQuestions
             ? "Concluir Simulado"
             : "Próxima Questão"}
           <ArrowRight className="w-4 h-4" />

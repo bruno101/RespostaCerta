@@ -57,7 +57,6 @@ export default function QuestionComments({
 
   useEffect(() => {
     if (activeItem !== undefined) {
-      console.log(activeItem);
       const element = buttonRef.current;
       if (element) {
         const y = element.getBoundingClientRect().top + window.scrollY - 65;

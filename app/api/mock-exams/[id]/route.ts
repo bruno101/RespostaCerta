@@ -40,6 +40,7 @@ export async function GET(
               ...question,
               grade: userExam.grades[index],
               comment: userExam.comments[index],
+              userResponse: userExam.responses[index],
             };
           })
         : exam.questions,

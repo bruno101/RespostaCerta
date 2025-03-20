@@ -9,6 +9,7 @@ import {
   X,
   AlertCircle,
   HelpCircle,
+  FilePen,
 } from "lucide-react"; // Icons
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress"; // Assuming you use shadcn for the progress bar
@@ -20,76 +21,22 @@ interface Answer {
 
 interface ExamReviewScreenProps {
   simulado: ISimulado;
+  deletingResponses: boolean;
   answers?: Answer;
-  setSimulado: React.Dispatch<React.SetStateAction<ISimulado | null>>;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  error: string;
+  onRestart: () => void;
 }
 
 export default function ExamReviewScreen({
   simulado,
-  setSimulado,
-  setIsLoading,
+  deletingResponses,
+  onRestart,
+  error,
   answers = {}, // Default to an empty object if `answers` is undefined
 }: ExamReviewScreenProps) {
   const totalGrade = simulado.questions.reduce((acc, question) => {
     return acc + (question.grade || 0);
   }, 0);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const fetchFeedback = async () => {
-      try {
-        setIsLoading(true);
-        const res = await fetch(
-          `/api/mock-exams/${simulado.id}/submit-responses`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              responses: simulado.questions.map((question, index) => ({
-                maxGrade: question.points,
-                question: question.question,
-                userResponse: answers[index + 1],
-              })),
-            }),
-          }
-        );
-        const data: {
-          user: string;
-          exam_id: string;
-          responses: string[];
-          grades: number[];
-          comments: string[];
-        } = await res.json();
-        if (!data || !data.grades || !data.comments) {
-          throw new Error("Erro buscando feedback.");
-        }
-        setSimulado((prev) => {
-          if (!prev) return prev;
-          const novoSimulado = { ...prev, completed: true };
-          const novasQuestoes = [...novoSimulado.questions].map(
-            (questao, index) => ({
-              ...questao,
-              grade: data.grades[index],
-              comment: data.comments[index],
-            })
-          );
-          novoSimulado.questions = novasQuestoes;
-          return novoSimulado;
-        });
-      } catch (e) {
-        console.error(e);
-        setError("Erro submetendo resposta.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    if (!simulado.completed) {
-      fetchFeedback();
-    }
-  }, []);
 
   const maxGrade = simulado.questions.reduce(
     (acc, question) => acc + question.points,
@@ -156,7 +103,7 @@ export default function ExamReviewScreen({
       <div className="space-y-6">
         {simulado.questions.map((question) => {
           const userAnswer =
-            answers[question.id] || "Nenhuma resposta fornecida.";
+            question.userResponse || "Nenhuma resposta fornecida.";
           const classification =
             question.grade !== null && question.grade !== undefined
               ? classifyAnswer(question.grade, question.points)
@@ -185,7 +132,12 @@ export default function ExamReviewScreen({
                     Sua Resposta:
                   </p>
                   <div className="p-3 bg-gray-50 rounded-lg">
-                    <p className="text-gray-800">{userAnswer}</p>
+                    <p
+                      className="text-gray-800 rich-text-editor"
+                      dangerouslySetInnerHTML={{
+                        __html: userAnswer,
+                      }}
+                    ></p>
                   </div>
                 </div>
                 <div>
@@ -256,18 +208,32 @@ export default function ExamReviewScreen({
           );
         })}
       </div>
-
-      {/* Back Button */}
-      <Link href={"/simulados"}>
+      <div className="ml-auto sm:flex">
         <motion.button
           whileHover={{ scale: 1.05 }}
+          onClick={() => {
+            onRestart();
+          }}
+          disabled={deletingResponses}
           whileTap={{ scale: 0.95 }}
-          className="mt-5 ml-auto flex items-center justify-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-lg shadow-md hover:bg-green-700 transition-colors text-sm"
+          className="disabled:opacity-50 mt-5 sm:mr-4 ml-auto flex items-center justify-center gap-2 bg-red-600 text-white px-5 py-2.5 rounded-lg shadow-md hover:bg-red-700 hover:text-white transition-colors text-sm"
         >
-          <Undo2 size={16} />
-          Voltar para Simulados
+          <FilePen size={16} />
+          {deletingResponses ? "Limpando Respostas..." : "Refazer Simulado"}
         </motion.button>
-      </Link>
+
+        {/* Back Button */}
+        <Link href={"/simulados"}>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="ml-auto sm:ml-0 mt-5 flex items-center justify-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-lg shadow-md hover:bg-green-700 transition-colors text-sm"
+          >
+            <Undo2 size={16} />
+            Voltar para Simulados
+          </motion.button>
+        </Link>
+      </div>
     </motion.div>
   );
 }

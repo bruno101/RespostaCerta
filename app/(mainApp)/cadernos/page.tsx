@@ -67,7 +67,6 @@ export default function CadernosPage() {
       });
   }, []);
 
-  console.log("cad", cadernos);
   const filteredCadernos = cadernos.filter((caderno) => {
     const searchLower = search.toLowerCase();
     return caderno.title.toLowerCase().includes(searchLower);

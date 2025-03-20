@@ -4,6 +4,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/mongoose";
 import UserExam from "@/app/models/UserExam";
+import { sanitizationSettings } from "@/lib/sanitization";
+import DOMPurify from "isomorphic-dompurify";
 
 const API_KEY = process.env.GEMINI_API_KEY || "";
 
@@ -87,7 +89,11 @@ export async function POST(
         const result = await model.generateContent(prompt);
         if (result && result.response) {
           const generatedText = result.response.text();
-          const [first, ...rest] = generatedText.split("-");
+          const sainitizedText = DOMPurify.sanitize(
+            generatedText,
+            sanitizationSettings
+          );
+          const [first, ...rest] = sainitizedText.split("-");
           feedbacks = {
             ...feedbacks,
             [index + 1]: {
