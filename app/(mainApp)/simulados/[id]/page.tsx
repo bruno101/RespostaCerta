@@ -183,11 +183,11 @@ export default function SimuladoPage({
   if (isLoading) {
     return (
       <div
-        className="w-full mx-auto"
+        className="w-full mx-auto my-6"
         style={{ width: "60%", marginTop: "10%" }}
       >
         {/* Header skeleton */}
-        <div className="mb-8 mt-6">
+        <div className="mb-8">
           <Skeleton className="h-10 w-3/4 mb-4" />
           <Skeleton className="h-7 w-1/2 mb-2" />
         </div>

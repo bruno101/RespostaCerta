@@ -7,9 +7,10 @@ import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "./api/uploadthing/core";
 
-const roboto = Lato({
+const lato = Lato({
   weight: "400",
   subsets: ["latin"],
+  fallback: ["Lato", "sans-serif"],
 });
 
 export const metadata: Metadata = {
@@ -25,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${roboto.className} antialiased z-0 relative`}>
+      <body className={`${lato.className} antialiased z-0 relative`}>
         <AuthProvider>
           <NextSSRPlugin
             /**

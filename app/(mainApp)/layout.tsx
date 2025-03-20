@@ -1,3 +1,4 @@
+import Footer from "./footer";
 import NavLinks from "./navlinks";
 
 export default function RootLayout({
@@ -9,6 +10,7 @@ export default function RootLayout({
     <div>
       <NavLinks />
       <main className="mt-[64px]">{children}</main>
+      <Footer />
     </div>
   );
 }

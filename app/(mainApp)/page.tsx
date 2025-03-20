@@ -8,15 +8,11 @@ import {
   ArrowRight,
   Award,
   BarChart,
-  Calendar,
   Clipboard,
   HelpCircle,
 } from "lucide-react";
 import { FaGraduationCap, FaRegSmile, FaUserFriends } from "react-icons/fa";
-import { Target, TrendingUp } from "lucide-react";
-import { useState } from "react";
 import ConcursosTabsSection from "../ui/landing-page/ConcursosTabsSection";
-import Image from "next/image";
 import Banner from "../ui/landing-page/Banner";
 
 export default function LandingPage() {

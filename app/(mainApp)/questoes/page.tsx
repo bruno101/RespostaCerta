@@ -26,7 +26,7 @@ export default function Home() {
     <div className="">
       <Suspense
         fallback={
-          <div className="pt-5">
+          <div className="py-5">
             <LoadingSkeletons />
           </div>
         }
@@ -39,7 +39,7 @@ export default function Home() {
             })}
           />
         ) : (
-          <div className="pt-5">
+          <div className="py-5">
             <LoadingSkeletons />
           </div>
         )}
