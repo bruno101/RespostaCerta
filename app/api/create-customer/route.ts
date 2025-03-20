@@ -111,21 +111,11 @@ export async function POST(request: Request) {
   }
 
   try {
-    console.log("key", process.env.ASAAS_API_KEY);
-    console.log(
-      `${ASAAS_API_URL}/customers`,
-      {
-        name,
-        email,
-        cpfCnpj: cleanedCpfCnpj, // Send cleaned CPF/CNPJ (without formatting)
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          access_token: ASAAS_API_KEY,
-        },
-      }
-    );
+    console.log(`${ASAAS_API_URL}/customers`, {
+      name,
+      email,
+      cpfCnpj: cleanedCpfCnpj, // Send cleaned CPF/CNPJ (without formatting)
+    });
     // Create customer in ASAAS
     const response = await axios.post(
       `${ASAAS_API_URL}/customers`,
