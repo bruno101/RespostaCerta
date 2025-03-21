@@ -6,7 +6,8 @@ export default function SuccessPage() {
           Assinatura Concluída!
         </h1>
         <p className="text-cyan-700">
-          Obrigado por assinar o Resposta Certa Premium.
+          Obrigado por assinar o Resposta Certa Premium. A sua assinatura será
+          ativada assim que o pagamento for confirmado.
         </p>
       </div>
     </div>

@@ -24,6 +24,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useUploadThing } from "@/utils/generateReactHelpers";
 import { Edit, Trash2, Trash2Icon, User } from "lucide-react";
+import { Session } from "next-auth";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import Link from "next/link";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -54,10 +55,7 @@ export default function UserProfileHeader({
       subscription?: "free" | "premium";
       email?: string | null;
     };
-  }) => Promise<
-    | import("C:/Users/bruno/2025/app-questoes/app-questoes/node_modules/.pnpm/next-auth@4.24.11_next@15.1_7bcee3bfd937de90994f0201ef3b570d/node_modules/next-auth/core/types").Session
-    | null
-  >;
+  }) => Promise<Session | null>;
 }) {
   const [deleteImage, setDeleteImage] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -256,8 +254,8 @@ export default function UserProfileHeader({
           <span
             className={`ml-1 mt-1 inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium ${
               session.user.subscription === "premium"
-                ? "bg-cyan-500 text-white"
-                : "bg-purple-500 text-white"
+                ? "bg-purple-500 text-white"
+                : "bg-cyan-500 text-white"
             }`}
           >
             {session.user.subscription === "premium"

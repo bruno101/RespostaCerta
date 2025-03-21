@@ -15,7 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useState } from "react";
-import { Session } from "inspector/promises";
+import { Session } from "next-auth";
 
 // Account Management Component
 export default function AccountManagement({
@@ -34,10 +34,7 @@ export default function AccountManagement({
       subscription?: "free" | "premium";
       email?: string | null;
     };
-  }) => Promise<
-    | import("C:/Users/bruno/2025/app-questoes/app-questoes/node_modules/.pnpm/next-auth@4.24.11_next@15.1_7bcee3bfd937de90994f0201ef3b570d/node_modules/next-auth/core/types").Session
-    | null
-  >;
+  }) => Promise<Session | null>;
   handleDeleteAccount: () => void;
 }) {
   const user = session?.user;

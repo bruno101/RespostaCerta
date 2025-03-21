@@ -93,58 +93,83 @@ export const authOptions: AuthOptions = {
       trigger?: "signIn" | "signUp" | "update";
       account?: any;
     }) {
-      if (account?.provider === "google") {
-        const userFound = await User.findOne({
-          email: user?.email || session?.user?.email,
-        });
-        if (userFound) {
-          if (userFound.name) {
-            token.name = userFound?.name;
-          } else {
-            token.name = user?.name || session?.user?.name;
-          }
-          if (userFound.email) {
-            token.email = userFound?.email;
-          } else {
-            token.email = user?.email || session?.user?.email;
-          }
-          if (userFound.image) {
-            token.image = userFound?.image;
-          } else {
-            token.image = user?.image || session?.user?.image;
-          }
-          if (userFound.role) {
-            token.role = userFound?.role;
-          } else {
-            token.role = user?.role || session?.user?.role || "user";
-          }
-          if (userFound.subscription) {
-            token.subscription = userFound?.subscription;
-          } else {
-            token.subscription =
-              user?.subscription || session?.user?.subscription || "free";
-          }
-          if (userFound._id) {
-            token.id = userFound?.id;
-          } else {
-            token.id = user?.id || session?.user?.id;
-          }
-        }
-      } else if (session?.user) {
-        token.name = session.user.name;
-        token.email = session.user.email;
-        token.image = session.user.image;
-        token.role = session.user.role || "user";
-        token.subscription = session.user.subscription || "free";
-        token.id = session.user.id;
-      } else if (user) {
-        token.name = user.name;
-        token.email = user.email;
-        token.image = user.image;
-        token.role = user.role || "user";
-        token.subscription = user.subscription || "free";
-        token.id = user.id;
+      await connectToDatabase();
+      const foundUser = await User.findOne({ email: token.email });
+      if (foundUser) {
+        token.name = foundUser.name;
+        token.image = foundUser.image;
+        token.role = foundUser.role || "user";
+        token.id = foundUser._id.toString();
+        token.subscription = foundUser.subscription || "free";
       }
+      /*if (trigger === "update") {
+        // Fetch the user's current data from the database
+        const userFound = await fetchUserFromDB(token.email); // Use the email from the token
+        if (userFound) {
+          // Only allow updates to non-sensitive fields (e.g., name, image)
+          token.name = session?.user?.name || token.name; // Allow name update
+          token.image = session?.user?.image || token.image; // Allow image update
+
+          // Prevent updates to sensitive fields by using server-side data
+          token.email = userFound.email; // Always use the email from the database
+          token.role = userFound.role; // Always use the role from the database
+          token.subscription = userFound.subscription; // Always use the subscription from the database
+          token.id = userFound._id; // Always use the ID from the database
+        }
+      } else {
+        if (account?.provider === "google") {
+          const userFound = await User.findOne({
+            email: user?.email || session?.user?.email,
+          });
+          if (userFound) {
+            if (userFound.name) {
+              token.name = userFound?.name;
+            } else {
+              token.name = user?.name || session?.user?.name;
+            }
+            if (userFound.email) {
+              token.email = userFound?.email;
+            } else {
+              token.email = user?.email || session?.user?.email;
+            }
+            if (userFound.image) {
+              token.image = userFound?.image;
+            } else {
+              token.image = user?.image || session?.user?.image;
+            }
+            if (userFound.role) {
+              token.role = userFound?.role;
+            } else {
+              token.role = user?.role || session?.user?.role || "user";
+            }
+            if (userFound.subscription) {
+              token.subscription = userFound?.subscription;
+            } else {
+              token.subscription =
+                user?.subscription || session?.user?.subscription || "free";
+            }
+            if (userFound._id) {
+              token.id = userFound?.id;
+            } else {
+              token.id = user?.id || session?.user?.id;
+            }
+          }
+        } else if (session?.user) {
+          token.name = session.user.name;
+          token.email = session.user.email;
+          token.image = session.user.image;
+          token.role = session.user.role || "user";
+          token.subscription = session.user.subscription || "free";
+          token.id = session.user.id;
+        } else if (user) {
+          token.name = user.name;
+          token.email = user.email;
+          token.image = user.image;
+          token.role = user.role || "user";
+          token.subscription = user.subscription || "free";
+          token.id = user.id;
+        }
+      }*/
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
