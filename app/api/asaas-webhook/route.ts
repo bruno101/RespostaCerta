@@ -26,9 +26,6 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error: "Access denied",
-        clientIP,
-        forwardedFor: request.headers.get("x-forwarded-for"),
-        headers: request.headers,
       },
       { status: 403 }
     );
