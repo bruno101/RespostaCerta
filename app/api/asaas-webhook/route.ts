@@ -18,7 +18,14 @@ export async function POST(request: Request) {
   }
 
   if (token !== ASAAS_WEBHOOK_SECRET) {
-    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+    return NextResponse.json(
+      {
+        error: "Invalid signature",
+        sentToken: token,
+        expectedToken: ASAAS_WEBHOOK_SECRET,
+      },
+      { status: 401 }
+    );
   }
 
   /*// Verify the signature
