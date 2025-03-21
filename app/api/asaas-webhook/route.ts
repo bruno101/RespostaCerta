@@ -96,7 +96,7 @@ export async function POST(request: Request) {
         );
       }
       break;
-    case "SUBSCRIPTION_CANCELED":
+    case "SUBSCRIPTION_DELETED":
       console.log("canceled");
       try {
         connectToDatabase();
