@@ -22,7 +22,15 @@ export async function POST(request: Request) {
   // Check if the client's IP is in the allowed list
   if (!clientIP || !ALLOWED_IPS.includes(clientIP)) {
     // Block the request if the IP is not allowed
-    return NextResponse.json({ error: "Access denied" }, { status: 403 });
+    return NextResponse.json(
+      {
+        error: "Access denied",
+        clientIP,
+        forwardedFor: request.headers.get("x-forwarded-for"),
+        headers: request.headers,
+      },
+      { status: 403 }
+    );
   }
 
   const body = await request.text();
@@ -35,7 +43,7 @@ export async function POST(request: Request) {
   if (token !== ASAAS_WEBHOOK_SECRET) {
     return NextResponse.json(
       {
-        error: "Invalid signature",
+        error: "Invalid token",
       },
       { status: 401 }
     );
