@@ -100,7 +100,7 @@ export async function POST(request: Request) {
       console.log("canceled");
       try {
         connectToDatabase();
-        const subscriptionId = event.subscription;
+        const subscriptionId = event.subscription.id;
         const user = await User.findOne({ subscriptionId });
         if (!user) {
           return NextResponse.json(
