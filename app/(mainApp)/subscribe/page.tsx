@@ -59,7 +59,7 @@ export default function SubscribePage() {
       router.push("/subscribe/success");
     } catch (error) {
       console.error("Subscription failed:", (error as any).response?.data);
-      setError("A subscrição ffalhou:\n" + error);
+      setError("A subscrição falhou:\n" + error);
     } finally {
       setLoading(false);
     }

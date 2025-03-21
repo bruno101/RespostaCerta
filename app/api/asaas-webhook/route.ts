@@ -81,7 +81,7 @@ export async function POST(request: Request) {
           throw new Error("");
         }
         const message = welcomeToPremium(user.name);
-        sendEmail({
+        await sendEmail({
           to: user.email,
           subject: "Bem-vindo ao Resposta Certa Premium",
           html: message,
@@ -113,20 +113,27 @@ export async function POST(request: Request) {
         user.subscription = "free";
         user.subscriptionId = undefined;
         const res = await user.save();
+        console.log(res);
         if (!res) {
-          throw new Error("");
+          return NextResponse.json(
+            {
+              error: "Erro atualizando subscrição no banco de dados",
+            },
+            { status: 500 }
+          );
         }
         const message = subscriptionCanceled(user.name);
-        sendEmail({
+        await sendEmail({
           to: user.email,
           subject: "Cancelamento de Assinatura - Resposta Certa",
           html: message,
         });
         return NextResponse.json({ success: true }, { status: 200 });
       } catch (e) {
+        console.error(e);
         return NextResponse.json(
           {
-            error: "Erro atualizando status da subscrição no banco de dados",
+            error: "Erro cancelando subscrição",
           },
           { status: 500 }
         );
