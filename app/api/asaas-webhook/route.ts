@@ -8,8 +8,23 @@ import welcomeToPremium from "@/utils/emails/welcome-to-premium";
 import subscriptionCanceled from "@/utils/emails/subscription-canceled";
 
 const ASAAS_WEBHOOK_SECRET = process.env.ASAAS_WEBHOOK_SECRET; // Store your webhook secret in .env
+const ALLOWED_IPS = [
+  "52.67.12.206",
+  "18.230.8.159",
+  "54.94.136.112",
+  "54.94.183.101",
+];
 
 export async function POST(request: Request) {
+  // Get the client's IP address from the x-forwarded-for header
+  const clientIP = request.headers.get("x-forwarded-for")?.split(",")[0].trim();
+
+  // Check if the client's IP is in the allowed list
+  if (!clientIP || !ALLOWED_IPS.includes(clientIP)) {
+    // Block the request if the IP is not allowed
+    return NextResponse.json({ error: "Access denied" }, { status: 403 });
+  }
+
   const body = await request.text();
   const token = request.headers.get("asaas-access-token");
 
@@ -21,8 +36,6 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error: "Invalid signature",
-        sentToken: token,
-        expectedToken: ASAAS_WEBHOOK_SECRET,
       },
       { status: 401 }
     );
