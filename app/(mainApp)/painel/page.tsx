@@ -205,6 +205,7 @@ export default function DashboardPage() {
   return (
     <div className="container py-8 px-4 mx-auto">
       <UserProfileHeader
+        handleDeleteAccount={handleDeleteAccount}
         update={update}
         session={session}
         router={router}

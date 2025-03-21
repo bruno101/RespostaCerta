@@ -3,6 +3,7 @@ import { connectToDatabase } from "@/lib/mongoose";
 import User from "@/app/models/User";
 import crypto from "crypto";
 import { sendEmail } from "@/lib/email";
+import forgotPassword from "@/utils/emails/forgot-password";
 
 export async function POST(request: Request) {
   try {
@@ -19,7 +20,7 @@ export async function POST(request: Request) {
 
     // Find the user
     const user = await User.findOne({ email: email });
-    
+
     // Even if user doesn't exist, return success to prevent email enumeration
     if (!user || (user && user.signedUpWithGoogle)) {
       return NextResponse.json(
@@ -44,24 +45,7 @@ export async function POST(request: Request) {
     await sendEmail({
       to: user.email,
       subject: "Redefinição de Senha - Resposta Certa",
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2>Redefinição de Senha</h2>
-          <p>Olá,</p>
-          <p>Recebemos uma solicitação para redefinir sua senha. Clique no link abaixo para criar uma nova senha:</p>
-          <p>
-            <a 
-              href="${resetUrl}" 
-              style="display: inline-block; background-color: #3b82f6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;"
-            >
-              Redefinir Senha
-            </a>
-          </p>
-          <p>Este link expira em 1 hora.</p>
-          <p>Se você não solicitou esta redefinição, ignore este email.</p>
-          <p>Atenciosamente,<br>Equipe Resposta Certa</p>
-        </div>
-      `,
+      html: forgotPassword(resetUrl),
     });
 
     return NextResponse.json(

@@ -256,8 +256,8 @@ export default function UserProfileHeader({
           <span
             className={`ml-1 mt-1 inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium ${
               session.user.subscription === "premium"
-                ? "bg-cyan-100 text-cyan-800"
-                : "bg-cyan-500 text-white"
+                ? "bg-cyan-500 text-white"
+                : "bg-purple-500 text-white"
             }`}
           >
             {session.user.subscription === "premium"

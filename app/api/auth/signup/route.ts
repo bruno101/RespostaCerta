@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import crypto from "crypto";
 import { sendEmail } from "@/lib/email";
+import accountActivation from "@/utils/emails/account-activation";
 
 export async function POST(request: Request) {
   try {
@@ -59,23 +60,7 @@ export async function POST(request: Request) {
     await sendEmail({
       to: user.email,
       subject: "Ativação de Conta - Resposta Certa",
-      html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <h2>Ativação de Conta</h2>
-              <p>Olá,</p>
-              <p>Você é o mais novo aluno do Resposta Certa! Para acessar o site, basta ativar agora sua conta, clicando no link abaixo.</p>
-              <p>
-                <a 
-                  href="${verifyUrl}" 
-                  style="display: inline-block; background-color: #3b82f6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;"
-                >
-                  Clique aqui para ativar!
-                </a>
-              </p>
-              <p>Seja bem-vindo!</p>
-              <p>Atenciosamente,<br>Equipe Resposta Certa</p>
-            </div>
-          `,
+      html: accountActivation(verifyUrl),
     });
 
     return NextResponse.json(

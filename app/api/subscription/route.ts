@@ -370,7 +370,6 @@ export async function DELETE(request: Request) {
   }
 
   try {
-    user.subscriptionId = undefined;
     user.subscription = "free";
     await user.save();
     return NextResponse.json(response.data);
@@ -378,7 +377,7 @@ export async function DELETE(request: Request) {
     return NextResponse.json(
       {
         error:
-          "Assinatura cancelada no ASAAS. Erro ao remover assinatura do banco de dados.",
+          "Assinatura cancelada no ASAAS. Erro ao atualizar assinatura para free.",
       },
       { status: 500 }
     );

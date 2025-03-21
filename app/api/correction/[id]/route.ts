@@ -11,6 +11,8 @@ import { connectToDatabase } from "@/lib/mongoose";
 import Feedback from "@/app/models/Feedback";
 import { sendEmail } from "@/lib/email";
 import Question from "@/app/models/Question";
+import correctedQuestion from "@/utils/emails/corrected-question";
+import correctionUpdated from "@/utils/emails/correction-updated";
 
 export async function GET(
   request: NextRequest,
@@ -188,20 +190,7 @@ export async function POST(
     }
 
     const responseUrl = `${process.env.NEXTAUTH_URL}/painel/questoes-respondidas/${updatedResponse.question}`;
-    const emailContent = `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-    <h2>Questão Corrigida</h2>
-    <p>Olá,</p>
-    <p>Uma das questões que você submeteu foi corrigida. Clique no link abaixo para acessar a correção:</p>
-    <p>
-      <a 
-        href="${responseUrl}" 
-        style="display: inline-block; background-color: #3b82f6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;"
-      >
-        Verificar correção.
-      </a>
-    </p>
-    <p>Atenciosamente,<br>Equipe Resposta Certa</p>
-  </div>`;
+    const emailContent = correctedQuestion(responseUrl);
 
     await sendEmail({
       to: updatedResponse.user,
@@ -296,20 +285,7 @@ export async function PUT(
     );
 
     const responseUrl = `${process.env.NEXTAUTH_URL}/painel/questoes-respondidas/${existingResponse.question}`;
-    const emailContent = `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-    <h2>Questão Corrigida</h2>
-    <p>Olá,</p>
-    <p>A correção de uma das questões que você submeteu foi atualizada. Clique no link abaixo para acessar a correção:</p>
-    <p>
-      <a 
-        href="${responseUrl}" 
-        style="display: inline-block; background-color: #3b82f6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;"
-      >
-        Verificar correção.
-      </a>
-    </p>
-    <p>Atenciosamente,<br>Equipe Resposta Certa</p>
-  </div>`;
+    const emailContent = correctionUpdated(responseUrl);
 
     await sendEmail({
       to: existingResponse.user,
