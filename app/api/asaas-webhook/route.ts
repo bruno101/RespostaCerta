@@ -74,9 +74,9 @@ export async function POST(request: Request) {
         if (!user) {
           return NextResponse.json(
             {
-              error: "Subscrição não encontrada",
+              message: "Subscrição já foi removida",
             },
-            { status: 404 }
+            { status: 200 }
           );
         }
         user.subscription = "premium";
@@ -109,9 +109,9 @@ export async function POST(request: Request) {
         if (!user) {
           return NextResponse.json(
             {
-              error: "Subscrição não encontrada",
+              message: "Subscrição já foi removida",
             },
-            { status: 404 }
+            { status: 200 }
           );
         }
         for (const [key, value] of request.headers.entries()) {
