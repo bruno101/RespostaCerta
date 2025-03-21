@@ -67,7 +67,7 @@ export default function AccountManagement({
         setCancelationDialogOpen(false);
         window.location.reload();
       } else {
-        throw new Error("Erro cancenlando");
+        throw new Error("Erro cancelando");
       }
     } catch (error) {
       console.error("Error canceling subscription:", error);

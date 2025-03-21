@@ -34,7 +34,7 @@ export default function SubscribePage() {
 
     try {
       // Step 1: Create a customer in ASAAS
-      const customerResponse = await axios.post("/api/customer", {
+      const customerResponse = await axios.post("/api/customers", {
         name: formData.name,
         cpfCnpj: formData.cpfCnpj,
       });
@@ -42,7 +42,7 @@ export default function SubscribePage() {
       const customerId = customerResponse.data.id;
 
       // Step 2: Create a subscription in ASAAS
-      const subscriptionResponse = await axios.post("/api/subscription", {
+      const subscriptionResponse = await axios.post("/api/subscriptions", {
         customerId,
         cardNumber: formData.cardNumber,
         expiryMonth: formData.expiryMonth,
