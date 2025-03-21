@@ -13,6 +13,7 @@ const ALLOWED_IPS = [
   "18.230.8.159",
   "54.94.136.112",
   "54.94.183.101",
+  "54.232.48.115",
 ];
 
 export async function POST(request: Request) {
