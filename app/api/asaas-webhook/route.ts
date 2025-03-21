@@ -114,6 +114,9 @@ export async function POST(request: Request) {
             { status: 404 }
           );
         }
+        for (const [key, value] of request.headers.entries()) {
+          console.log(`${key}:${value}`);
+        }
         user.subscription = "free";
         user.subscriptionId = undefined;
         const res = await user.save();
