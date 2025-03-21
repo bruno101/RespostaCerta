@@ -11,16 +11,17 @@ const ASAAS_WEBHOOK_SECRET = process.env.ASAAS_WEBHOOK_SECRET; // Store your web
 
 export async function POST(request: Request) {
   const body = await request.text();
-  const signature = request.headers.get("asaas-signature");
+  const token = request.headers.get("asaas-access-token");
 
-  if (!signature) {
-    return NextResponse.json(
-      { error: "No signature provided" },
-      { status: 400 }
-    );
+  if (!token) {
+    return NextResponse.json({ error: "No token provided" }, { status: 400 });
   }
 
-  // Verify the signature
+  if (token !== ASAAS_WEBHOOK_SECRET) {
+    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+  }
+
+  /*// Verify the signature
   const expectedSignature = crypto
     .createHmac("sha256", ASAAS_WEBHOOK_SECRET || "")
     .update(body)
@@ -28,7 +29,7 @@ export async function POST(request: Request) {
 
   if (signature !== expectedSignature) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
-  }
+  }*/
 
   // Process the webhook event
   const event = JSON.parse(body);
