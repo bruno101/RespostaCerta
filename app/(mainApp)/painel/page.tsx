@@ -75,6 +75,11 @@ export default function DashboardPage() {
     }
   }, [status, router]);
 
+  useEffect(() => {
+    //Atualizando dados da sessão (como subscrição)
+    update();
+  }, []);
+
   const fetchUserData = async () => {
     try {
       setIsLoading(true);

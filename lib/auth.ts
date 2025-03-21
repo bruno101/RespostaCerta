@@ -94,6 +94,7 @@ export const authOptions: AuthOptions = {
       account?: any;
     }) {
       await connectToDatabase();
+      console.log("let's update");
       const foundUser = await User.findOne({ email: token.email });
       if (foundUser) {
         token.name = foundUser.name;
@@ -102,6 +103,7 @@ export const authOptions: AuthOptions = {
         token.id = foundUser._id.toString();
         token.subscription = foundUser.subscription || "free";
       }
+      console.log(token.subscription);
       /*if (trigger === "update") {
         // Fetch the user's current data from the database
         const userFound = await fetchUserFromDB(token.email); // Use the email from the token
@@ -173,6 +175,7 @@ export const authOptions: AuthOptions = {
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
+      console.log(token.subscription);
       return {
         ...session,
         user: {
@@ -181,7 +184,7 @@ export const authOptions: AuthOptions = {
           image: token.image,
           name: token.name,
           role: token.role || "user",
-          subscription: token.subcription || "free",
+          subscription: token.subscription || "free",
         },
       };
     },

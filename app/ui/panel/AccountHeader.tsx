@@ -48,6 +48,7 @@ export default function UserProfileHeader({
       email?: string | null;
       image?: string | null;
       name?: string | null;
+      role?: "admin" | "user" | "corretor" | null;
     };
   };
   update: (session: {
@@ -262,6 +263,17 @@ export default function UserProfileHeader({
               ? "Premium"
               : "Plano Gratuito"}
           </span>
+          {session.user.role !== "user" && (
+            <span
+              className={`mt-1 inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium ${
+                session.user.role === "admin"
+                  ? "bg-pink-500 text-white"
+                  : "bg-green-500 text-white"
+              }`}
+            >
+              {session.user.role === "admin" ? "Admin" : "Corretor"}
+            </span>
+          )}
         </div>
         <p className="text-gray-500 mb-4">{session.user.email}</p>
 
