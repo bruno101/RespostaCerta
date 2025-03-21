@@ -38,6 +38,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "No token provided" }, { status: 400 });
   }
 
+  for (const [key, value] of request.headers.entries()) {
+    console.log(`${key}:${value}`);
+  }
+
   if (token !== ASAAS_WEBHOOK_SECRET) {
     return NextResponse.json(
       {
