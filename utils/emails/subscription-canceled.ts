@@ -65,7 +65,7 @@ export default function subscriptionCanceled(name: string) {
             <h1>Cancelamento de Assinatura</h1>
             <p>Olá ${name},</p>
             <p>Recebemos a solicitação de cancelamento da sua assinatura premium no <strong>Resposta Certa</strong>. Lamentamos ver você partir, mas respeitamos a sua decisão.</p>
-            <p>Informamos que o cancelamento foi efetivado e perderá o aos recursos premium, incluindo:</p>
+            <p>Informamos que o cancelamento foi efetivado e você perderá o ácesso aos recursos premium, incluindo:</p>
             <ul>
                 <li>Simulados ilimitados</li>
                 <li>Gabaritos ilimitados</li>

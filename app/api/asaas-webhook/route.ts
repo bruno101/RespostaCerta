@@ -38,10 +38,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "No token provided" }, { status: 400 });
   }
 
-  for (const [key, value] of request.headers.entries()) {
-    console.log(`${key}:${value}`);
-  }
-
   if (token !== ASAAS_WEBHOOK_SECRET) {
     return NextResponse.json(
       {
@@ -66,7 +62,6 @@ export async function POST(request: Request) {
 
   switch (event.event) {
     case "PAYMENT_CONFIRMED":
-      console.log("Payment Confirmed:", event.payment);
       try {
         connectToDatabase();
         const subscriptionId = event.payment.subscription;
@@ -101,7 +96,6 @@ export async function POST(request: Request) {
       }
       break;
     case "SUBSCRIPTION_DELETED":
-      console.log("canceled");
       try {
         connectToDatabase();
         const subscriptionId = event.subscription.id;
@@ -114,13 +108,9 @@ export async function POST(request: Request) {
             { status: 200 }
           );
         }
-        for (const [key, value] of request.headers.entries()) {
-          console.log(`${key}:${value}`);
-        }
         user.subscription = "free";
         user.subscriptionId = undefined;
         const res = await user.save();
-        console.log(res);
         if (!res) {
           return NextResponse.json(
             {
@@ -146,8 +136,42 @@ export async function POST(request: Request) {
         );
       }
       break;
+    case "SUBSCRIPTION_INACTIVATED":
+      try {
+        connectToDatabase();
+        const subscriptionId = event.subscription.id;
+        const user = await User.findOne({ subscriptionId });
+        if (!user) {
+          return NextResponse.json(
+            {
+              message: "Subscrição já foi removida",
+            },
+            { status: 200 }
+          );
+        }
+        user.subscription = "free";
+        user.subscriptionId = undefined;
+        const res = await user.save();
+        if (!res) {
+          return NextResponse.json(
+            {
+              error: "Erro atualizando subscrição no banco de dados",
+            },
+            { status: 500 }
+          );
+        }
+        return NextResponse.json({ success: true }, { status: 200 });
+      } catch (e) {
+        console.error(e);
+        return NextResponse.json(
+          {
+            error: "Erro cancelando subscrição",
+          },
+          { status: 500 }
+        );
+      }
+      break;
     default:
-      console.log("Unhandled Event:", event.event);
   }
 
   return NextResponse.json({ success: true });

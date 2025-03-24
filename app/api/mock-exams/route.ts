@@ -26,7 +26,6 @@ export async function GET() {
       id: simulado._id.toString(),
       completed: userSimuladodIds.includes(simulado._id.toString()),
     }));
-    console.log("usi", userSimuladodIds);
     return NextResponse.json(simulados);
   } catch (e) {
     console.error(e);

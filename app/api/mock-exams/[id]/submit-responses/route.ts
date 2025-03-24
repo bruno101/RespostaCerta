@@ -85,7 +85,6 @@ export async function POST(
         Escreva um comentário justificando essa nota e dando feedback para o usuário que submeteu a resposta. Considere aspectos como corretude, completude, precisão, clareza e domínio da língua portuguesa.
         Na sua resposta, o(s) primeiro(s) caracteres devem ser a nota, seguidos de um "-"; isto é, inicie a resposta com a nota, seguida de "-". Os caracteres restantes devem ser o comentário.`;
 
-        console.log(prompt);
         const result = await model.generateContent(prompt);
         if (result && result.response) {
           const generatedText = result.response.text();
@@ -108,13 +107,6 @@ export async function POST(
       gradeArray.push(feedbacks[key].grade);
       commentArray.push(feedbacks[key].comment);
     }
-    console.log({
-      user: session.user.email,
-      exam_id: id,
-      responses: userResponseArray,
-      grades: gradeArray,
-      comments: commentArray,
-    });
     const userExam = new UserExam({
       user: session.user.email,
       exam_id: id,
@@ -123,7 +115,6 @@ export async function POST(
       comments: commentArray,
     });
     const data = await userExam.save();
-    console.log(data);
     return NextResponse.json(data);
   } catch (e) {
     console.error(e);

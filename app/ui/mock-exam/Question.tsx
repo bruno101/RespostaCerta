@@ -26,14 +26,6 @@ export default function Question({
   const [timeLeft, setTimeLeft] = useState(question?.timeLimit || 10000000);
   const [userAnswer, setUserAnswer] = useState("");
 
-  console.log(
-    "\ninside question",
-    currentQuestionIndex,
-    numberOfQuestions,
-    currentQuestionIndex === numberOfQuestions,
-    "\n"
-  );
-
   // Handle the countdown timer
   useEffect(() => {
     if (timeLeft === 0) {

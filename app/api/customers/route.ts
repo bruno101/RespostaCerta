@@ -119,18 +119,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ id: user.customerId });
     }
   } catch (e) {
-    console.log("Falha ao buscar usuário no banco de dados", e);
     return NextResponse.json(
       { error: "Falha na assinatura. Tente novamente." },
       { status: 500 }
     );
   }
   try {
-    console.log(`${ASAAS_API_URL}/customers`, {
-      name,
-      email,
-      cpfCnpj: cleanedCpfCnpj, // Send cleaned CPF/CNPJ (without formatting)
-    });
     // Create customer in ASAAS
     response = await axios.post(
       `${ASAAS_API_URL}/customers`,
@@ -154,7 +148,6 @@ export async function POST(request: Request) {
     );
   }
 
-  console.log("Salvando", response.data.id);
   try {
     await User.findOneAndUpdate(
       { email },

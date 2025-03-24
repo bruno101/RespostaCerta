@@ -22,7 +22,6 @@ export async function DELETE(
 ) {
   try {
     const id = (await params).id;
-    console.log("delete response", id);
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Não autenticado." }, { status: 401 });

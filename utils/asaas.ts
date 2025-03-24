@@ -23,7 +23,6 @@ export const createSubscriptionPlan = async () => {
         access_token: ASAAS_API_KEY,
       },
     });
-    console.log("Subscription Plan Created:", response.data);
     return response.data;
   } catch (error) {
     console.error(
@@ -55,7 +54,6 @@ export const createCustomer = async (
         access_token: ASAAS_API_KEY,
       },
     });
-    console.log("Customer Created:", response.data);
     return response.data.id; // Return the customer ID
   } catch (error) {
     console.error("Error creating customer:", (error as any).response?.data);
@@ -86,7 +84,6 @@ export const createSubscription = async (
         access_token: ASAAS_API_KEY,
       },
     });
-    console.log("Subscription Created:", response.data);
     return response.data;
   } catch (error) {
     console.error(
