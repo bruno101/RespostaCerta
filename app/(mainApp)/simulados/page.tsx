@@ -19,6 +19,8 @@ import {
   ArrowRight,
   BookOpen,
   GraduationCap,
+  Sparkles,
+  Rocket,
 } from "lucide-react"; // lucide-react icons
 import { FaGraduationCap, FaBook, FaUserTie } from "react-icons/fa"; // react-icons
 import { motion } from "framer-motion"; // Framer Motion
@@ -173,13 +175,57 @@ export default function SimuladosPage() {
             Simulados
           </h1>
           <p className="text-lg">
-            Prepare-se para o seu concurso com nossos simulados personalizados.
+            Prepare-se para o seu concurso com nossos simulados exclusivos.
           </p>
         </motion.div>
       </div>
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto p-8">
+        <div className="mb-12">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl p-0.5 shadow-lg"
+          >
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-6 text-center">
+              <div className="flex flex-col items-center">
+                <Rocket className="h-10 w-10 text-purple-600 mb-4" />
+                <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                  Simulado Personalizado
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-md">
+                  Crie seu próprio simulado escolhendo bancas, disciplinas e
+                  temas específicos para focar exatamente no que você precisa
+                  estudar.
+                </p>
+
+                {/* Custom Button (No Component) */}
+                <Link href="/gerar-simulado">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="relative px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"
+                  >
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      <Sparkles className="h-5 w-5" />
+                      Gerar Simulado Personalizado
+                    </span>
+                    {/* Animated background shine effect */}
+                    <span
+                      className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-500 -rotate-12 origin-left transform scale-x-0 group-hover:scale-x-100"
+                      style={{ width: "200%", left: "-50%" }}
+                    />
+                  </motion.button>
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
         {/* Search Bar */}
         <div className="mb-8">
           <div className="relative">

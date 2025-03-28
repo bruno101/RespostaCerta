@@ -135,7 +135,7 @@ export default function FilterPage({
     //setLoading(true);
     let newKeyWordParams = `?palavras=${keyWords}${
       solved && "&resolvidas=" + solved
-    }&questionsPerPage=${questionsPerPage}&pageIndex=${pageIndex}`;
+    }&questionsPerPage=${questionsPerPage}&pageIndex=1`;
     for (const item of selected) {
       newKeyWordParams += `&${item.name.toLowerCase()}=${item.options.join(
         ","

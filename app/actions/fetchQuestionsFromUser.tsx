@@ -19,16 +19,28 @@ export async function fetchQuestionsFromUser() {
       Disciplina: q.Disciplina,
       Banca: q.Banca,
       Ano: q.Ano,
-      Nivel: q.Nivel,
+      Nivel:
+        q.Nivel === "Fundamental" ||
+        q.Nivel === "Médio" ||
+        q.Nivel === "Superior"
+          ? q.Nivel
+          : "Superior",
+      Numero: String(q.Numero),
       Instituicao: q.Instituicao,
-      Cargo: q.Cargo,
+      Cargos: q.Cargos,
       TextoMotivador: q.TextoMotivador,
       Questao: q.Questao,
       Criterios: q.Criterios,
       Resposta: q.Resposta,
       TextoPlano: q.TextoPlano,
-      Dificuldade: q.Dificuldade,
+      Dificuldade:
+        q.Dificuldade === "Fácil" ||
+        q.Dificuldade === "Média" ||
+        q.Dificuldade === "Difícil"
+          ? q.Dificuldade
+          : "Média",
       NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,
+      EmailCriador: q.EmailCriador,
     }));
   }
   return JSON.stringify(mappedData);

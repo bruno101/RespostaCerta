@@ -147,7 +147,7 @@ export default function QuestionList({
             className={
               pageIndex === i
                 ? "cursor-pointer bg-cyan-600 text-white hover:bg-cyan-700"
-                : ""
+                : "cursor-pointer"
             }
           >
             {i}

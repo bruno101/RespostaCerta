@@ -2,7 +2,7 @@ export default interface IQuestion {
   Disciplina: string;
   Banca: string;
   Ano: string;
-  Nivel: string;
+  Nivel: "Fundamental" | "Médio" | "Superior";
   Questao: string;
   Resposta: string;
   Numero?: string;
@@ -10,8 +10,8 @@ export default interface IQuestion {
   TextoMotivador?: string;
   Codigo: string;
   Instituicao: string;
-  Cargo: string;
+  Cargos: string[];
   TextoPlano: string;
-  Dificuldade: string;
-  NotaMaxima: number
+  Dificuldade: "Fácil" | "Média" | "Difícil";
+  NotaMaxima: number;
 }

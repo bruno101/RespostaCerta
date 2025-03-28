@@ -243,7 +243,7 @@ export default function SubscriptionForm() {
       <form onSubmit={handleSubmit} className="space-y-3">
         {/* User Details */}
         <div>
-          <label className="block text-sm font-medium text-cyan-600">
+          <label className="block text-sm font-medium text-slate-500">
             Nome
           </label>
           <input
@@ -267,7 +267,7 @@ export default function SubscriptionForm() {
         </div>
         <div className="grid grid-cols-1 gap-4">
           <div className="w-full">
-            <label className="block text-sm font-medium text-cyan-600">
+            <label className="block text-sm font-medium text-slate-500">
               CPF
             </label>
             <input
@@ -294,7 +294,7 @@ export default function SubscriptionForm() {
 
           {/* Credit Card Details */}
           <div className="w-full">
-            <label className="block text-sm font-medium text-cyan-600">
+            <label className="block text-sm font-medium text-slate-500">
               Número do Cartão
             </label>
             <input
@@ -323,10 +323,10 @@ export default function SubscriptionForm() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="block md:hidden lg:block text-sm font-medium text-cyan-600">
+            <label className="block md:hidden lg:block text-sm font-medium text-slate-500">
               Mês de Expiração
             </label>
-            <label className="hidden md:block lg:hidden text-sm font-medium text-cyan-600">
+            <label className="hidden md:block lg:hidden text-sm font-medium text-slate-500">
               Mês de Expir.
             </label>
             <input
@@ -360,10 +360,10 @@ export default function SubscriptionForm() {
               )}
           </div>
           <div>
-            <label className="block md:hidden lg:block text-sm font-medium text-cyan-600">
+            <label className="block md:hidden lg:block text-sm font-medium text-slate-500">
               Ano de Expiração
             </label>
-            <label className="hidden md:block lg:hidden text-sm font-medium text-cyan-600">
+            <label className="hidden md:block lg:hidden text-sm font-medium text-slate-500">
               Ano de Expir.
             </label>
             <input
@@ -397,7 +397,7 @@ export default function SubscriptionForm() {
               )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-cyan-600">
+            <label className="block text-sm font-medium text-slate-500">
               CVV
             </label>
             <input
@@ -422,7 +422,7 @@ export default function SubscriptionForm() {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-cyan-600">
+          <label className="block text-sm font-medium text-slate-500">
             Nome no Cartão
           </label>
           <input
@@ -450,7 +450,7 @@ export default function SubscriptionForm() {
         {/* Additional Fields */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-cyan-600">
+            <label className="block text-sm font-medium text-slate-500">
               Telefone
             </label>
             <input
@@ -474,7 +474,7 @@ export default function SubscriptionForm() {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-cyan-600">
+            <label className="block text-sm font-medium text-slate-500">
               CEP
             </label>
             <input
@@ -502,7 +502,7 @@ export default function SubscriptionForm() {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-cyan-600">
+          <label className="block text-sm font-medium text-slate-500">
             Endereço
           </label>
           <input

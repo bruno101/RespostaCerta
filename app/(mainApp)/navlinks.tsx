@@ -25,6 +25,7 @@ export default function TopMenu() {
   const router = useRouter();
   const pathname = usePathname(); // Get the current path
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  console.log(pathname, pathname === "/gerar-simulado");
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -55,7 +56,8 @@ export default function TopMenu() {
                 key={item.name}
                 href={item.href}
                 className={`px-3 py-2 rounded-md text-sm font-medium ${
-                  pathname.startsWith(item.href) // Check if the current path starts with the item's href
+                  pathname.startsWith(item.href) ||
+                  (item.name === "Simulados" && pathname === "/gerar-simulado") // Check if the current path starts with the item's href
                     ? "bg-cyan-700 text-white" // Active style
                     : "text-white hover:bg-cyan-700" // Default style
                 }`}
@@ -173,7 +175,8 @@ export default function TopMenu() {
                 key={item.name}
                 href={item.href}
                 className={`block px-3 py-2 rounded-md text-base font-medium ${
-                  pathname.startsWith(item.href) // Check if the current path starts with the item's href
+                  pathname.startsWith(item.href) ||
+                  (item.name === "Simulados" && pathname === "/gerar-simulado") // Check if the current path starts with the item's href
                     ? "bg-cyan-700 text-white" // Active style
                     : "text-white hover:bg-cyan-700" // Default style
                 }`}
@@ -187,4 +190,3 @@ export default function TopMenu() {
     </nav>
   );
 }
-

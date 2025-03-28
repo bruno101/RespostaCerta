@@ -31,7 +31,7 @@ export async function GET(
     })
       .populate({
         path: "question",
-        select: "Banca Ano Instituicao Cargo Questao",
+        select: "Banca Ano Instituicao Cargos Questao",
         model: Question,
       })
       .populate({
@@ -52,11 +52,11 @@ export async function GET(
       email: (response.feedback as any)?.evaluatedBy,
     });
     if (evaluator) {
-        evaluatedBy = {
-            email: evaluator.email,
-            name: evaluator.name,
-            image: evaluator.image
-        }
+      evaluatedBy = {
+        email: evaluator.email,
+        name: evaluator.name,
+        image: evaluator.image,
+      };
     }
 
     // Format the response data
@@ -74,7 +74,7 @@ export async function GET(
           " - " +
           (response.question as any).Instituicao +
           " - " +
-          (response.question as any).Cargo +
+          (response.question as any).Cargos[0] +
           ((response.question as any).Numero
             ? " - Questão " + String((response.question as any).Numero)
             : ""),

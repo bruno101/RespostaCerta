@@ -20,16 +20,26 @@ export async function GET() {
       Disciplina: q.Disciplina,
       Banca: q.Banca,
       Ano: q.Ano,
-      Nivel: q.Nivel,
+      Nivel:
+        q.Nivel === "Fundamental" ||
+        q.Nivel === "Médio" ||
+        q.Nivel === "Superior"
+          ? q.Nivel
+          : "Superior",
       Numero: String(q.Numero),
       Instituicao: q.Instituicao,
-      Cargo: q.Cargo,
+      Cargos: q.Cargos,
       TextoMotivador: q.TextoMotivador,
       Questao: q.Questao,
       Criterios: q.Criterios,
       Resposta: q.Resposta,
       TextoPlano: q.TextoPlano,
-      Dificuldade: q.Dificuldade,
+      Dificuldade:
+        q.Dificuldade === "Fácil" ||
+        q.Dificuldade === "Média" ||
+        q.Dificuldade === "Difícil"
+          ? q.Dificuldade
+          : "Média",
       NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,
     }));
 
@@ -74,10 +84,15 @@ export async function POST(request: NextRequest) {
       Disciplina: q.Disciplina,
       Banca: q.Banca,
       Ano: q.Ano,
-      Nivel: q.Nivel,
+      Nivel:
+        q.Nivel === "Fundamental" ||
+        q.Nivel === "Médio" ||
+        q.Nivel === "Superior"
+          ? q.Nivel
+          : "Superior",
       Numero: String(q.Numero),
       Instituicao: q.Instituicao,
-      Cargo: q.Cargo,
+      Cargos: q.Cargos,
       TextoMotivador: DOMPurify.sanitize(
         q.TextoMotivador,
         sanitizationSettings
@@ -86,7 +101,12 @@ export async function POST(request: NextRequest) {
       Criterios: DOMPurify.sanitize(q.Criterios, sanitizationSettings),
       Resposta: DOMPurify.sanitize(q.Resposta, sanitizationSettings),
       TextoPlano: q.TextoPlano,
-      Dificuldade: q.Dificuldade,
+      Dificuldade:
+        q.Dificuldade === "Fácil" ||
+        q.Dificuldade === "Média" ||
+        q.Dificuldade === "Difícil"
+          ? q.Dificuldade
+          : "Média",
       NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,
     };
 

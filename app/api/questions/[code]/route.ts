@@ -6,7 +6,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import IQuestion from "@/app/interfaces/IQuestion";
 import { sanitizationSettings } from "@/lib/sanitization";
-import DOMPurify from "isomorphic-dompurify"
+import DOMPurify from "isomorphic-dompurify";
 
 export async function GET(
   request: Request,
@@ -34,16 +34,29 @@ export async function GET(
       Disciplina: q.Disciplina,
       Banca: q.Banca,
       Ano: q.Ano,
-      Nivel: q.Nivel,
+      Nivel:
+        q.Nivel === "Fundamental" ||
+        q.Nivel === "Médio" ||
+        q.Nivel === "Superior"
+          ? q.Nivel
+          : "Superior",
       Numero: String(q.Numero),
       Instituicao: q.Instituicao,
-      Cargo: q.Cargo,
-      TextoMotivador: q.TextoMotivador,
-      Questao: q.Questao,
-      Criterios: q.Criterios,
-      Resposta: q.Resposta,
-      Dificuldade: q.Dificuldade,
+      Cargos: q.Cargos,
+      TextoMotivador: DOMPurify.sanitize(
+        q.TextoMotivador,
+        sanitizationSettings
+      ),
+      Questao: DOMPurify.sanitize(q.Questao, sanitizationSettings),
+      Criterios: DOMPurify.sanitize(q.Criterios, sanitizationSettings),
+      Resposta: DOMPurify.sanitize(q.Resposta, sanitizationSettings),
       TextoPlano: q.TextoPlano,
+      Dificuldade:
+        q.Dificuldade === "Fácil" ||
+        q.Dificuldade === "Média" ||
+        q.Dificuldade === "Difícil"
+          ? q.Dificuldade
+          : "Média",
       NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,
     };
 
@@ -105,14 +118,14 @@ export async function PUT(
       Nivel,
       Numero,
       Instituicao,
-      Cargo,
+      Cargos,
       TextoMotivador,
       Questao,
       Criterios,
       Resposta,
       TextoPlano,
       Dificuldade,
-      NotaMaxima
+      NotaMaxima,
     } = body;
 
     const newBody = {
@@ -122,7 +135,7 @@ export async function PUT(
       Nivel: Nivel,
       Instituicao: Instituicao,
       Numero: Numero,
-      Cargo: Cargo,
+      Cargos: Cargos,
       TextoMotivador: DOMPurify.sanitize(TextoMotivador, sanitizationSettings),
       Questao: DOMPurify.sanitize(Questao, sanitizationSettings),
       Criterios: DOMPurify.sanitize(Criterios, sanitizationSettings),
@@ -130,7 +143,7 @@ export async function PUT(
       TextoPlano: TextoPlano,
       Dificuldade: Dificuldade,
       EmailCriador: session?.user?.email,
-      NotaMaxima: NotaMaxima
+      NotaMaxima: NotaMaxima,
     };
 
     // Find and update the question
@@ -149,7 +162,7 @@ export async function PUT(
     }
 
     // Return the updated question
-    return NextResponse.json({...updatedQuestion, Codigo: code});
+    return NextResponse.json({ ...updatedQuestion, Codigo: code });
   } catch (error: any) {
     // Handle validation errors
     if (error.name === "ValidationError") {

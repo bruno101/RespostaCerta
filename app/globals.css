@@ -143,14 +143,6 @@ body:has([data-state="open"]) {
       @apply list-disc list-outside ml-6 space-y-1;
     }
 
-    ol {
-      @apply list-decimal list-outside ml-6 space-y-1;
-    }
-
-    li {
-      @apply pl-2;
-    }
-
     p {
       @apply leading-7;
     }
@@ -162,6 +154,61 @@ body:has([data-state="open"]) {
     code {
       @apply bg-muted rounded px-1.5 py-0.5 font-mono text-sm;
     }
+  }
+}
+
+.question {
+  /* Reset default list styles */
+  ol,
+  ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  /* List items with consistent spacing */
+  li {
+    position: relative;
+    padding-left: 1.75rem; /* Space for numbers/dots */
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+  }
+
+  /* Nested list indentation */
+  li > ol,
+  li > ul {
+    margin-top: 0.5rem;
+    padding-left: 1.25rem;
+  }
+
+  /* Ordered list - blue numbers without a dot after (e.g., "1 item" instead of "1.item") */
+  ol {
+    counter-reset: list-counter;
+  }
+
+  ol > li {
+    counter-increment: list-counter;
+  }
+
+  ol > li::before {
+    content: counter(list-counter); /* Removed the dot */
+    position: absolute;
+    left: 0;
+    color: #8da0a1; /* Blue color */
+    font-weight: 500;
+    font-size: 1em;
+  }
+
+  /* Unordered list - blue dots (no hover effects) */
+  ul > li::before {
+    content: "";
+    position: absolute;
+    left: 0.5rem;
+    top: 0.65em;
+    width: 0.35rem;
+    height: 0.35rem;
+    background-color: #8da0a1; /* Blue color */
+    border-radius: 50%;
   }
 }
 

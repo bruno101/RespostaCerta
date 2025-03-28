@@ -12,14 +12,14 @@ export default function FullQuestion({ codigo }: { codigo: string }) {
     Disciplina: "",
     Banca: "",
     Ano: "",
-    Nivel: "",
+    Nivel: "Superior",
     Questao: "",
     Resposta: "",
     Criterios: "",
     Codigo: "",
     Instituicao: "",
-    Cargo: "",
-    Dificuldade: "",
+    Cargos: [""],
+    Dificuldade: "Média",
     TextoPlano: "",
     NotaMaxima: 10,
   });
@@ -88,7 +88,7 @@ export default function FullQuestion({ codigo }: { codigo: string }) {
               clipRule="evenodd"
             />
           </svg>
-          <div className="mt-[10px] ml-2 text-xs">{question.Cargo}</div>
+          <div className="mt-[10px] ml-2 text-xs">{question.Cargos[0]}</div>
         </div>
       </div>
 

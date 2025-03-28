@@ -55,7 +55,7 @@ export default function Question({
               clipRule="evenodd"
             />
           </svg>
-          <div className="mt-[23px] ml-2 text-xs">{question.Cargo}</div>
+          <div className="mt-[23px] ml-2 text-xs">{question.Cargos[0]}</div>
         </div>
         <button
           onClick={() => setMinimized((x) => !x)}

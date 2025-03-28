@@ -66,7 +66,7 @@ export async function GET() {
           Ano: q.Ano,
           Nivel: q.Nivel,
           Instituicao: q.Instituicao,
-          Cargo: q.Cargo,
+          Cargos: q.Cargos,
           TextoMotivador: q.TextoMotivador,
           Questao: q.Questao,
           Criterios: q.Criterios,

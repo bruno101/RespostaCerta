@@ -10,7 +10,6 @@ import User from "@/app/models/User";
 import Question from "@/app/models/Question";
 import Feedback from "@/app/models/Feedback";
 
-
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -20,11 +19,15 @@ export async function GET(request: NextRequest) {
     }
 
     await connectToDatabase();
-    console.log(session.user.email)
+    console.log(session.user.email);
 
     // Find all responses for the current user
     const responses = await Response.find({ user: session.user.email })
-      .populate("question", "Banca Ano Instituicao Cargo Numero _id NotaMaxima", Question)
+      .populate(
+        "question",
+        "Banca Ano Instituicao Cargos Numero _id NotaMaxima",
+        Question
+      )
       .populate("feedback", "grade evaluatedBy", Feedback)
       .sort({ createdAt: -1 })
       .lean();
@@ -68,7 +71,7 @@ export async function GET(request: NextRequest) {
           " - " +
           response.question.Instituicao +
           " - " +
-           response.question.Cargo +
+          response.question.Cargos[0] +
           questionNumber,
         status: response.status,
         createdAt: response.createdAt,

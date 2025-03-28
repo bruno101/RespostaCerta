@@ -23,7 +23,7 @@ export default function Page() {
               " - " +
               item.Ano +
               " - " +
-              item.Cargo +
+              item.Cargos[0] +
               " - " +
               item.Banca,
             text: item.TextoPlano ? item.TextoPlano : "",

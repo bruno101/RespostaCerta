@@ -17,7 +17,7 @@ export default function QuestionBody({ question }: { question: IQuestion }) {
       {
         <div
           dangerouslySetInnerHTML={{ __html: question.Questao }}
-          className="rich-text-editor p-5 text-[15px] sm:text-[17px] text-gray-800"
+          className="question p-5 text-[15px] sm:text-[17px] text-gray-800"
         ></div>
       }
     </div>

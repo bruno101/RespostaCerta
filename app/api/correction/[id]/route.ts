@@ -38,7 +38,7 @@ export async function GET(
     })
       .populate(
         "question",
-        "TextoMotivador NotaMaxima Questao Banca Ano Instituicao Cargo Numero _id",
+        "TextoMotivador NotaMaxima Questao Banca Ano Instituicao Cargos Numero _id",
         Question
       )
       .populate("feedback", "grade comment createdAt evaluatedBy", Feedback)
@@ -68,7 +68,7 @@ export async function GET(
           " - " +
           (response.question as any).Instituicao +
           " - " +
-          (response.question as any).Cargo +
+          (response.question as any).Cargos[0] +
           ((response.question as any).Numero
             ? " - Questão " + String((response.question as any).Numero)
             : ""),
@@ -82,7 +82,7 @@ export async function GET(
         banca: (response.question as any).Banca,
         ano: (response.question as any).Ano,
         instituicao: (response.question as any).Instituicao,
-        cargo: (response.question as any).Cargo,
+        cargo: (response.question as any).Cargos[0],
         questao: (response.question as any).Questao,
       },
       student: {

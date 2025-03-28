@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
             " - " +
             response.question.Instituicao +
             " - " +
-            response.question.Cargo +
+            response.question.Cargos[0] +
             questionNumber,
           status: response.status,
           maxGrade: response.NotaMaxima,
