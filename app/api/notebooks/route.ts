@@ -4,7 +4,6 @@ import Notebook, { INotebookSchema } from "@/app/models/Notebook";
 import Question, { IQuestionSchema } from "@/app/models/Question";
 import { authOptions } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/mongoose";
-import { HydratedDocument } from "mongoose";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { Types } from "mongoose";

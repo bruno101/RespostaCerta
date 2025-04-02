@@ -1,5 +1,4 @@
 import mongoose, { Document, Schema, Model, ObjectId } from "mongoose";
-import { Types } from "mongoose";
 
 export interface IQuestionSchema extends Document {
   _id: ObjectId;
@@ -18,6 +17,12 @@ export interface IQuestionSchema extends Document {
   TextoPlano: string;
   Dificuldade: string;
   NotaMaxima?: string;
+  Embedding?: number[];
+  EmbeddingModel?: string;
+  SubjectEmbedding?: number[];
+  SubjectEmbeddingModel?: string;
+  CargoEmbedding?: number[];
+  CargoEmbeddingModel?: string;
 }
 
 const QuestionSchema = new Schema<IQuestionSchema>(
@@ -37,6 +42,12 @@ const QuestionSchema = new Schema<IQuestionSchema>(
     TextoPlano: { type: String, required: true },
     Dificuldade: { type: String, required: true },
     NotaMaxima: { type: Number, required: false },
+    Embedding: { type: [Number] },
+    EmbeddingModel: { type: String },
+    SubjectEmbedding: { type: [Number] },
+    SubjectEmbeddingModel: { type: String },
+    CargoEmbedding: { type: [Number] },
+    CargoEmbeddingModel: { type: String },
   },
   { timestamps: true }
 );

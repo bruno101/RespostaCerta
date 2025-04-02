@@ -13,6 +13,7 @@ interface IExam extends Document {
     timeLimit: number;
     points: number;
   }[];
+  user?: string;
 }
 
 const QuestionSchema = new Schema(
@@ -36,6 +37,7 @@ const ExamSchema = new Schema<IExam>(
       type: [QuestionSchema],
       required: true,
     },
+    user: { type: String },
   },
   { timestamps: true }
 );

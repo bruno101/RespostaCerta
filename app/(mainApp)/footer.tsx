@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <div className="bg-gradient-to-r from-cyan-600 to-purple-600 py-8 text-center text-white">
+    <div className="z-11 absolute w-screen overflow-x-hidden bg-gradient-to-r from-cyan-600 to-purple-600 py-8 text-center text-white">
       <p className="text-sm">
         © 2025 Resposta Certa. Todos os direitos reservados.
       </p>
