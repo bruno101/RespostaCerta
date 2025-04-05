@@ -19,25 +19,42 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Slider } from "@/components/ui/slider";
 import { useExamConfig } from "@/app/hooks/useExamConfig";
+import { useRouter } from "next/navigation";
+
+type QuestionTypeId =
+  | "ANALISE_CASO"
+  | "COMPARACAO"
+  | "DEFINICAO_CONCEITUAL"
+  | "DISSERTACAO_ABERTA"
+  | "DISSERTACAO_TOPICOS"
+  | "EXPLANACAO_DETALHADA"
+  | "LISTAGEM"
+  | "PARECER_TECNICO"
+  | "PECA_PROCESSO"
+  | "PLANO_ACAO"
+  | "RESOLUCAO_TECNICA"
+  | "TAREFA_TECNICA";
 
 export default function ExamGenerator() {
-  const [examType, setExamType] = useState<string>("");
+  const [questionTypes, setQuestionTypes] = useState<
+    QuestionTypeId[] | undefined
+  >();
   const [step, setStep] = useState<number>(1);
   const [initialStep, setInitialStep] = useState(true);
   const [selectedTemas, setSelectedTemas] = useState<string[]>([]);
   const [currentTemaInput, setCurrentTemaInput] = useState("");
-  const [dificuldade, setDificuldade] = useState<number>(2); // 1-3
+  const [dificuldade, setDificuldade] = useState<1 | 2 | 3>(2); // 1-3
   const [cargo, setCargo] = useState<string>("");
-  const [numQuestions, setNumQuestions] = useState<number>(3); // 1-5
+  const [generating, setGenerating] = useState(false);
+  const [numQuestions, setNumQuestions] = useState<1 | 2 | 3 | 4 | 5>(3); // 1-5
   const [timePerQuestion, setTimePerQuestion] = useState<number>(30); // minutes
   const { submitExamConfig } = useExamConfig();
+  const router = useRouter();
 
   const cardRef = useRef<HTMLDivElement>(null); // Create a ref for the card container
 
   useEffect(() => {
-    console.log("running out", cardRef.current, !initialStep);
     if (cardRef.current && !initialStep) {
-      console.log("running");
       const cardTop =
         cardRef.current.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({
@@ -51,7 +68,11 @@ export default function ExamGenerator() {
   let isContinueDisabled = true;
   switch (step) {
     case 1:
-      if (examType) {
+      if (
+        questionTypes &&
+        questionTypes.length > 0 &&
+        questionTypes.length <= 5
+      ) {
         isContinueDisabled = false;
       }
       break;
@@ -65,19 +86,123 @@ export default function ExamGenerator() {
   }
 
   const handleGenerate = async () => {
-    const result = await submitExamConfig({
-      dificuldade,
-      numQuestions,
-      timePerQuestion,
-      selectedTemas,
-      cargo,
-      examType,
-    });
+    console.log("generating");
+    try {
+      setGenerating(true);
+      const result = await submitExamConfig({
+        dificuldade,
+        numQuestions,
+        timePerQuestion,
+        selectedTemas,
+        cargo,
+        questionTypes,
+      });
+      console.log(result, "\n");
 
-    if (result.success) {
-      // Redirect
+      if (result.success) {
+        console.log(`/simulados/${result.data._id}`);
+        router.push(`/simulados/${result.data._id}`);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setGenerating(false);
     }
   };
+
+  const questionTypesDescription: {
+    id: QuestionTypeId;
+    title: string;
+    description: string;
+    frequency: number;
+  }[] = [
+    {
+      id: "DEFINICAO_CONCEITUAL" as const,
+      title: "Definição Conceitual",
+      frequency: 185,
+      description:
+        "Defina com precisão termos ou conceitos específicos da área.",
+    },
+    {
+      id: "EXPLANACAO_DETALHADA" as const,
+      title: "Explanação Detalhada",
+      frequency: 666,
+      description:
+        "Explique processos, teorias ou sistemas com profundidade técnica.",
+    },
+    {
+      id: "DISSERTACAO_TOPICOS" as const,
+      title: "Dissertação Estruturada por Tópicos",
+      frequency: 543,
+      description:
+        "Desenvolva uma redação seguindo exatamente os tópicos solicitados.",
+    },
+    {
+      id: "DISSERTACAO_ABERTA" as const,
+      title: "Dissertação Temática Aberta",
+      frequency: 72,
+      description:
+        "Construa um texto argumentativo com liberdade de abordagem sobre o tema.",
+    },
+    {
+      id: "ANALISE_CASO" as const,
+      frequency: 328,
+      title: "Análise de Caso (Jurídico / Hipotético)",
+      description:
+        "Analise situações concretas aplicando normas e princípios técnicos.",
+    },
+    {
+      id: "RESOLUCAO_TECNICA" as const,
+      frequency: 65,
+      title: "Resolução de Problema Técnico / Prático",
+      description:
+        "Resolva problemas quantitativos ou técnicos com métodos específicos.",
+    },
+    {
+      id: "PARECER_TECNICO" as const,
+      frequency: 51,
+      title: "Parecer Técnico / Profissional",
+      description:
+        "Emita um posicionamento fundamentado conforme sua função profissional.",
+    },
+    {
+      id: "PECA_PROCESSO" as const,
+      frequency: 57,
+      title: "Elaboração de Peça Processual / Documento Formal",
+      description:
+        "Redija documentos jurídicos com a estrutura e linguagem adequadas.",
+    },
+    {
+      id: "PLANO_ACAO" as const,
+      frequency: 54,
+      title: "Elaboração de Plano / Programa",
+      description:
+        "Proponha estratégias estruturadas com metas, ações e prazos definidos.",
+    },
+    {
+      id: "TAREFA_TECNICA" as const,
+      frequency: 17,
+      title: "Execução de Tarefa Técnica Específica",
+      description:
+        "Execute cálculos, algoritmos ou demonstrações técnicas precisas.",
+    },
+    {
+      id: "LISTAGEM" as const,
+      frequency: 256,
+      title: "Listagem / Enumeração Direta",
+      description:
+        "Enumere elementos, características ou exemplos conforme solicitado.",
+    },
+    {
+      id: "COMPARACAO" as const,
+      frequency: 94,
+      title: "Comparação / Diferenciação Conceitual",
+      description:
+        "Contraste conceitos, apontando semelhanças e diferenças essenciais.",
+    },
+  ].sort((a, b) => {
+    return b.frequency - a.frequency;
+  });
 
   function polarToCartesian(
     x: number,
@@ -191,7 +316,7 @@ export default function ExamGenerator() {
                         {
                           [
                             "Estilo",
-                            "Tema",
+                            "Tema e Cargo",
                             "Dificuldade",
                             "Questões",
                             "Tempo",
@@ -256,9 +381,13 @@ export default function ExamGenerator() {
                       }`}
                     >
                       {
-                        ["Estilo", "Tema", "Dificuldade", "Questões", "Tempo"][
-                          stepNumber - 1
-                        ]
+                        [
+                          "Estilo",
+                          "Tema e Cargo",
+                          "Dificuldade",
+                          "Questões",
+                          "Tempo",
+                        ][stepNumber - 1]
                       }
                     </span>
                   </button>
@@ -291,31 +420,12 @@ export default function ExamGenerator() {
                   <h2 className="text-xl sm:text-2xl font-bold text-purple-800 mb-4 sm:mb-8 flex items-center justify-center gap-2">
                     <ClipboardList className="text-pink-500 size-5 sm:size-6" />
                     <span className="text-lg sm:text-2xl">
-                      Selecione o Tipo de Prova
+                      Selecione os Tipos de Questão
                     </span>
                   </h2>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-                    {[
-                      {
-                        id: "dissertativa",
-                        title: "Redação Dissertativo-Argumentativa",
-                        description:
-                          "Desenvolva uma redação com argumentação lógica",
-                      },
-                      {
-                        id: "parecer",
-                        title: "Parecer Técnico",
-                        description:
-                          "Elabore um parecer relacionado a um tema específico",
-                      },
-                      {
-                        id: "multiplos-itens",
-                        title: "Questão com Múltiplos Itens",
-                        description:
-                          "Responda itens relacionados a um mesmo tema",
-                      },
-                    ].map((type) => (
+                    {questionTypesDescription.map((type) => (
                       <motion.button
                         key={type.id}
                         initial={{ scale: 0.95 }}
@@ -326,10 +436,31 @@ export default function ExamGenerator() {
                         }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => {
-                          setExamType(type.id);
+                          if (
+                            questionTypes &&
+                            questionTypes.length >= 5 &&
+                            !questionTypes.includes(type.id)
+                          ) {
+                            toast.error("Limite de Tipos de Questão Atingido", {
+                              description:
+                                "Por favor, selecione no máximo cinco tipos de questão.",
+                            });
+                          }
+                          setQuestionTypes((prev) => {
+                            if (!prev) {
+                              return [type.id];
+                            }
+                            if (prev.includes(type.id)) {
+                              return prev.filter((t) => t !== type.id);
+                            }
+                            if (prev.length === 5) {
+                              return prev;
+                            }
+                            return [...prev, type.id];
+                          });
                         }}
                         className={`p-4 sm:p-6 rounded-lg sm:rounded-xl border-2 bg-white text-left transition-all duration-200 ${
-                          examType === type.id
+                          questionTypes && questionTypes.includes(type.id)
                             ? "border-purple-600 ring-2 ring-purple-400 ring-opacity-50"
                             : "border-gray-200 hover:border-purple-300"
                         }`}
@@ -346,7 +477,7 @@ export default function ExamGenerator() {
                         <div className="mt-3 sm:mt-4 flex justify-center">
                           <div
                             className={`h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full ${
-                              examType === type.id
+                              questionTypes?.includes(type.id)
                                 ? "bg-purple-600"
                                 : "bg-gray-200"
                             }`}
@@ -501,14 +632,14 @@ export default function ExamGenerator() {
 
                       <div className="mb-4">
                         <p className="text-sm text-gray-600 mb-2">
-                          Exemplos: Analista de TI, Técnico Judiciário,
-                          Escrivão...
+                          Exemplos: Analista de TI, Técnico Judiciário, Técnico
+                          Bancário...
                         </p>
                         <div className="flex flex-wrap gap-2">
                           {[
                             "Analista de Tecnologia da Informação",
                             "Técnico Judiciário - Área Judiciária",
-                            "Escrivão de Polícia",
+                            "Técnico Bancário",
                           ].map((example) => (
                             <motion.button
                               key={example}
@@ -559,7 +690,9 @@ export default function ExamGenerator() {
                         <div className="mb-8 px-2 sm:px-4">
                           <Slider
                             value={[dificuldade]}
-                            onValueChange={(val) => setDificuldade(val[0])}
+                            onValueChange={(val) =>
+                              setDificuldade(val[0] as 1 | 2 | 3)
+                            }
                             min={1}
                             max={3}
                             step={1}
@@ -626,7 +759,7 @@ export default function ExamGenerator() {
                             <motion.div
                               key={level}
                               whileHover={{ y: -3 }}
-                              onClick={() => setDificuldade(level)}
+                              onClick={() => setDificuldade(level as 1 | 2 | 3)}
                               className={`flex flex-col items-center text-center p-4 sm:p-5 rounded-xl cursor-pointer transition-all ${
                                 dificuldade === level
                                   ? "bg-purple-50 border border-purple-200 shadow-inner"
@@ -694,7 +827,9 @@ export default function ExamGenerator() {
                       {[1, 2, 3, 4, 5].map((num) => (
                         <button
                           key={num}
-                          onClick={() => setNumQuestions(num)}
+                          onClick={() =>
+                            setNumQuestions(num as 1 | 2 | 3 | 4 | 5)
+                          }
                           className={`w-8 h-8 rounded-full transition-all flex items-center justify-center text-sm ${
                             numQuestions === num
                               ? "bg-pink-600 text-white scale-110"
@@ -708,7 +843,9 @@ export default function ExamGenerator() {
 
                     <Slider
                       value={[numQuestions]}
-                      onValueChange={(val) => setNumQuestions(val[0])}
+                      onValueChange={(val) =>
+                        setNumQuestions(val[0] as 1 | 2 | 3 | 4 | 5)
+                      }
                       min={1}
                       max={5}
                       step={1}
@@ -886,15 +1023,15 @@ export default function ExamGenerator() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleGenerate}
-              disabled={!selectedTemas}
-              className={`px-4 sm:px-8 py-2 sm:py-3 rounded-lg flex items-center gap-2 ml-auto shadow-md sm:shadow-lg hover:shadow-xl text-sm sm:text-base ${
+              disabled={!selectedTemas || generating}
+              className={`disabled:opacity-50 px-4 sm:px-8 py-2 sm:py-3 rounded-lg flex items-center gap-2 ml-auto shadow-md sm:shadow-lg hover:shadow-xl text-sm sm:text-base ${
                 !selectedTemas
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                   : "bg-gradient-to-r from-green-500 to-emerald-600 text-white"
               }`}
             >
               <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />
-              Gerar Simulado
+              {generating ? "Gerando Simulado..." : "Gerar Simulado"}
             </motion.button>
           )}
         </div>

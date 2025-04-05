@@ -1,12 +1,26 @@
 import { toast } from "sonner";
 
+type QuestionTypeId =
+  | "ANALISE_CASO"
+  | "COMPARACAO"
+  | "DEFINICAO_CONCEITUAL"
+  | "DISSERTACAO_ABERTA"
+  | "DISSERTACAO_TOPICOS"
+  | "EXPLANACAO_DETALHADA"
+  | "LISTAGEM"
+  | "PARECER_TECNICO"
+  | "PECA_PROCESSO"
+  | "PLANO_ACAO"
+  | "RESOLUCAO_TECNICA"
+  | "TAREFA_TECNICA";
+
 interface ExamConfig {
-  dificuldade: number; // 1-3
-  numQuestions: number; // 1-5
+  dificuldade: 1 | 2 | 3; // 1-3
+  numQuestions: 1 | 2 | 3 | 4 | 5; // 1-5
   timePerQuestion: number; // minutes
   selectedTemas: string[];
   cargo: string;
-  examType: string;
+  questionTypes: QuestionTypeId[] | undefined;
 }
 
 export const useExamConfig = () => {
@@ -45,7 +59,7 @@ export const useExamConfig = () => {
       }
 
       toast.success("Sucesso", {
-        description: "Configuração do exame salva com sucesso!",
+        description: "Simulado gerado com sucesso! Redirecionando...",
       });
       return { success: true, data: data.data };
     } catch (error) {

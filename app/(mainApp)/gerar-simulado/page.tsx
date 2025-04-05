@@ -20,7 +20,7 @@ export default function GerarSimulado() {
 
   // Parallax effects for different elements
   const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "90%"]);
-  const yGradient = useTransform(scrollYProgress, [0, 1], ["0%", "70%"]);
+  const yGradient = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
   const yShapes = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
 
   return (
@@ -29,7 +29,7 @@ export default function GerarSimulado() {
       ref={containerRef}
       className="relative overflow-hidden"
     >
-      {/* Background Image with parallax - now with higher z-index */}
+      {/* Background Image with parallax - now with higher z-index 
       <motion.div
         style={{ y: yBg }} // Apply parallax here
         className="absolute inset-0 h-[100%] overflow-hidden"
@@ -40,9 +40,18 @@ export default function GerarSimulado() {
           fill
           className="object-cover scale-x-[-1]" // Tailwind flip
         />
+      </motion.div>*/}
+
+      <motion.div className="fixed inset-0 h-[120%] overflow-hidden">
+        <Image
+          src="/gradient4.png"
+          alt=""
+          fill
+          className="object-cover" // Tailwind flip
+        />
       </motion.div>
 
-      {/* Gradient Overlay with parallax - now below content but above bg */}
+      {/* Gradient Overlay with parallax - now below content but above bg
       <motion.div
         className="absolute inset-0 h-[130%]"
         style={{
@@ -66,7 +75,7 @@ export default function GerarSimulado() {
           y: yGradient,
           zIndex: 1, // Middle layer
         }}
-      />
+      />*/}
 
       {/* Precise Geometric Shapes with parallax - top layer */}
       <motion.div

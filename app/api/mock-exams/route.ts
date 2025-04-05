@@ -13,7 +13,11 @@ export async function GET() {
       return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
     }
     await connectToDatabase();
-    const data = await Exam.find({}).sort({ createdAt: -1 }).lean();
+    const data = await Exam.find({
+      $or: [{ user: session.user.email }, { user: undefined }, { user: null }],
+    })
+      .sort({ createdAt: -1 })
+      .lean();
     const userSimuladodIds = (
       (await UserExam.find({ user: session.user.email })
         .sort({

@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress"; // shadcn Progress
 import { BookOpen, Clock, ArrowRight } from "lucide-react"; // Icons
 import { toast } from "sonner";
-import IExamQuestion from "@/app/interfaces/IExamQuestion";
 import ISimulado from "@/app/interfaces/ISimulado";
 import { RichTextEditor } from "@/components/rich-text-editor";
 
@@ -72,7 +71,7 @@ export default function Question({
         <div>
           <h1 className="text-xl font-bold text-gray-800 flex items-center gap-2">
             <BookOpen className="w-5 h-5 text-orange-500" />
-            Simulado de IA
+            {simulado?.title}
           </h1>
           <p className="text-sm text-gray-600">
             Questão {question?.id} de {numberOfQuestions} •{" "}

@@ -23,6 +23,8 @@ export interface IQuestionSchema extends Document {
   SubjectEmbeddingModel?: string;
   CargoEmbedding?: number[];
   CargoEmbeddingModel?: string;
+  Types?: string[];
+  TypeModel?: string;
 }
 
 const QuestionSchema = new Schema<IQuestionSchema>(
@@ -48,6 +50,8 @@ const QuestionSchema = new Schema<IQuestionSchema>(
     SubjectEmbeddingModel: { type: String },
     CargoEmbedding: { type: [Number] },
     CargoEmbeddingModel: { type: String },
+    Types: { type: [String] },
+    TypeModel: { type: String },
   },
   { timestamps: true }
 );
