@@ -19,7 +19,7 @@ export default function FullQuestion({ codigo }: { codigo: string }) {
     Codigo: "",
     Instituicao: "",
     Cargos: [""],
-    Dificuldade: "Média",
+    Dificuldade: 6,
     TextoPlano: "",
     NotaMaxima: 10,
   });

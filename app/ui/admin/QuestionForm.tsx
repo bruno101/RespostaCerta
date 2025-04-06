@@ -50,7 +50,7 @@ let initialQuestion: IQuestion = {
   Cargos: [""],
   Codigo: "",
   TextoPlano: "",
-  Dificuldade: "Média",
+  Dificuldade: 6,
   NotaMaxima: 10,
 };
 
@@ -245,57 +245,80 @@ export function QuestionForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
-      <div
-        ref={divRef}
-        className={`${
-          !error && "hidden"
-        } bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mt-4`}
-      >
-        {error}
-      </div>
+    <form onSubmit={handleSubmit} className="space-y-6 pt-3">
+      {error && (
+        <div
+          ref={divRef}
+          className={`${
+            !error && "hidden"
+          } bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mt-4`}
+        >
+          {error}
+        </div>
+      )}
 
-      <div
-        ref={successDivRef}
-        className={`${
-          !createdQuestionLink && "hidden"
-        } bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mt-4`}
-      >
-        <Link href={createdQuestionLink}>
-          <u>Questão</u>
-        </Link>
-        {edit ? " editada " : " criada "}com sucesso!
-      </div>
+      {createdQuestionLink && (
+        <div
+          ref={successDivRef}
+          className={`bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mt-4`}
+        >
+          <Link href={createdQuestionLink}>
+            <u>Questão</u>
+          </Link>
+          {edit ? " editada " : " criada "}com sucesso!
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {filters.map((filter, index) => {
-          let noSpecialCharacterName = filter.name;
-          switch (filter.name) {
-            case "Instituição": {
-              noSpecialCharacterName = "Instituicao";
-              break;
+        {filters
+          .filter((f) => f.name !== "Dificuldade")
+          .map((filter, index) => {
+            let noSpecialCharacterName = filter.name;
+            switch (filter.name) {
+              case "Instituição": {
+                noSpecialCharacterName = "Instituicao";
+                break;
+              }
+              case "Nível": {
+                noSpecialCharacterName = "Nivel";
+                break;
+              }
             }
-            case "Nível": {
-              noSpecialCharacterName = "Nivel";
-              break;
-            }
-          }
 
-          return (
-            <div className="space-y-2" key={index}>
-              <Label htmlFor={filter.name} className="text-cyan-700">
-                {filter.name} <span className="text-red-400">*</span>
-              </Label>
-              <Selector
-                filter={filter}
-                openAddOptionModal={openAddOptionModal}
-                handleSelectChange={handleSelectChange}
-                customOptions={customOptions}
-                question={question}
-                noSpecialCharacterName={noSpecialCharacterName}
-              />
-            </div>
-          );
-        })}
+            return (
+              <div className="space-y-2" key={index}>
+                <Label htmlFor={filter.name} className="text-cyan-700">
+                  {filter.name} <span className="text-red-400">*</span>
+                </Label>
+                <Selector
+                  filter={filter}
+                  openAddOptionModal={openAddOptionModal}
+                  handleSelectChange={handleSelectChange}
+                  customOptions={customOptions}
+                  question={question}
+                  noSpecialCharacterName={noSpecialCharacterName}
+                />
+              </div>
+            );
+          })}
+        <div className="space-y-2">
+          <Label htmlFor="Numero" className="text-cyan-700">
+            Dificuldade
+          </Label>
+          <Input
+            name="Numero"
+            placeholder="6"
+            step="1"
+            min="1"
+            max="10"
+            value={question.Dificuldade}
+            type="number"
+            onChange={(e) =>
+              setQuestion((q) => {
+                return { ...q, Dificuldade: +e.target.value };
+              })
+            }
+          />
+        </div>
         <div className="space-y-2">
           <Label htmlFor="Numero" className="text-cyan-700">
             Número da Questão

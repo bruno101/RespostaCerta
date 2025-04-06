@@ -33,12 +33,7 @@ export async function fetchQuestionsFromUser() {
       Criterios: q.Criterios,
       Resposta: q.Resposta,
       TextoPlano: q.TextoPlano,
-      Dificuldade:
-        q.Dificuldade === "Fácil" ||
-        q.Dificuldade === "Média" ||
-        q.Dificuldade === "Difícil"
-          ? q.Dificuldade
-          : "Média",
+      Dificuldade: q.Dificuldade || 6,
       NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,
       EmailCriador: q.EmailCriador,
     }));

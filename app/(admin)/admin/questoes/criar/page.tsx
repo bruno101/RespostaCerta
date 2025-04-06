@@ -18,12 +18,12 @@ export default function Page() {
     fetchFilters();
   }, []);
   return (
-    <div className="container py-10 px-10">
+    <div className="p-3 sm:p-10">
       <h1 className="text-3xl font-bold mb-6 text-cyan-600 flex">
         <FaFileCircleQuestion className="mr-2 w-8 h-8 mt-1" />
         Criar Nova Questão
       </h1>
-      <div className="py-7 px-10 rounded-lg border-1 bg-white shadow-md border-t-4">
+      <div className="px-3 sm:py-7 sm:px-10 rounded-lg border-1 bg-white shadow-md border-t-4">
         <QuestionForm edit={false} filters={filters} setPreview={setPreview} />
       </div>
       {preview.length > 0 && (

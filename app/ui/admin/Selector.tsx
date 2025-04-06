@@ -35,9 +35,16 @@ export default function Selector({
   const allFilteredOptions = allOptions.filter((option) =>
     option.toLowerCase().includes(searchValue.toLowerCase())
   );*/
+  let originalValue;
+  if (filter.name === "Cargo") {
+    originalValue = question.Cargos[0];
+  } else {
+    originalValue = question[noSpecialCharacterName as keyof IQuestion];
+  }
+
   return (
     <Select
-      value={String(question[noSpecialCharacterName as keyof IQuestion])}
+      value={String(originalValue)}
       onValueChange={(value) => {
         if (value === `adicionar_${noSpecialCharacterName}`) {
           // Open modal to add new option

@@ -15,7 +15,7 @@ export interface IQuestionSchema extends Document {
   Resposta: string;
   EmailCriador: string;
   TextoPlano: string;
-  Dificuldade: string;
+  Dificuldade?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
   NotaMaxima?: string;
   Embedding?: number[];
   EmbeddingModel?: string;
@@ -42,7 +42,11 @@ const QuestionSchema = new Schema<IQuestionSchema>(
     Resposta: { type: String, required: false },
     EmailCriador: { type: String, required: false, select: false },
     TextoPlano: { type: String, required: true },
-    Dificuldade: { type: String, required: true },
+    Dificuldade: {
+      type: Number,
+      enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      required: false,
+    },
     NotaMaxima: { type: Number, required: false },
     Embedding: { type: [Number] },
     EmbeddingModel: { type: String },

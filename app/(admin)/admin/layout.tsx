@@ -68,9 +68,9 @@ export default function Layout({
           />
           Resposta Certa
         </Link>
-        <p className="hidden sm:flex text-white text-lg my-auto">
-          Painel de Administração
-        </p>
+        <Link href="/admin" className="hidden sm:flex my-auto">
+          <p className=" text-white text-lg">Painel de Administração</p>
+        </Link>
       </div>
       <div className="flex w-full h-full mt-[40px]">
         <nav
@@ -114,7 +114,7 @@ export default function Layout({
             </Link>
           ))}
         </nav>
-        <div className="w-full sm:ml-[300px] min-h-[calc(100vh-40px)]">
+        <div className="w-full sm:w-[calc(100%-300px)] sm:ml-[300px] min-h-[calc(100vh-40px)]">
           {children}
         </div>
       </div>

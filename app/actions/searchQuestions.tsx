@@ -31,6 +31,7 @@ export async function searchQuestions(
       if (
         selector.name !== "Palavras Chave" &&
         selector.name !== "Resolvidas" &&
+        selector.name !== "Dificuldade" &&
         selector.options.length > 0
       ) {
         const orArray: {}[] = [];
@@ -40,6 +41,17 @@ export async function searchQuestions(
           orArray.push(newObject);
         }
         findObject.$and.push({ $or: orArray });
+      } else if (selector.name === "Dificuldade") {
+        let min = 1,
+          max = 4;
+        const option = selector.options[0];
+        if (option === "Média") {
+          (min = 5), (max = 7);
+        }
+        if (option === "Difícil") {
+          (min = 8), (max = 10);
+        }
+        findObject.$and.push({ Dificuldade: { $gte: min, $lte: max } });
       } else if (selector.name === "Resolvidas") {
         //tbd
       } else {
@@ -78,12 +90,7 @@ export async function searchQuestions(
       Criterios: q.Criterios,
       Resposta: q.Resposta,
       TextoPlano: q.TextoPlano,
-      Dificuldade:
-        q.Dificuldade === "Fácil" ||
-        q.Dificuldade === "Média" ||
-        q.Dificuldade === "Difícil"
-          ? q.Dificuldade
-          : "Média",
+      Dificuldade: q.Dificuldade || 6,
       NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,
       EmailCriador: q.EmailCriador,
     }));
