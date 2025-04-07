@@ -42,7 +42,7 @@ let initialQuestion: IQuestion = {
   Ano: "" + new Date().getFullYear(),
   Nivel: "Médio",
   Questao: "",
-  Numero: undefined,
+  Numero: "1",
   Resposta: "",
   Criterios: "",
   TextoMotivador: "",
@@ -52,6 +52,7 @@ let initialQuestion: IQuestion = {
   TextoPlano: "",
   Dificuldade: 6,
   NotaMaxima: 10,
+  Modalidades: [],
 };
 
 export function QuestionForm({
@@ -126,7 +127,10 @@ export function QuestionForm({
     criteriosCorrecao +
     "</div>";
 
-  const handleSelectChange = (name: keyof IQuestion, value: string) => {
+  const handleSelectChange = (
+    name: keyof IQuestion,
+    value: string | string[]
+  ) => {
     value && setQuestion((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -204,7 +208,7 @@ export function QuestionForm({
         const updateResponse = await updateFilter(customOptionsToAdd);
         if (!updateResponse || !updateResponse.success) {
           setCreatedQuestionLink("");
-          setError("Erro " + edit ? "editando" : "criando" + " questão.");
+          setError("Erro " + (edit ? "editando" : "criando") + " questão.");
           setMessageCount((m) => m + 1);
         } else {
           needsToUpdateFilters = false;
@@ -224,7 +228,7 @@ export function QuestionForm({
         const data = await response.json();
         if (!response.ok) {
           setCreatedQuestionLink("");
-          setError("Erro " + edit ? "editando" : "criando" + " questão.");
+          setError("Erro " + (edit ? "editando" : "criando") + " questão.");
           setMessageCount((m) => m + 1);
         } else {
           setError("");
@@ -301,11 +305,11 @@ export function QuestionForm({
             );
           })}
         <div className="space-y-2">
-          <Label htmlFor="Numero" className="text-cyan-700">
+          <Label htmlFor="Dificuldade" className="text-cyan-700">
             Dificuldade
           </Label>
           <Input
-            name="Numero"
+            name="Dificuldade"
             placeholder="6"
             step="1"
             min="1"
@@ -330,7 +334,7 @@ export function QuestionForm({
             type="number"
             onChange={(e) =>
               setQuestion((q) => {
-                return { ...q, Numero: e.target.value };
+                return { ...q, Numero: e.target.value || "1" };
               })
             }
           />

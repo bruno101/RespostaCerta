@@ -28,6 +28,10 @@ export async function GET() {
         options: filters.Instituicao.sort(),
       },
       {
+        name: "Modalidade",
+        options: filters.Modalidade.sort(),
+      },
+      {
         name: "Ano",
         options: filters.Ano.sort()
           .reverse()

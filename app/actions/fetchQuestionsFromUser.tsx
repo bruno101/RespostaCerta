@@ -36,6 +36,7 @@ export async function fetchQuestionsFromUser() {
       Dificuldade: q.Dificuldade || 6,
       NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,
       EmailCriador: q.EmailCriador,
+      Modalidades: q.Modalidades || [],
     }));
   }
   return JSON.stringify(mappedData);

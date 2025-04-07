@@ -22,6 +22,7 @@ export default function FullQuestion({ codigo }: { codigo: string }) {
     Dificuldade: 6,
     TextoPlano: "",
     NotaMaxima: 10,
+    Modalidades: [],
   });
   const [loading, setLoading] = useState(true);
   useEffect(() => {

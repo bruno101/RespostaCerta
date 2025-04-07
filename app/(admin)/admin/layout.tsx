@@ -7,7 +7,7 @@ import { IoMenuSharp } from "react-icons/io5";
 import { FaFileCircleQuestion, FaUser, FaUserCheck } from "react-icons/fa6";
 import { PiExamFill } from "react-icons/pi";
 import { FaFilter } from "react-icons/fa";
-import { MdManageAccounts } from "react-icons/md";
+import { MdManageAccounts, MdSubscriptions } from "react-icons/md";
 
 export default function Layout({
   children,
@@ -43,6 +43,11 @@ export default function Layout({
       link: "/admin/papeis",
       icon: <FaUserCheck className={iconStyle} />,
     },
+    {
+      title: "Assinaturas",
+      link: "/admin/assinaturas",
+      icon: <MdSubscriptions className={iconStyle} />,
+    },
   ];
   return (
     <div className="flex flex-col w-full max-w-screen h-full min-h-[100vh] bg-slate-50">
@@ -76,7 +81,7 @@ export default function Layout({
         <nav
           className={`transition-all duration-300 transform ${
             showMobileMenu
-              ? "w-[180px] sm:w-[300px] flex flex-col translate-x-0 opacity-100"
+              ? "w-[250px] sm:w-[300px] flex flex-col translate-x-0 opacity-100"
               : "w-0 sm:w-[300px] opacity-0 sm:opacity-100 -translate-x-full sm:translate-x-0 sm:flex sm:flex-col"
           } bg-cyan-800 fixed z-10 h-full`}
         >

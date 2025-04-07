@@ -20,6 +20,7 @@ export default function Page({
       const res = await fetch(`/api/filters`); // 👈 API call
       if (!res.ok) throw new Error("Failed to fetch selectors");
       const data: ISelector[] = await res.json();
+      console.log(data);
       setFilters(data);
     }
     fetchFilters();

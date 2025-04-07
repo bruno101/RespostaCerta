@@ -1,4 +1,4 @@
-import { Schema, model, models } from "mongoose"
+import { Schema, model, models } from "mongoose";
 
 const FilterSchema = new Schema({
   Disciplina: [String],
@@ -6,9 +6,9 @@ const FilterSchema = new Schema({
   Instituicao: [String],
   Cargo: [String],
   Ano: [String],
-})
+  Modalidade: [String],
+});
 
-const Filter = models.Filter || model("Filter", FilterSchema)
+const Filter = models.Filter || model("Filter", FilterSchema);
 
-export default Filter
-
+export default Filter;

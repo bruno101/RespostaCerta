@@ -22,6 +22,10 @@ export async function searchQuestions(
         selector.name = "Instituicao";
       } else if (selector.name === "Nível") {
         selector.name = "Nivel";
+      } else if (selector.name === "Cargo") {
+        selector.name = "Cargos";
+      } else if (selector.name === "Modalidade") {
+        selector.name = "Modalidades";
       }
       return selector;
     });
@@ -93,6 +97,7 @@ export async function searchQuestions(
       Dificuldade: q.Dificuldade || 6,
       NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,
       EmailCriador: q.EmailCriador,
+      Modalidades: q.Modalidades || [],
     }));
     return { questions: mappedQuestions, totalDocuments, totalPages };
   } catch (error) {

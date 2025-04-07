@@ -40,7 +40,7 @@ export async function GET(
         q.Nivel === "Superior"
           ? q.Nivel
           : "Superior",
-      Numero: String(q.Numero),
+      Numero: q.Numero ? String(q.Numero) : "1",
       Instituicao: q.Instituicao,
       Cargos: q.Cargos,
       TextoMotivador: DOMPurify.sanitize(
@@ -51,12 +51,8 @@ export async function GET(
       Criterios: DOMPurify.sanitize(q.Criterios, sanitizationSettings),
       Resposta: DOMPurify.sanitize(q.Resposta, sanitizationSettings),
       TextoPlano: q.TextoPlano,
-      Dificuldade:
-        q.Dificuldade === "Fácil" ||
-        q.Dificuldade === "Média" ||
-        q.Dificuldade === "Difícil"
-          ? q.Dificuldade
-          : "Média",
+      Dificuldade: q.Dificuldade || 6,
+      Modalidades: q.Modalidades || [],
       NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,
     };
 
@@ -126,6 +122,7 @@ export async function PUT(
       TextoPlano,
       Dificuldade,
       NotaMaxima,
+      Modalidades,
     } = body;
 
     const newBody = {
@@ -134,7 +131,7 @@ export async function PUT(
       Ano: Ano,
       Nivel: Nivel,
       Instituicao: Instituicao,
-      Numero: Numero,
+      Numero: Numero || 1,
       Cargos: Cargos,
       TextoMotivador: DOMPurify.sanitize(TextoMotivador, sanitizationSettings),
       Questao: DOMPurify.sanitize(Questao, sanitizationSettings),
@@ -144,7 +141,10 @@ export async function PUT(
       Dificuldade: Dificuldade,
       EmailCriador: session?.user?.email,
       NotaMaxima: NotaMaxima,
+      Modalidades: Modalidades || [],
     };
+
+    console.log("Numero", newBody, newBody.Numero);
 
     // Find and update the question
     const updatedQuestion = await Question.findByIdAndUpdate(

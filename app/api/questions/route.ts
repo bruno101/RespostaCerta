@@ -26,7 +26,7 @@ export async function GET() {
         q.Nivel === "Superior"
           ? q.Nivel
           : "Superior",
-      Numero: String(q.Numero),
+      Numero: q.Numero ? String(q.Numero) : "1",
       Instituicao: q.Instituicao,
       Cargos: q.Cargos,
       TextoMotivador: q.TextoMotivador,
@@ -34,12 +34,8 @@ export async function GET() {
       Criterios: q.Criterios,
       Resposta: q.Resposta,
       TextoPlano: q.TextoPlano,
-      Dificuldade:
-        q.Dificuldade === "Fácil" ||
-        q.Dificuldade === "Média" ||
-        q.Dificuldade === "Difícil"
-          ? q.Dificuldade
-          : "Média",
+      Dificuldade: q.Dificuldade || 6,
+      Modalidades: q.Modalidades || [],
       NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,
     }));
 
@@ -90,7 +86,7 @@ export async function POST(request: NextRequest) {
         q.Nivel === "Superior"
           ? q.Nivel
           : "Superior",
-      Numero: String(q.Numero),
+      Numero: q.Numero ? String(q.Numero) : "1",
       Instituicao: q.Instituicao,
       Cargos: q.Cargos,
       TextoMotivador: DOMPurify.sanitize(
@@ -101,13 +97,9 @@ export async function POST(request: NextRequest) {
       Criterios: DOMPurify.sanitize(q.Criterios, sanitizationSettings),
       Resposta: DOMPurify.sanitize(q.Resposta, sanitizationSettings),
       TextoPlano: q.TextoPlano,
-      Dificuldade:
-        q.Dificuldade === "Fácil" ||
-        q.Dificuldade === "Média" ||
-        q.Dificuldade === "Difícil"
-          ? q.Dificuldade
-          : "Média",
+      Dificuldade: q.Dificuldade || 6,
       NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,
+      Modalidades: q.Modalidades || [],
     };
 
     // Return the created question
