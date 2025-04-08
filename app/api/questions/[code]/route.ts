@@ -144,8 +144,6 @@ export async function PUT(
       Modalidades: Modalidades || [],
     };
 
-    console.log("Numero", newBody, newBody.Numero);
-
     // Find and update the question
     const updatedQuestion = await Question.findByIdAndUpdate(
       code,

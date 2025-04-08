@@ -33,7 +33,7 @@ export default function FilterPage({
   const [filtered, setFiltered] = useState([
     ...initialSelected,
     { name: "Palavras Chave", options: [] },
-    { name: "Resolvidas", options: [""] },
+    { name: "Resolvidas", options: [solved] },
   ]);
 
   const capitalize = (option: string, name: string): string => {
@@ -46,18 +46,13 @@ export default function FilterPage({
 
   useEffect(() => {
     const keyW = searchParams.get("palavras");
-    let alreadyHasSelectedItems = false;
     if (keyW) {
       setKeyWords(keyW);
-      !alreadyHasSelectedItems;
-      alreadyHasSelectedItems = true;
     }
 
     const s = searchParams.get("resolvidas");
     if (s && (s === "" || s === "y" || s === "n")) {
       setSolved(s);
-      !alreadyHasSelectedItems;
-      alreadyHasSelectedItems = true;
     }
 
     const questionsPerPage = searchParams.get("questionsPerPage");
@@ -70,15 +65,14 @@ export default function FilterPage({
       setPageIndex(+pageIndex);
     }
 
-    const newSelected = [...selected].map((selector) => {
-      return { name: selector.name, options: [...selector.options] };
-    });
+    const newSelected =
+      [...selected].map((selector) => {
+        return { name: selector.name, options: [...selector.options] };
+      }) || [];
 
     for (const item of newSelected) {
       const value = searchParams.get(item.name.toLowerCase());
       if (value) {
-        !alreadyHasSelectedItems;
-        alreadyHasSelectedItems = true;
         const valueArr = value.split(",");
         for (const option of valueArr) {
           const newOption = capitalize(option, item.name);
@@ -93,7 +87,7 @@ export default function FilterPage({
     setFiltered([
       ...newSelected,
       { name: "Palavras Chave", options: [keyW ? keyW : ""] },
-      { name: "Resolvidas", options: [solved] },
+      { name: "Resolvidas", options: [s || ""] },
     ]);
   }, [searchParams]);
 

@@ -38,7 +38,7 @@ export async function GET() {
           .map((ano: number) => String(ano)),
       },
       { name: "Nível", options: ["Fundamental", "Médio", "Superior"] },
-      { name: "Dificuldade", options: ["Fácil", "Médio", "Difícil"] },
+      { name: "Dificuldade", options: ["Fácil", "Média", "Difícil"] },
     ];
 
     return NextResponse.json(selectors);

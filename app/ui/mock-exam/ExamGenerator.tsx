@@ -86,7 +86,6 @@ export default function ExamGenerator() {
   }
 
   const handleGenerate = async () => {
-    console.log("generating");
     try {
       setGenerating(true);
       const result = await submitExamConfig({
@@ -97,10 +96,8 @@ export default function ExamGenerator() {
         cargo,
         questionTypes,
       });
-      console.log(result, "\n");
 
       if (result.success) {
-        console.log(`/simulados/${result.data._id}`);
         router.push(`/simulados/${result.data._id}`);
       }
     } catch (e) {

@@ -91,10 +91,6 @@ SAÍDA EXIGIDA (APENAS JSON):
       maxOutputTokens: 4096, // To ensure detailed answers
     };
 
-    console.log(
-      questionTypes.map((e) => getQuestionTypeDefinition(e)).join(", ")
-    );
-
     const result = await model.generateContent({
       contents: [{ role: "user", parts: [{ text: prompt }] }],
       generationConfig,
@@ -115,8 +111,6 @@ SAÍDA EXIGIDA (APENAS JSON):
       if (!Array.isArray(questions) || questions.length !== numQuestions) {
         throw new Error("Invalid number of questions returned");
       }
-
-      console.log("\n***\n", questions, "\n***\n");
 
       return questions;
     } catch (parseError) {

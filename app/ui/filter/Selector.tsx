@@ -1,6 +1,6 @@
 "use client";
 
-import "../../globals.css"
+import "../../globals.css";
 import * as React from "react";
 import { X, Check, ChevronsUpDown, ChevronDown } from "lucide-react";
 import {
@@ -18,6 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { getQuestionTypeName } from "@/utils/questionTypes";
 
 interface SelectorProps {
   name: string;
@@ -43,15 +44,6 @@ export default function Selector({
     onSelectionChange(name, newSelected);
   };
 
-  const handleRemove = (option: string) => {
-    const newSelected = selected.filter((item) => item !== option);
-    onSelectionChange(name, newSelected);
-  };
-
-  const handleClear = () => {
-    onSelectionChange(name, []);
-  };
-
   // Filter options based on search input
   const filteredOptions = options.filter((option) =>
     option.toLowerCase().includes(searchValue.toLowerCase())
@@ -67,11 +59,13 @@ export default function Selector({
             aria-expanded={open}
             className="w-full justify-between min-h-[40px] h-auto"
           >
-            <div className="flex flex-wrap gap-1 w-full items-center">
-              <span className="text-muted-foreground">{name}</span>
+            <div className="flex items-center w-full gap-1 overflow-hidden">
+              <span className="text-muted-foreground text-left whitespace-nowrap overflow-hidden text-ellipsis flex-1">
+                {name}
+              </span>
 
               {selected.length > 0 && (
-                <div className="px-[11px] py-[2px] ml-auto mr-[2px] text-white text-xs bg-teal-500 rounded-xl">
+                <div className="px-[11px] py-[2px] text-white text-xs bg-teal-500 rounded-xl flex-shrink-0">
                   {selected.length}
                 </div>
               )}
@@ -111,7 +105,9 @@ export default function Selector({
                         )}
                       </div>
                       <span className="whitespace-normal break-words text-sm text-gray-700 leading-tight">
-                        {option}
+                        {name === "Modalidade"
+                          ? getQuestionTypeName(option)
+                          : option}
                       </span>
                     </div>
                   </CommandItem>

@@ -1,3 +1,5 @@
+import { getQuestionTypeName } from "@/utils/questionTypes";
+
 export default function AppliedFilter({
   name,
   options,
@@ -47,7 +49,7 @@ export default function AppliedFilter({
           key={index}
           className="text-xs border-1 text-gray-600 bg-gray-100 px-2 py-1 mb-1 mt-1 mr-auto rounded-md flex flex-row"
         >
-          {option}
+          {name === "Modalidade" ? getQuestionTypeName(option) : option}
           <button onClick={() => onRemoveSelection(name, option)}>
             <svg
               xmlns="http://www.w3.org/2000/svg"

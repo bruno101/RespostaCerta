@@ -145,8 +145,6 @@ export async function POST(request: Request) {
       },
     ]);
 
-    console.log(similarQuestions);
-
     if (similarQuestions.length === 0) {
       return NextResponse.json(
         { error: "Internal server error" },
@@ -180,12 +178,6 @@ export async function POST(request: Request) {
         },
       },
     ]);
-
-    console.log(
-      similarQuestions.map((q) => q.Questao),
-      "\n\n***\n\n",
-      questionsForSimilarCargos.map((q) => q.Cargos)
-    );
 
     if (questionsForSimilarCargos.length === 0) {
       return NextResponse.json(
@@ -230,8 +222,6 @@ export async function POST(request: Request) {
         { error: "Internal server error" },
         { status: 500 }
       );
-    } else {
-      console.log(questionsOfSameType);
     }
 
     const questions: IExamQuestion[] = await generateExam(

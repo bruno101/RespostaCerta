@@ -16,6 +16,8 @@ import {
   SearchCheck,
   SearchIcon,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function Filter({
   onSelectionChange,
@@ -38,12 +40,12 @@ export default function Filter({
   setSolved: Dispatch<SetStateAction<"" | "y" | "n">>;
   selectors: ISelector[];
 }) {
+  const { data: session } = useSession();
+  const router = useRouter();
+
   return (
     <div className="w-full">
       <div className="flex-col md:flex-row ml-3 space-y-3 md:space-y-0 mt-5">
-        {
-          //tbd
-        }
         <button
           onClick={() => setSolved("")}
           disabled={solved === ""}
@@ -56,7 +58,13 @@ export default function Filter({
           Todas
         </button>
         <button
-          onClick={() => setSolved("n")}
+          onClick={() => {
+            if (session?.user?.email) {
+              setSolved("n");
+            } else {
+              router.push("/signin");
+            }
+          }}
           disabled={solved === "n"}
           className={`rounded-2xl py-1 px-3 mr-3 text-[15px] border-1 border-gray ${
             solved !== "n"
@@ -67,7 +75,13 @@ export default function Filter({
           Não Resolvidas
         </button>
         <button
-          onClick={() => setSolved("y")}
+          onClick={() => {
+            if (session?.user?.email) {
+              setSolved("y");
+            } else {
+              router.push("/signin");
+            }
+          }}
           disabled={solved === "y"}
           className={`rounded-2xl py-1 px-3 text-[15px] border-1 border-gray ${
             solved !== "y"

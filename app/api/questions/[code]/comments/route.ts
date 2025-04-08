@@ -60,7 +60,6 @@ export async function GET(
           };
         })
     );
-    console.log(commentsWithExtraData);
     return NextResponse.json(commentsWithExtraData);
   } catch (error) {
     console.error("Error fetching comments:", error);

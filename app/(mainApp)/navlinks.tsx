@@ -25,7 +25,6 @@ export default function TopMenu() {
   const router = useRouter();
   const pathname = usePathname(); // Get the current path
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  console.log(pathname, pathname === "/gerar-simulado");
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 

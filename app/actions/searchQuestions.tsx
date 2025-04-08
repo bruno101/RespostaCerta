@@ -4,6 +4,11 @@ import { connectToDatabase } from "@/lib/mongoose";
 import ISelector from "../interfaces/ISelector";
 import Question from "../models/Question";
 import IQuestion from "../interfaces/IQuestion";
+import Response from "../models/Response";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { Schema } from "mongoose";
+import { Types } from "mongoose";
 
 export async function searchQuestions(
   selected: ISelector[],
@@ -14,6 +19,8 @@ export async function searchQuestions(
   | undefined
 > {
   try {
+    const session = await getServerSession(authOptions);
+
     const page = Math.max(1, pageNumber || 1);
     const limit = Math.max(1, questionsPerPage || 5);
     const skip = (page - 1) * limit;
@@ -31,6 +38,7 @@ export async function searchQuestions(
     });
     await connectToDatabase();
     let findObject: any = { $and: [] };
+    let solved = "";
     for (let selector of selected) {
       if (
         selector.name !== "Palavras Chave" &&
@@ -47,17 +55,20 @@ export async function searchQuestions(
         findObject.$and.push({ $or: orArray });
       } else if (selector.name === "Dificuldade") {
         let min = 1,
-          max = 4;
+          max = 10;
         const option = selector.options[0];
+        if (option === "Fácil") {
+          (min = 1), (max = 5);
+        }
         if (option === "Média") {
-          (min = 5), (max = 7);
+          (min = 6), (max = 7);
         }
         if (option === "Difícil") {
           (min = 8), (max = 10);
         }
         findObject.$and.push({ Dificuldade: { $gte: min, $lte: max } });
       } else if (selector.name === "Resolvidas") {
-        //tbd
+        solved = selector.options[0];
       } else {
         if (selector.options) {
           findObject.$and.push({
@@ -68,12 +79,30 @@ export async function searchQuestions(
         }
       }
     }
+
+    if (!(solved === "") && session?.user?.email) {
+      const responseIds: string[] = (
+        await Response.find({ user: session.user.email }, { question: 1 })
+      ).map((r) => r.question.toString());
+
+      if (solved === "y") {
+        findObject.$and.push({
+          _id: { $in: responseIds },
+        });
+      } else if (solved === "n") {
+        findObject.$and.push({
+          _id: { $nin: responseIds },
+        });
+      }
+    }
+
     const questions = await Question.find(findObject)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
     const totalDocuments = await Question.countDocuments(findObject);
+
     const totalPages = Math.ceil(totalDocuments / limit);
     const mappedQuestions: IQuestion[] = questions.map((q) => ({
       Codigo: q._id.toString(),

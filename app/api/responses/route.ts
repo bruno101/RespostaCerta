@@ -19,7 +19,6 @@ export async function GET(request: NextRequest) {
     }
 
     await connectToDatabase();
-    console.log(session.user.email);
 
     // Find all responses for the current user
     const responses = await Response.find({ user: session.user.email })
