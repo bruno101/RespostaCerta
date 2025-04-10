@@ -24,14 +24,14 @@ export async function fetchQuestionsFromUser() {
         q.Nivel === "Médio" ||
         q.Nivel === "Superior"
           ? q.Nivel
-          : "Superior",
+          : ("Superior" as "Fundamental" | "Médio" | "Superior"),
       Numero: String(q.Numero),
       Instituicao: q.Instituicao,
       Cargos: q.Cargos,
       TextoMotivador: q.TextoMotivador,
       Questao: q.Questao,
       Criterios: q.Criterios,
-      Resposta: q.Resposta,
+      Resposta: q.Resposta || "",
       TextoPlano: q.TextoPlano,
       Dificuldade: q.Dificuldade || 6,
       NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,
