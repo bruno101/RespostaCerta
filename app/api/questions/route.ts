@@ -20,19 +20,18 @@ export async function GET() {
       Disciplina: q.Disciplina,
       Banca: q.Banca,
       Ano: q.Ano,
-      Nivel:
-        q.Nivel === "Fundamental" ||
-        q.Nivel === "Médio" ||
-        q.Nivel === "Superior"
-          ? q.Nivel
-          : "Superior",
+      Nivel: (q.Nivel === "Fundamental" ||
+      q.Nivel === "Médio" ||
+      q.Nivel === "Superior"
+        ? q.Nivel
+        : "Superior") as "Fundamental" | "Médio" | "Superior",
       Numero: q.Numero ? String(q.Numero) : "1",
       Instituicao: q.Instituicao,
       Cargos: q.Cargos,
       TextoMotivador: q.TextoMotivador,
       Questao: q.Questao,
-      Criterios: q.Criterios,
-      Resposta: q.Resposta,
+      Criterios: q.Criterios || "",
+      Resposta: q.Resposta || "",
       TextoPlano: q.TextoPlano,
       Dificuldade: q.Dificuldade || 6,
       Modalidades: q.Modalidades || [],
@@ -94,8 +93,8 @@ export async function POST(request: NextRequest) {
         sanitizationSettings
       ),
       Questao: DOMPurify.sanitize(q.Questao, sanitizationSettings),
-      Criterios: DOMPurify.sanitize(q.Criterios, sanitizationSettings),
-      Resposta: DOMPurify.sanitize(q.Resposta, sanitizationSettings),
+      Criterios: DOMPurify.sanitize(q.Criterios || "", sanitizationSettings),
+      Resposta: DOMPurify.sanitize(q.Resposta || "", sanitizationSettings),
       TextoPlano: q.TextoPlano,
       Dificuldade: q.Dificuldade || 6,
       NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,

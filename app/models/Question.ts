@@ -11,9 +11,9 @@ export interface IQuestionSchema extends Document {
   Numero: number;
   TextoMotivador: string;
   Questao: string;
-  Criterios: string;
-  Resposta: string;
-  EmailCriador: string;
+  Criterios?: string;
+  Resposta?: string;
+  EmailCriador?: string;
   TextoPlano: string;
   Dificuldade?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
   NotaMaxima?: string;

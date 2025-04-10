@@ -48,8 +48,8 @@ export async function GET(
         sanitizationSettings
       ),
       Questao: DOMPurify.sanitize(q.Questao, sanitizationSettings),
-      Criterios: DOMPurify.sanitize(q.Criterios, sanitizationSettings),
-      Resposta: DOMPurify.sanitize(q.Resposta, sanitizationSettings),
+      Criterios: DOMPurify.sanitize(q.Criterios || "", sanitizationSettings),
+      Resposta: DOMPurify.sanitize(q.Resposta || "", sanitizationSettings),
       TextoPlano: q.TextoPlano,
       Dificuldade: q.Dificuldade || 6,
       Modalidades: q.Modalidades || [],

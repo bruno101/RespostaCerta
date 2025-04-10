@@ -9,28 +9,33 @@ export interface IQuestionStageSchema extends Document {
   Nivel: string;
   Instituicao: string;
   Cargos: string[];
-  Link: string;
   Numero: number;
   TextoMotivador: string;
   Questao: string;
-  Criterios: string;
-  Resposta: string;
-  EmailCriador: string;
+  Criterios?: string;
+  Resposta?: string;
+  EmailCriador?: string;
   TextoPlano: string;
-  Dificuldade: string;
+  Dificuldade?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
   NotaMaxima?: string;
+  Embedding?: number[];
+  EmbeddingModel?: string;
+  SubjectEmbedding?: number[];
+  SubjectEmbeddingModel?: string;
+  CargoEmbedding?: number[];
+  CargoEmbeddingModel?: string;
+  Modalidades?: string[];
+  ModalidadeModel?: string;
 }
 
 const QuestionStageSchema = new Schema<IQuestionStageSchema>(
   {
-    _id: { type: mongoose.Schema.Types.ObjectId, required: true },
     Disciplina: { type: String, required: true },
     Banca: { type: String, required: true },
     Ano: { type: String, required: true },
     Nivel: { type: String, required: true },
     Instituicao: { type: String, required: true },
     Cargos: { type: [String], required: true },
-    Link: { type: String, required: true },
     Numero: { type: Number, required: false },
     TextoMotivador: { type: String, required: false },
     Questao: { type: String, required: true },
@@ -38,8 +43,20 @@ const QuestionStageSchema = new Schema<IQuestionStageSchema>(
     Resposta: { type: String, required: false },
     EmailCriador: { type: String, required: false, select: false },
     TextoPlano: { type: String, required: true },
-    Dificuldade: { type: String, required: true },
+    Dificuldade: {
+      type: Number,
+      enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      required: false,
+    },
     NotaMaxima: { type: Number, required: false },
+    Embedding: { type: [Number] },
+    EmbeddingModel: { type: String },
+    SubjectEmbedding: { type: [Number] },
+    SubjectEmbeddingModel: { type: String },
+    CargoEmbedding: { type: [Number] },
+    CargoEmbeddingModel: { type: String },
+    Modalidades: { type: [String] },
+    ModalidadeModel: { type: String },
   },
   { timestamps: true }
 );
