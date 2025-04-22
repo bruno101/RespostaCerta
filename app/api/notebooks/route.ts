@@ -7,11 +7,13 @@ import { connectToDatabase } from "@/lib/mongoose";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { Types } from "mongoose";
+import getUserEmail from "@/utils/getUserEmail";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
+    const token = request.headers.get("authorization")?.split(" ")[1];
+    const userEmail = await getUserEmail(token);
+    if (!userEmail) {
       return NextResponse.json(
         { error: "Autenticação necessária" },
         { status: 401 }
@@ -22,7 +24,7 @@ export async function GET() {
 
     // Fetch all questions from the database
     const data = await Notebook.find({
-      user: session.user.email,
+      user: userEmail,
     })
       .populate({
         path: "questions",
@@ -90,10 +92,12 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     // 1. Get the current session
-    const session = await getServerSession(authOptions);
+    const token = request.headers.get("authorization")?.split(" ")[1];
+
+    const userEmail = getUserEmail(token);
 
     // 2. Validate that the user is logged in
-    if (!session || !session.user?.email) {
+    if (!userEmail) {
       return NextResponse.json(
         { error: "Unauthorized: You must be logged in to create a notebook." },
         { status: 401 }
@@ -139,7 +143,7 @@ export async function POST(request: Request) {
     // 6. Create the new notebook
     const newNotebook = {
       title,
-      user: session.user.email, // Use the logged-in user's email
+      user: userEmail, // Use the logged-in user's email
       questions: questions,
       currentQuestion: 0, // Always set to 0 on creation
     };
