@@ -25,7 +25,7 @@ export default function Page() {
   const emailValid = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
     email
   );
-  const passwordValid = password.length >= 6;
+  const passwordValid = password.length >= 7;
   const formValid = nameValid && emailValid && passwordValid;
   const router = useRouter();
   const { data: session } = useSession();

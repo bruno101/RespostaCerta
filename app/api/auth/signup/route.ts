@@ -13,9 +13,9 @@ export async function POST(request: Request) {
 
     const { name, email, password } = await request.json();
 
-    if (password.length < 6) {
+    if (password.length < 7) {
       return NextResponse.json(
-        { message: "Password must be at least 6 characters" },
+        { message: "Password must be at least 7 characters" },
         { status: 400 }
       );
     }

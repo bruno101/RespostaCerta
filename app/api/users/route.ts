@@ -6,7 +6,7 @@ export async function POST(req: Request) {
   try {
     await connectToDatabase();
     const body = await req.json();
-    let { name, email, image, signedUpWithGoogle } = body;
+    let { name, email, image, signedUpWithGoogle, password } = body;
 
     if (!name || !email) {
       return NextResponse.json(
@@ -32,6 +32,13 @@ export async function POST(req: Request) {
 
     if (signedUpWithGoogle === null || signedUpWithGoogle === undefined)
       signedUpWithGoogle = true;
+
+    if (!signedUpWithGoogle) {
+      return NextResponse.json(
+        { error: "Esssa rota é apenas para autenticação com Google." },
+        { status: 400 }
+      );
+    }
 
     const user = await User.findOne({ email });
 
