@@ -23,7 +23,7 @@ export const authOptions: AuthOptions = {
         await connectToDatabase();
         const userFound = await User.findOne({
           email: credentials?.email,
-          verified: true,
+          //verified: true,
         }).select("+password");
 
         if (!userFound) throw new Error("Invalid Email");
@@ -58,6 +58,8 @@ export const authOptions: AuthOptions = {
     async signIn({ user, account, profile }) {
       // Only proceed if it's a Google sign in
       if (account?.provider === "google") {
+        // TBD:alterar
+        // Executado no servidor, deveria acessar o banco de dados diretamente
         try {
           await fetch(`${process.env.NEXTAUTH_URL}/api/users/`, {
             method: "POST",

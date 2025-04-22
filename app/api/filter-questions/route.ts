@@ -56,19 +56,9 @@ export async function GET(request: Request) {
       validated.pageNumber
     );
 
-    if (!result) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Nenhum resultado encontrado",
-        },
-        { status: 404 }
-      );
-    }
-
     return NextResponse.json({
       success: true,
-      data: result,
+      data: result || [],
     });
   } catch (error) {
     console.error("Erro na busca de perguntas:", error);

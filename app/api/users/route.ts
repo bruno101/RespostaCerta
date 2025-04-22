@@ -44,8 +44,7 @@ export async function POST(req: Request) {
     ) {
       return NextResponse.json(
         {
-          error:
-            "Email already used by account not created with google",
+          error: "Email already used by account not created with google",
         },
         { status: 409 }
       );
@@ -59,7 +58,7 @@ export async function POST(req: Request) {
       name,
       email,
       signedUpWithGoogle,
-      verified: signedUpWithGoogle,
+      verified: signedUpWithGoogle, //TBD: alterar, não deveria ser manipulável pelo cliente
       image: image ? image : null,
     });
 

@@ -129,7 +129,7 @@ export async function searchQuestions(
     }));
     return { questions: mappedQuestions, totalDocuments, totalPages };
   } catch (error) {
-    console.error("Error usearching questions:", error);
+    console.error("Error searching questions:", error);
     return;
   }
 }
