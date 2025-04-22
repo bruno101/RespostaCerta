@@ -23,7 +23,7 @@ export const authOptions: AuthOptions = {
         await connectToDatabase();
         const userFound = await User.findOne({
           email: credentials?.email,
-          //verified: true,
+          verified: true,
         }).select("+password");
 
         if (!userFound) throw new Error("Invalid Email");

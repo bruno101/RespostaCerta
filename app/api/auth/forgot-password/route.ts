@@ -42,12 +42,11 @@ export async function POST(request: Request) {
     const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${resetToken}`;
 
     // Send email
-    const res = await sendEmail({
+    await sendEmail({
       to: user.email,
       subject: "Redefinição de Senha - Resposta Certa",
       html: forgotPassword(resetUrl),
     });
-    console.log("sending response:", res);
 
     return NextResponse.json(
       { message: "Se o email existir, enviaremos um link de recuperação" },
