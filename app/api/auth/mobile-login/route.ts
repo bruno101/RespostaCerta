@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongoose";
 import User from "@/app/models/User";
 import bcrypt from "bcryptjs";
-import { generateToken } from "@/lib/token";
+import { generateRefreshToken, generateToken } from "@/lib/token";
 
 export async function POST(req: Request) {
   try {
@@ -39,7 +39,8 @@ export async function POST(req: Request) {
     }
 
     // 4. Generate JWT token
-    const token = generateToken(user._id.toString());
+    const accessToken = generateToken(user._id.toString());
+    const refreshToken = generateRefreshToken(user._id.toString());
 
     // 5. Return user data (without password) and token
     const userData = {
@@ -52,7 +53,8 @@ export async function POST(req: Request) {
     };
 
     return NextResponse.json({
-      token,
+      accessToken,
+      refreshToken,
       user: userData,
     });
   } catch (error) {

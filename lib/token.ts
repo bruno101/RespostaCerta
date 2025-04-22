@@ -3,12 +3,18 @@ import jwt from "jsonwebtoken";
 import { connectToDatabase } from "./mongoose";
 import User from "@/app/models/User";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-very-secure-secret";
-const JWT_EXPIRES_IN = "30d"; // Token expires in 30 days
+const JWT_SECRET = process.env.JWT_SECRET || "";
 
 export const generateToken = (email: string) => {
   return jwt.sign({ email: email }, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN,
+    expiresIn: "15m", // Short-lived access token (15 minutes)
+  });
+};
+
+// Generate refresh token with longer expiration
+export const generateRefreshToken = (email: string) => {
+  return jwt.sign({ email: email }, JWT_SECRET, {
+    expiresIn: "30d", // Refresh token valid for 30 days
   });
 };
 
