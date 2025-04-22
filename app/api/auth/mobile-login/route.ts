@@ -39,8 +39,8 @@ export async function POST(req: Request) {
     }
 
     // 4. Generate JWT token
-    const accessToken = generateToken(user._id.toString());
-    const refreshToken = generateRefreshToken(user._id.toString());
+    const accessToken = generateToken(user.email);
+    const refreshToken = generateRefreshToken(user.email);
 
     // 5. Return user data (without password) and token
     const userData = {
