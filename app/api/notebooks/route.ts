@@ -75,6 +75,7 @@ export async function GET(request: Request) {
           TextoPlano: q.TextoPlano,
           Dificuldade: q.Dificuldade,
           NotaMaxima: q.NotaMaxima ? +q.NotaMaxima : 10,
+          Modalidades: q.Modalidades,
         })),
       }))
     );
