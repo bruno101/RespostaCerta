@@ -42,10 +42,13 @@ export async function GET(request: Request) {
     const notebooks = await Promise.all(
       data.map(async (notebook) => ({
         ...(notebook as any)._doc,
-        currentQuestion: Math.max(data.length, notebook.currentQuestion),
+        currentQuestion: Math.max(
+          (notebook as any)._doc.length,
+          notebook.currentQuestion
+        ),
         createdAt: (notebook as any).createdAt,
         updatedAt: (notebook as any).updatedAt,
-        numberOfQuestions: data.length,
+        numberOfQuestions: (notebook as any)._doc.length,
         id: notebook._id.toString(),
         subjects: [
           ...new Set(
