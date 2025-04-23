@@ -7,6 +7,7 @@ import { connectToDatabase } from "@/lib/mongoose";
 import Notebook from "@/app/models/Notebook";
 import Question from "@/app/ui/questions/Question";
 import { IQuestionSchema } from "@/app/models/Question";
+import getUserEmail from "@/utils/getUserEmail";
 
 export async function GET(
   request: Request,
@@ -14,8 +15,9 @@ export async function GET(
 ) {
   try {
     const id = (await params).id;
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
+    const token = request.headers.get("authorization")?.split(" ")[1];
+    const userEmail = await getUserEmail(token);
+    if (!userEmail) {
       return NextResponse.json(
         { error: "Autenticação necessária" },
         { status: 401 }
@@ -27,7 +29,7 @@ export async function GET(
     // Fetch all questions from the database
     const data = await Notebook.find({
       _id: id,
-      user: session.user.email,
+      user: userEmail,
     });
 
     if (!data || !data[0]) {
@@ -61,11 +63,12 @@ export async function PATCH(
 ) {
   try {
     // 1. Get the current session
-    const session = await getServerSession(authOptions);
+    const token = request.headers.get("authorization")?.split(" ")[1];
+    const userEmail = await getUserEmail(token);
     const id = (await params).id;
 
     // 2. Validate that the user is logged in
-    if (!session || !session.user?.email) {
+    if (!userEmail) {
       return NextResponse.json(
         { error: "Unauthorized: You must be logged in to update a notebook." },
         { status: 401 }
@@ -112,7 +115,7 @@ export async function PATCH(
     }
 
     // 7. Check if the notebook belongs to the logged-in user
-    if (notebook.user !== session.user.email) {
+    if (notebook.user !== userEmail) {
       return NextResponse.json(
         {
           error:
@@ -162,11 +165,12 @@ export async function DELETE(
 ) {
   try {
     // 1. Get the current session
-    const session = await getServerSession(authOptions);
+    const token = request.headers.get("authorization")?.split(" ")[1];
+    const userEmail = await getUserEmail(token);
     const id = (await params).id;
 
     // 2. Validate that the user is logged in
-    if (!session || !session.user?.email) {
+    if (!userEmail) {
       return NextResponse.json(
         { error: "Unauthorized: You must be logged in to delete a notebook." },
         { status: 401 }
@@ -195,7 +199,7 @@ export async function DELETE(
     }
 
     // 6. Check if the notebook belongs to the logged-in user
-    if (notebook.user !== session.user.email) {
+    if (notebook.user !== userEmail) {
       return NextResponse.json(
         {
           error:
