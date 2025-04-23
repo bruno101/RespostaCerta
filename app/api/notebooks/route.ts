@@ -28,23 +28,24 @@ export async function GET(request: Request) {
     })
       .populate({
         path: "questions",
-        options: { limit: 200 },
+        //options: { limit: 200 },
         model: Question,
       })
       .sort({ createdAt: -1 })
       .exec();
 
-    const fetchNumber = async (id: string) => {
+    /*const fetchNumber = async (id: string) => {
       const q = await Notebook.findById(id).select("questions").lean();
       return q?.questions.length || 0;
-    };
+    };*/
 
     const notebooks = await Promise.all(
       data.map(async (notebook) => ({
         ...(notebook as any)._doc,
+        currentQuestion: Math.max(data.length, notebook.currentQuestion),
         createdAt: (notebook as any).createdAt,
         updatedAt: (notebook as any).updatedAt,
-        numberOfQuestions: await fetchNumber(notebook._id.toString()),
+        numberOfQuestions: data.length,
         id: notebook._id.toString(),
         subjects: [
           ...new Set(
