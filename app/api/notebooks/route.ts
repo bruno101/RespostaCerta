@@ -43,12 +43,12 @@ export async function GET(request: Request) {
       data.map(async (notebook) => ({
         ...(notebook as any)._doc,
         currentQuestion: Math.max(
-          (notebook as any)._doc.length,
+          notebook.questions?.length || 0,
           notebook.currentQuestion
         ),
         createdAt: (notebook as any).createdAt,
         updatedAt: (notebook as any).updatedAt,
-        numberOfQuestions: (notebook as any)._doc.length,
+        numberOfQuestions: (notebook as any).questions?.length || 0,
         id: notebook._id.toString(),
         subjects: [
           ...new Set(
