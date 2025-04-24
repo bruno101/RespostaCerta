@@ -42,7 +42,7 @@ export async function GET(request: Request) {
     const notebooks = await Promise.all(
       data.map(async (notebook) => ({
         ...(notebook as any)._doc,
-        currentQuestion: Math.max(
+        currentQuestion: Math.min(
           notebook.questions?.length || 0,
           notebook.currentQuestion
         ),

@@ -7,46 +7,14 @@ import IQuestion from "../interfaces/IQuestion";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Notebook from "../models/Notebook";
+import { generateFindParameters } from "./searchQuestions";
 
 async function fetchQuestionIds(
-  selected: ISelector[]
+  selected: ISelector[],
+  userEmail: string
 ): Promise<string[] | null> {
   try {
-    selected.map((selector) => {
-      if (selector.name === "Instituição") {
-        selector.name = "Instituicao";
-      } else if (selector.name === "Nível") {
-        selector.name = "Nivel";
-      }
-      return selector;
-    });
-    await connectToDatabase();
-    let findObject: any = { $and: [] };
-    for (let selector of selected) {
-      if (
-        selector.name !== "Palavras Chave" &&
-        selector.name !== "Resolvidas" &&
-        selector.options.length > 0
-      ) {
-        const orArray: {}[] = [];
-        for (let option of selector.options) {
-          const newObject: any = {};
-          newObject[selector.name] = option;
-          orArray.push(newObject);
-        }
-        findObject.$and.push({ $or: orArray });
-      } else if (selector.name === "Resolvidas") {
-        //tbd
-      } else {
-        if (selector.options) {
-          findObject.$and.push({
-            $or: selector.options.map((keyword) => ({
-              TextoPlano: { $regex: keyword, $options: "i" },
-            })),
-          });
-        }
-      }
-    }
+    const findObject = await generateFindParameters(selected, userEmail);
     const questions = await Question.find(findObject)
       .sort({ createdAt: -1 })
       .select("_id")
@@ -56,7 +24,7 @@ async function fetchQuestionIds(
     }
     return questions.map((question) => question._id.toString());
   } catch (error) {
-    console.error("Error usearching questions:", error);
+    console.error("Error searching questions:", error);
     return null;
   }
 }
@@ -87,21 +55,33 @@ export async function saveNotebook(
 
 export async function generateNotebook(
   selected: ISelector[],
-  title: string
+  title: string,
+  userEmail?: string
 ): Promise<{ id: string } | { error: string }> {
   try {
     if (title === "") {
       return { error: "Título deve ser não vazio" };
     }
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
-      return { error: "Autenticação Necessária" };
+    let session;
+    if (!userEmail) {
+      session = await getServerSession(authOptions);
+      if (!session?.user?.email) {
+        return { error: "Autenticação Necessária" };
+      }
     }
-    const questionIds = await fetchQuestionIds(selected);
+
+    const questionIds = await fetchQuestionIds(
+      selected,
+      userEmail || session?.user?.email || ""
+    );
     if (questionIds === null) {
       return { error: "Erro filtrando questões" };
     }
-    return await saveNotebook(questionIds, title, session.user.email);
+    return await saveNotebook(
+      questionIds,
+      title,
+      userEmail || session?.user?.email || ""
+    );
   } catch (error) {
     console.error(error);
     return { error: "Internal Server Error" };

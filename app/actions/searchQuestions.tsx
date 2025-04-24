@@ -10,33 +10,11 @@ import { authOptions } from "@/lib/auth";
 import { Schema } from "mongoose";
 import { Types } from "mongoose";
 
-export async function searchQuestions(
+export async function generateFindParameters(
   selected: ISelector[],
-  questionsPerPage: number,
-  pageNumber: number
-): Promise<
-  | { questions: IQuestion[]; totalDocuments: number; totalPages: number }
-  | undefined
-> {
+  userEmail: string
+) {
   try {
-    const session = await getServerSession(authOptions);
-
-    const page = Math.max(1, pageNumber || 1);
-    const limit = Math.max(1, questionsPerPage || 5);
-    const skip = (page - 1) * limit;
-    selected.map((selector) => {
-      if (selector.name === "Instituição") {
-        selector.name = "Instituicao";
-      } else if (selector.name === "Nível") {
-        selector.name = "Nivel";
-      } else if (selector.name === "Cargo") {
-        selector.name = "Cargos";
-      } else if (selector.name === "Modalidade") {
-        selector.name = "Modalidades";
-      }
-      return selector;
-    });
-    await connectToDatabase();
     let findObject: any = { $and: [] };
     let solved = "";
     for (let selector of selected) {
@@ -79,10 +57,9 @@ export async function searchQuestions(
         }
       }
     }
-
-    if (!(solved === "") && session?.user?.email) {
+    if (!(solved === "") && userEmail) {
       const responseIds: string[] = (
-        await Response.find({ user: session.user.email }, { question: 1 })
+        await Response.find({ user: userEmail }, { question: 1 })
       ).map((r) => r.question.toString());
 
       if (solved === "y") {
@@ -95,6 +72,46 @@ export async function searchQuestions(
         });
       }
     }
+    return findObject;
+  } catch (e) {
+    console.error(e);
+    return {};
+  }
+}
+
+export async function searchQuestions(
+  selected: ISelector[],
+  questionsPerPage: number,
+  pageNumber: number
+): Promise<
+  | { questions: IQuestion[]; totalDocuments: number; totalPages: number }
+  | undefined
+> {
+  try {
+    const session = await getServerSession(authOptions);
+
+    const page = Math.max(1, pageNumber || 1);
+    const limit = Math.max(1, questionsPerPage || 5);
+    const skip = (page - 1) * limit;
+
+    /*selected.map((selector) => {
+      if (selector.name === "Instituição") {
+        selector.name = "Instituicao";
+      } else if (selector.name === "Nível") {
+        selector.name = "Nivel";
+      } else if (selector.name === "Cargo") {
+        selector.name = "Cargos";
+      } else if (selector.name === "Modalidade") {
+        selector.name = "Modalidades";
+      }
+      return selector;
+    });*/
+
+    await connectToDatabase();
+    let findObject: any = generateFindParameters(
+      selected,
+      session?.user?.email || ""
+    );
 
     const questions = await Question.find(findObject)
       .sort({ Ano: -1, createdAt: -1 })
