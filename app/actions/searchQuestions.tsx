@@ -82,13 +82,17 @@ export async function generateFindParameters(
 export async function searchQuestions(
   selected: ISelector[],
   questionsPerPage: number,
-  pageNumber: number
+  pageNumber: number,
+  userEmail?: string
 ): Promise<
   | { questions: IQuestion[]; totalDocuments: number; totalPages: number }
   | undefined
 > {
   try {
-    const session = await getServerSession(authOptions);
+    let session;
+    if (!userEmail) {
+      session = await getServerSession(authOptions);
+    }
 
     const page = Math.max(1, pageNumber || 1);
     const limit = Math.max(1, questionsPerPage || 5);
@@ -108,9 +112,9 @@ export async function searchQuestions(
     });*/
 
     await connectToDatabase();
-    let findObject: any = generateFindParameters(
+    let findObject: any = await generateFindParameters(
       selected,
-      session?.user?.email || ""
+      userEmail || session?.user?.email || ""
     );
 
     const questions = await Question.find(findObject)
